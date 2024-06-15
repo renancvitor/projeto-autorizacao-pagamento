@@ -1,19 +1,15 @@
 package Entities;
 
-import Servicoes.Solicitacao;
-import Servicoes.StatusSolicitacao;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 import javafx.scene.Scene;
-import javafx.scene.control.*;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import javafx.scene.control.TextField;
 import javafx.scene.layout.GridPane;
 import javafx.stage.Stage;
-
 import java.sql.Connection;
 import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.Date;
+import Servicoes.Database;
 
 public class TelaUsuario {
     private Usuario usuario;
@@ -29,129 +25,48 @@ public class TelaUsuario {
         grid.setHgap(10);
         grid.setVgap(10);
 
-        // Formulário de solicitação
-        Label descricaoLabel = new Label("Descrição:");
-        grid.add(descricaoLabel, 0, 0);
+        Label nameLabel = new Label("Nome:");
+        grid.add(nameLabel, 0, 0);
 
-        TextArea descricaoField = new TextArea();
-        grid.add(descricaoField, 1, 0);
+        TextField nameField = new TextField();
+        grid.add(nameField, 1, 0);
 
-        Label valorLabel = new Label("Valor:");
-        grid.add(valorLabel, 0, 1);
+        Label emailLabel = new Label("E-mail:");
+        grid.add(emailLabel, 0, 1);
 
-        TextField valorField = new TextField();
-        grid.add(valorField, 1, 1);
+        TextField emailField = new TextField();
+        grid.add(emailField, 1, 1);
 
-        Label dataLabel = new Label("Data:");
-        grid.add(dataLabel, 0, 2);
+        Button cadastrarButton = new Button("Cadastrar");
+        grid.add(cadastrarButton, 1, 2);
 
-        DatePicker datePicker = new DatePicker();
-        grid.add(datePicker, 1, 2);
+        cadastrarButton.setOnAction(e -> {
+            String nome = nameField.getText();
+            String email = emailField.getText();
 
-        Label tipoLabel = new Label("Tipo:");
-        grid.add(tipoLabel, 0, 3);
+            // Adicionar lógica para cadastrar o usuário diretamente aqui
+            cadastrarNovoUsuario(nome, email);
 
-        ComboBox<String> tipoComboBox = new ComboBox<>();
-        tipoComboBox.getItems().addAll("Alimentação", "Transporte", "Hospedagem");
-        grid.add(tipoComboBox, 1, 3);
-
-        Button enviarButton = new Button("Enviar Solicitação");
-        grid.add(enviarButton, 1, 4);
-
-        enviarButton.setOnAction(e -> {
-            String descricao = descricaoField.getText();
-            double valor = Double.parseDouble(valorField.getText());
-            String data = datePicker.getValue().toString();
-            String tipo = tipoComboBox.getValue();
-
-            // Criar nova solicitação
-            Solicitacao solicitacao = new Solicitacao(usuario, valor, descricao, StatusSolicitacao.PENDENTE, new Date(), data, tipo);
-
-            // Adicionar solicitação ao banco de dados
-            adicionarSolicitacao(solicitacao);
-
-            // Mostrar mensagem de confirmação
-            System.out.println("Solicitação enviada com sucesso!");
-
-            // Limpar campos
-            descricaoField.clear();
-            valorField.clear();
-            datePicker.setValue(null);
-            tipoComboBox.setValue(null);
-
-            // Atualizar tabela de histórico
-            tableView.setItems(getSolicitacoesUsuario());
+            // Limpar campos após cadastro
+            nameField.clear();
+            emailField.clear();
         });
 
-        // Histórico de solicitações
-        TableView<Solicitacao> tableView = new TableView<>();
-        TableColumn<Solicitacao, String> colunaDescricao = new TableColumn<>("Descrição");
-        colunaDescricao.setCellValueFactory(cellData -> cellData.getValue().descricaoProperty());
-
-        TableColumn<Solicitacao, String> colunaValor = new TableColumn<>("Valor");
-        colunaValor.setCellValueFactory(cellData -> cellData.getValue().valorProperty().asString());
-
-        TableColumn<Solicitacao, String> colunaData = new TableColumn<>("Data");
-        colunaData.setCellValueFactory(cellData -> cellData.getValue().dataProperty());
-
-        TableColumn<Solicitacao, String> colunaTipo = new TableColumn<>("Tipo");
-        colunaTipo.setCellValueFactory(cellData -> cellData.getValue().tipoProperty());
-
-        TableColumn<Solicitacao, String> colunaStatus = new TableColumn<>("Status");
-        colunaStatus.setCellValueFactory(cellData -> cellData.getValue().statusProperty().asString());
-
-        tableView.getColumns().addAll(colunaDescricao, colunaValor, colunaData, colunaTipo, colunaStatus);
-        tableView.setItems(getSolicitacoesUsuario());
-
-        grid.add(tableView, 0, 5, 2, 1);
-
-        Scene scene = new Scene(grid, 800, 600);
+        Scene scene = new Scene(grid, 300, 200);
         primaryStage.setScene(scene);
         primaryStage.show();
     }
 
-    private void adicionarSolicitacao(Solicitacao solicitacao) {
-        String sql = "INSERT INTO solicitacoes(usuario_id, descricao, valor, data, tipo, status) VALUES(?, ?, ?, ?, ?, ?)";
-
+    private void cadastrarNovoUsuario(String nome, String email) {
+        String sql = "INSERT INTO usuarios (nome, email, senha) VALUES (?, ?, '123456')";
         try (Connection conn = Database.connect();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
-            pstmt.setInt(1, usuario.getId()); // Supondo que você tenha um método getId() em Usuario
-            pstmt.setString(2, solicitacao.getDescricao());
-            pstmt.setDouble(3, solicitacao.getValor());
-            pstmt.setString(4, solicitacao.getData());
-            pstmt.setString(5, solicitacao.getTipo());
-            pstmt.setString(6, solicitacao.getStatus().toString());
+            pstmt.setString(1, nome);
+            pstmt.setString(2, email);
             pstmt.executeUpdate();
-        } catch (SQLException e) {
-            System.out.println(e.getMessage());
+            System.out.println("Usuário cadastrado com sucesso!");
+        } catch (SQLException ex) {
+            System.out.println("Erro ao cadastrar usuário: " + ex.getMessage());
         }
-    }
-
-    private ObservableList<Solicitacao> getSolicitacoesUsuario() {
-        ObservableList<Solicitacao> solicitacoes = FXCollections.observableArrayList();
-        String sql = "SELECT * FROM solicitacoes WHERE usuario_id = ?";
-
-        try (Connection conn = Database.connect();
-             PreparedStatement pstmt = conn.prepareStatement(sql)) {
-            pstmt.setInt(1, usuario.getId()); // Supondo que você tenha um método getId() em Usuario
-            ResultSet rs = pstmt.executeQuery();
-
-            while (rs.next()) {
-                Solicitacao solicitacao = new Solicitacao(
-                        usuario,
-                        rs.getDouble("valor"),
-                        rs.getString("descricao"),
-                        StatusSolicitacao.valueOf(rs.getString("status")),
-                        new Date(), // Aqui você pode precisar converter a data de String para Date
-                        rs.getString("data"),
-                        rs.getString("tipo")
-                );
-                solicitacoes.add(solicitacao);
-            }
-        } catch (SQLException e) {
-            System.out.println(e.getMessage());
-        }
-
-        return solicitacoes;
     }
 }

@@ -10,7 +10,20 @@ module org.projetoexecutavel.projetoautorizacaopagamento {
     requires org.kordamp.bootstrapfx.core;
     requires eu.hansolo.tilesfx;
     requires com.almasb.fxgl.all;
+    requires java.sql;
 
     opens org.projetoexecutavel.projetoautorizacaopagamento to javafx.fxml;
     exports org.projetoexecutavel.projetoautorizacaopagamento;
+
+    // Exporta o pacote Application para o módulo javafx.graphics
+    exports Application;
+    exports Entities;
 }
+
+//module org.projetoexecutavel.projetoautorizacaopagamento {
+//        requires javafx.controls;
+//        requires javafx.fxml;
+//
+//        // Exporta o pacote Application para o módulo javafx.graphics
+//        exports Application;
+//        }

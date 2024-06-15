@@ -4,6 +4,7 @@ import Entities.Gestor;
 import Entities.TelaGestor;
 import Entities.TelaUsuario;
 import Entities.Usuario;
+import Entities.UsuarioComum;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
@@ -13,6 +14,8 @@ import javafx.scene.layout.GridPane;
 import javafx.stage.Stage;
 
 public class TelaLogin {
+
+    private CadastroListener onCadastroClickListener;
 
     public void start(Stage primaryStage) {
         primaryStage.setTitle("Login");
@@ -35,6 +38,9 @@ public class TelaLogin {
 
         Button loginButton = new Button("Login");
         grid.add(loginButton, 1, 2);
+
+        Button cadastroButton = new Button("Cadastrar Usuário");
+        grid.add(cadastroButton, 1, 3);
 
         loginButton.setOnAction(e -> {
             String username = userNameField.getText();
@@ -61,6 +67,12 @@ public class TelaLogin {
             }
         });
 
+        cadastroButton.setOnAction(e -> {
+            if (onCadastroClickListener != null) {
+                onCadastroClickListener.onCadastroClicked();
+            }
+        });
+
         Scene scene = new Scene(grid, 300, 200);
         primaryStage.setScene(scene);
         primaryStage.show();
@@ -78,7 +90,11 @@ public class TelaLogin {
         if ("admin".equals(username)) {
             return new Gestor("Admin", "Financeiro", "admin", "password");
         } else {
-            return new Usuario("User", "RH", "user", "password");
+            return new UsuarioComum("User", "RH", "user", "123456");
         }
+    }
+
+    public void setOnCadastroClickListener(CadastroListener listener) {
+        this.onCadastroClickListener = listener;
     }
 }

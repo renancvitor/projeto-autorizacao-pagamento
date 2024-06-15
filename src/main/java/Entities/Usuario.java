@@ -1,24 +1,33 @@
 package Entities;
 
-public class Usuario {
+public abstract class Usuario {
+    private String nome;
+    private String setor;
+    private String username;
+    private String senha;
+    private String email;
 
-    public String name;
-    public String setor;
-    public String username;
-    public String password;
-
-    public Usuario() {
+    public void setEmail(String email) {
+        this.email = email;
     }
 
-    public Usuario(String name, String setor, String username, String password) {
-        this.name = name;
+    public String getEmail() {
+        return email;
+    }
+
+    public Usuario(String email) {
+        this.email = email;
+    }
+
+    public Usuario(String nome, String setor, String username, String senha) {
+        this.nome = nome;
         this.setor = setor;
         this.username = username;
-        this.password = password;
+        this.senha = senha;
     }
 
-    public String getName() {
-        return name;
+    public String getNome() {
+        return nome;
     }
 
     public String getSetor() {
@@ -29,23 +38,9 @@ public class Usuario {
         return username;
     }
 
-    public String getPassword() {
-        return password;
+    public String getSenha() {
+        return senha;
     }
 
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public void setSetor(String setor) {
-        this.setor = setor;
-    }
-
-    public void setUsername(String username) {
-        this.username = username;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
+    public abstract void cadastrarUsuario();
 }

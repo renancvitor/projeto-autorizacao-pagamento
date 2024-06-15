@@ -26,18 +26,18 @@ public class SistemaSolicitacao {
     public List<Solicitacao> getSolicitacoesPendentes() {
         List<Solicitacao> pendentes = new ArrayList<>();
         for (Solicitacao s : solicitacoes) {
-            if (s.getStatus() == StatusSolicitacao.PENDENTE) {
+            if (s.getStatus() == String.valueOf(StatusSolicitacao.PENDENTE)) {
                 pendentes.add(s);
             }
         }
         return pendentes;
     }
     public void aprovarSolicitacao(Solicitacao solicitacao) {
-        solicitacao.setStatus(StatusSolicitacao.APROVADA);
+        solicitacao.setStatus(String.valueOf(StatusSolicitacao.APROVADA));
     }
 
     public void rejeitarSolicitacao(Solicitacao solicitacao) {
-        solicitacao.setStatus(StatusSolicitacao.REJEITADA);
+        solicitacao.setStatus(String.valueOf(StatusSolicitacao.REJEITADA));
     }
 
 }
