@@ -6,8 +6,8 @@ import java.sql.SQLException;
 
 public class Database {
     private static final String URL = "jdbc:mysql://localhost:3306/sistema_pagamentos?allowPublicKeyRetrieval=true";
-    private static final String USER = "seu_usuario";
-    private static final String PASSWORD = "sua_senha";
+    private static final String USER = "root";
+    private static final String PASSWORD = "123456789";
 
     public static Connection connect() {
         Connection conn = null;

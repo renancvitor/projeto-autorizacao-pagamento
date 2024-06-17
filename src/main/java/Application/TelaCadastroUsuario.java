@@ -16,7 +16,7 @@ public class TelaCadastroUsuario {
     }
 
     public void cadastrarNovoUsuario(String nome, String email) {
-        String sql = "INSERT INTO usuario (nome, email) VALUES (?, ?)";
+        String sql = "INSERT INTO usuarios (nome, email) VALUES (?, ?)";
         System.out.println("SQL: " + sql); // Debug: Imprime a consulta SQL
         try (Connection conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/sistema_pagamentos", "root", "123456789")) {
             try (PreparedStatement stmt = conn.prepareStatement(sql)) {

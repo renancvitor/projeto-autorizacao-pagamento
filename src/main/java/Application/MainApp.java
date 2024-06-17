@@ -15,7 +15,7 @@ public class MainApp {
             TelaCadastroUsuario telaCadastroUsuario = new TelaCadastroUsuario(conn);
 
             // Agora você pode chamar os métodos da classe TelaCadastroUsuario normalmente
-            telaCadastroUsuario.cadastrarNovoUsuario("usuario", "senha");
+            telaCadastroUsuario.cadastrarNovoUsuario("usuario3", "senha3");
         } catch (SQLException e) {
             e.printStackTrace();
             // Lida com exceções aqui
