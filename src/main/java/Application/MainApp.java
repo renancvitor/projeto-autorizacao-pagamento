@@ -1,34 +1,23 @@
 package Application;
 
+import javafx.application.Application;
+import javafx.stage.Stage;
+
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 
-public class MainApp {
-    public static void main(String[] args) {
-        // Obtendo a conexão com o banco de dados
-        Connection conn = null;
+public class MainApp extends Application {
+
+    @Override
+    public void start(Stage primaryStage) {
         try {
-            conn = obterConexao();
+            Connection conn = obterConexao(); // Obtenção da conexão com o banco de dados
 
-            // Crie um objeto TelaCadastroUsuario passando a conexão como argumento
             TelaCadastroUsuario telaCadastroUsuario = new TelaCadastroUsuario(conn);
-
-            // Agora você pode chamar os métodos da classe TelaCadastroUsuario normalmente
-            telaCadastroUsuario.cadastrarNovoUsuario("usuario3", "senha3");
-        } catch (SQLException e) {
+            telaCadastroUsuario.mostrarTelaInicial(primaryStage);
+        } catch (Exception e) {
             e.printStackTrace();
-            // Lida com exceções aqui
-        } finally {
-            // Certifique-se de fechar a conexão quando não precisar mais dela
-            if (conn != null) {
-                try {
-                    conn.close();
-                } catch (SQLException e) {
-                    e.printStackTrace();
-                    // Lida com exceções aqui
-                }
-            }
         }
     }
 
@@ -40,4 +29,7 @@ public class MainApp {
         return DriverManager.getConnection(url, usuario, senha);
     }
 
+    public static void main(String[] args) {
+        launch(args);
+    }
 }
