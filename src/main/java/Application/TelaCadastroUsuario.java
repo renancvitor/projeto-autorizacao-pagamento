@@ -11,6 +11,7 @@ import javafx.stage.Stage;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 
 public class TelaCadastroUsuario {
@@ -28,17 +29,17 @@ public class TelaCadastroUsuario {
         grid.setVgap(8);
         grid.setHgap(10);
 
-        // Nome
-        Label nomeLabel = new Label("Nome:");
-        GridPane.setConstraints(nomeLabel, 0, 0);
-        TextField nomeInput = new TextField();
-        GridPane.setConstraints(nomeInput, 1, 0);
-
         // Email
         Label emailLabel = new Label("Email:");
-        GridPane.setConstraints(emailLabel, 0, 1);
+        GridPane.setConstraints(emailLabel, 0, 0);
         TextField emailInput = new TextField();
-        GridPane.setConstraints(emailInput, 1, 1);
+        GridPane.setConstraints(emailInput, 1, 0);
+
+        // Senha
+        Label senhaLabel = new Label("Senha:");
+        GridPane.setConstraints(senhaLabel, 0, 1);
+        TextField senhaInput = new TextField();
+        GridPane.setConstraints(senhaInput, 1, 1);
 
         // Botão de Login
         Button loginButton = new Button("Login");
@@ -49,20 +50,20 @@ public class TelaCadastroUsuario {
         GridPane.setConstraints(registerButton, 1, 3);
 
         loginButton.setOnAction(e -> {
-            String nome = nomeInput.getText();
             String email = emailInput.getText();
+            String senha = senhaInput.getText();
 
-            if (login(nome, email)) {
+            if (login(email, senha)) {
                 mostrarAlerta(Alert.AlertType.INFORMATION, "Login bem-sucedido!", "Bem-vindo!");
                 // Continue com o sistema após o login bem-sucedido
             } else {
-                mostrarAlerta(Alert.AlertType.ERROR, "Erro no login", "Nome ou email incorretos.");
+                mostrarAlerta(Alert.AlertType.ERROR, "Erro no login", "Email ou senha incorretos.");
             }
         });
 
         registerButton.setOnAction(e -> mostrarTelaCadastro());
 
-        grid.getChildren().addAll(nomeLabel, nomeInput, emailLabel, emailInput, loginButton, registerButton);
+        grid.getChildren().addAll(emailLabel, emailInput, senhaLabel, senhaInput, loginButton, registerButton);
 
         Scene scene = new Scene(grid, 300, 200);
         primaryStage.setScene(scene);
@@ -90,60 +91,72 @@ public class TelaCadastroUsuario {
         TextField emailInput = new TextField();
         GridPane.setConstraints(emailInput, 1, 1);
 
+        // Senha
+        Label senhaLabel = new Label("Senha:");
+        GridPane.setConstraints(senhaLabel, 0, 2);
+        TextField senhaInput = new TextField();
+        GridPane.setConstraints(senhaInput, 1, 2);
+
         // Botão de Cadastrar
         Button cadastrarButton = new Button("Cadastrar");
-        GridPane.setConstraints(cadastrarButton, 1, 2);
+        GridPane.setConstraints(cadastrarButton, 1, 3);
 
         cadastrarButton.setOnAction(e -> {
             String novoNome = nomeInput.getText();
             String novoEmail = emailInput.getText();
+            String novaSenha = senhaInput.getText();
 
-            if (novoNome.isEmpty() || novoEmail.isEmpty()) {
+            if (novoNome.isEmpty() || novoEmail.isEmpty() || novaSenha.isEmpty()) {
                 mostrarAlerta(Alert.AlertType.ERROR, "Erro de Cadastro", "Preencha todos os campos antes de cadastrar.");
                 return;
             }
 
-            cadastrarNovoUsuario(novoNome, novoEmail);
+            cadastrarNovoUsuario(novoNome, novoEmail, novaSenha);
             mostrarAlerta(Alert.AlertType.INFORMATION, "Cadastro realizado", "Usuário cadastrado com sucesso!");
 
             // Fechar a janela de cadastro após o cadastro bem-sucedido
             cadastroStage.close();
         });
 
-        grid.getChildren().addAll(nomeLabel, nomeInput, emailLabel, emailInput, cadastrarButton);
+        grid.getChildren().addAll(nomeLabel, nomeInput, emailLabel, emailInput, senhaLabel, senhaInput, cadastrarButton);
 
-        Scene scene = new Scene(grid, 300, 150);
+        Scene scene = new Scene(grid, 300, 250);
         cadastroStage.setScene(scene);
         cadastroStage.show();
     }
 
-    private void cadastrarNovoUsuario(String nome, String email) {
-        String sql = "INSERT INTO usuarios (nome, email) VALUES (?, ?)";
+    private void cadastrarNovoUsuario(String nome, String email, String senha) {
+        String sql = "INSERT INTO usuarios (nome, email, senha) VALUES (?, ?, ?)";
 
         try (PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setString(1, nome);
             stmt.setString(2, email);
+            stmt.setString(3, senha); // Armazenar a senha como texto simples
             stmt.executeUpdate();
         } catch (SQLException ex) {
             ex.printStackTrace();
         }
     }
 
-    private boolean login(String nome, String email) {
-        String sql = "SELECT * FROM usuarios WHERE nome = ? AND email = ?";
+    private boolean login(String email, String senha) {
+        String sql = "SELECT senha FROM usuarios WHERE email = ?";
 
         try (PreparedStatement stmt = conn.prepareStatement(sql)) {
-            stmt.setString(1, nome);
-            stmt.setString(2, email);
+            stmt.setString(1, email);
 
-            try (var rs = stmt.executeQuery()) {
-                return rs.next(); // Retorna true se encontrar algum usuário
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    String senhaArmazenada = rs.getString("senha");
+
+                    // Comparar a senha fornecida com a senha armazenada
+                    return senha.equals(senhaArmazenada);
+                }
             }
         } catch (SQLException ex) {
             ex.printStackTrace();
         }
 
-        return false; // Retorna false se não encontrar nenhum usuário
+        return false; // Retorna false se não encontrar nenhum usuário ou a senha não corresponder
     }
 
     private void mostrarAlerta(Alert.AlertType tipo, String titulo, String mensagem) {
