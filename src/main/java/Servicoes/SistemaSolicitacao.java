@@ -19,25 +19,25 @@ public class SistemaSolicitacao {
         return instance;
     }
 
-    public void adicionarSolicitacao (Solicitacao solicitacao) {
+    public void adicionarSolicitacao(Solicitacao solicitacao) {
         solicitacoes.add(solicitacao);
     }
 
     public List<Solicitacao> getSolicitacoesPendentes() {
         List<Solicitacao> pendentes = new ArrayList<>();
         for (Solicitacao s : solicitacoes) {
-            if (s.getStatus() == String.valueOf(StatusSolicitacao.PENDENTE)) {
+            if (s.getStatus().equals(StatusSolicitacao.PENDENTE.toString())) {
                 pendentes.add(s);
             }
         }
         return pendentes;
     }
+
     public void aprovarSolicitacao(Solicitacao solicitacao) {
-        solicitacao.setStatus(String.valueOf(StatusSolicitacao.APROVADA));
+        solicitacao.setStatus(StatusSolicitacao.APROVADA.toString());
     }
 
     public void rejeitarSolicitacao(Solicitacao solicitacao) {
-        solicitacao.setStatus(String.valueOf(StatusSolicitacao.REJEITADA));
+        solicitacao.setStatus(StatusSolicitacao.REJEITADA.toString());
     }
-
 }

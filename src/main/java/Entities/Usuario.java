@@ -6,24 +6,19 @@ public abstract class Usuario {
     private String username;
     private String senha;
     private String email;
+    private UserType tipo;
 
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public Usuario(String email) {
-        this.email = email;
-    }
-
-    public Usuario(String nome, String setor, String username, String senha) {
+    public Usuario(String nome, String setor, String username, String senha, String email, UserType tipo) {
         this.nome = nome;
         this.setor = setor;
         this.username = username;
         this.senha = senha;
+        this.email = email;
+        this.tipo = tipo;
+    }
+
+    public String getEmail() {
+        return email;
     }
 
     public String getNome() {
@@ -40,6 +35,10 @@ public abstract class Usuario {
 
     public String getSenha() {
         return senha;
+    }
+
+    public UserType getTipo() {
+        return tipo;
     }
 
     public abstract void cadastrarUsuario();

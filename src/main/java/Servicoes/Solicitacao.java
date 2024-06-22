@@ -1,12 +1,7 @@
 package Servicoes;
 
 import Entities.Usuario;
-import javafx.beans.property.DoubleProperty;
-import javafx.beans.property.ObjectProperty;
-import javafx.beans.property.SimpleDoubleProperty;
-import javafx.beans.property.SimpleObjectProperty;
-import javafx.beans.property.SimpleStringProperty;
-import javafx.beans.property.StringProperty;
+import javafx.beans.property.*;
 
 import java.util.Date;
 
@@ -27,13 +22,8 @@ public class Solicitacao {
         this.status = new SimpleStringProperty(status);
     }
 
-    public Solicitacao(Usuario usuario, double valor, String descricao, StatusSolicitacao status, Date date, String data, String tipo) {
-    }
+    // Getters e Setters omitidos para brevidade
 
-    public Solicitacao(Usuario usuario, double valor, String descricao, StatusSolicitacao status, java.sql.Date data, String tipo) {
-    }
-
-    // Getters e Setters
     public Usuario getUsuario() {
         return usuario;
     }

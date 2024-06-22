@@ -9,6 +9,12 @@ public class ConnectionFactory {
         String url = ConfigLoader.getProperty("db.url");
         String user = ConfigLoader.getProperty("db.user");
         String password = ConfigLoader.getProperty("db.password");
-        return DriverManager.getConnection(url, user, password);
+
+        try {
+            return DriverManager.getConnection(url, user, password);
+        } catch (SQLException e) {
+            // Você pode adicionar tratamento específico para SQLExceptions aqui
+            throw new SQLException("Erro ao conectar com o banco de dados", e);
+        }
     }
 }

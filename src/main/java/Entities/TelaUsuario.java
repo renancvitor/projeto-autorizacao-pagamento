@@ -6,15 +6,11 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.GridPane;
 import javafx.stage.Stage;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
-import Servicoes.Database;
 
-public class TelaUsuario {
-    private Usuario usuario;
+public class TelaUsuario<T extends Usuario> {
+    private T usuario;
 
-    public TelaUsuario(Usuario usuario) {
+    public TelaUsuario(T usuario) {
         this.usuario = usuario;
     }
 
@@ -28,13 +24,13 @@ public class TelaUsuario {
         Label nameLabel = new Label("Nome:");
         grid.add(nameLabel, 0, 0);
 
-        TextField nameField = new TextField();
+        TextField nameField = new TextField(usuario.getNome());
         grid.add(nameField, 1, 0);
 
         Label emailLabel = new Label("E-mail:");
         grid.add(emailLabel, 0, 1);
 
-        TextField emailField = new TextField();
+        TextField emailField = new TextField(usuario.getEmail());
         grid.add(emailField, 1, 1);
 
         Button cadastrarButton = new Button("Cadastrar");
@@ -58,15 +54,8 @@ public class TelaUsuario {
     }
 
     private void cadastrarNovoUsuario(String nome, String email) {
-        String sql = "INSERT INTO usuarios (nome, email, senha) VALUES (?, ?, '123456')";
-        try (Connection conn = Database.connect();
-             PreparedStatement pstmt = conn.prepareStatement(sql)) {
-            pstmt.setString(1, nome);
-            pstmt.setString(2, email);
-            pstmt.executeUpdate();
-            System.out.println("Usuário cadastrado com sucesso!");
-        } catch (SQLException ex) {
-            System.out.println("Erro ao cadastrar usuário: " + ex.getMessage());
-        }
+        // Implemente a lógica para cadastrar o usuário no banco de dados ou realizar outras operações necessárias
+        // Aqui, a lógica é simplificada para demonstração
+        System.out.println("Cadastro do usuário: Nome=" + nome + ", Email=" + email);
     }
 }

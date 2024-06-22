@@ -1,10 +1,6 @@
 package Application;
 
-import Entities.Gestor;
-import Entities.TelaGestor;
-import Entities.TelaUsuario;
-import Entities.Usuario;
-import Entities.UsuarioComum;
+import Entities.*;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
@@ -13,9 +9,13 @@ import javafx.scene.control.TextField;
 import javafx.scene.layout.GridPane;
 import javafx.stage.Stage;
 
-public class TelaLogin {
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 
-    private CadastroListener onCadastroClickListener;
+public class TelaLogin {
 
     public void start(Stage primaryStage) {
         primaryStage.setTitle("Login");
@@ -24,13 +24,13 @@ public class TelaLogin {
         grid.setHgap(10);
         grid.setVgap(10);
 
-        Label userNameLabel = new Label("Username:");
-        grid.add(userNameLabel, 0, 0);
+        Label usernameLabel = new Label("Usuário:");
+        grid.add(usernameLabel, 0, 0);
 
-        TextField userNameField = new TextField();
-        grid.add(userNameField, 1, 0);
+        TextField usernameField = new TextField();
+        grid.add(usernameField, 1, 0);
 
-        Label passwordLabel = new Label("Password:");
+        Label passwordLabel = new Label("Senha:");
         grid.add(passwordLabel, 0, 1);
 
         PasswordField passwordField = new PasswordField();
@@ -39,37 +39,21 @@ public class TelaLogin {
         Button loginButton = new Button("Login");
         grid.add(loginButton, 1, 2);
 
-        Button cadastroButton = new Button("Cadastrar Usuário");
-        grid.add(cadastroButton, 1, 3);
-
         loginButton.setOnAction(e -> {
-            String username = userNameField.getText();
-            String password = passwordField.getText();
+            String username = usernameField.getText();
+            String senha = passwordField.getText();
 
             // Valida login e redireciona para a tela apropriada
-            if (validarLogin(username, password)) {
-                Usuario usuario = obterUsuario(username);
-                if (usuario instanceof Gestor) {
-                    // Redireciona para a tela do gestor
-                    TelaGestor telaGestor = new TelaGestor((Gestor) usuario);
-                    Stage stage = new Stage();
-                    telaGestor.start(stage);
-                } else {
-                    // Redireciona para a tela do usuário
-                    TelaUsuario telaUsuario = new TelaUsuario(usuario);
-                    Stage stage = new Stage();
-                    telaUsuario.start(stage);
-                }
+            Usuario usuario = validarLogin(username, senha);
+            if (usuario != null) {
+                // Redireciona para a tela principal do sistema, independente do tipo de usuário
+                TelaPrincipal telaPrincipal = new TelaPrincipal(usuario);
+                Stage stage = new Stage();
+                telaPrincipal.start(stage);
                 primaryStage.close();
             } else {
                 // Exibe mensagem de erro
                 System.out.println("Login inválido");
-            }
-        });
-
-        cadastroButton.setOnAction(e -> {
-            if (onCadastroClickListener != null) {
-                onCadastroClickListener.onCadastroClicked();
             }
         });
 
@@ -78,23 +62,35 @@ public class TelaLogin {
         primaryStage.show();
     }
 
-    private boolean validarLogin(String username, String password) {
-        // Implementa a lógica de validação do login
-        // Por exemplo, comparar username e password com valores fixos
-        return "admin".equals(username) && "password".equals(password);
-    }
+    private Usuario validarLogin(String username, String senha) {
+        String sql = "SELECT * FROM usuarios WHERE username = ? AND senha = ?";
+        try (Connection conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/seu_banco_de_dados", "usuario", "senha");
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setString(1, username);
+            pstmt.setString(2, senha);
+            ResultSet rs = pstmt.executeQuery();
+            if (rs.next()) {
+                String nome = rs.getString("nome");
+                String setor = rs.getString("setor");
+                String email = rs.getString("email");
+                String tipo = rs.getString("tipo");
 
-    private Usuario obterUsuario(String username) {
-        // Implementa a lógica para obter o usuário pelo username
-        // Aqui estamos apenas criando um exemplo de usuário
-        if ("admin".equals(username)) {
-            return new Gestor("Admin", "Financeiro", "admin", "password");
-        } else {
-            return new UsuarioComum("User", "RH", "user", "123456");
+                switch (UserType.valueOf(tipo.toUpperCase())) {
+                    case ADMIN:
+                        return new Admin(nome, setor, username, senha, email);
+                    case GESTOR:
+                        return new Gestor(nome, setor, username, senha, email);
+                    case VISUALIZADOR:
+                        return new Visualizador(nome, setor, username, senha, email);
+                    case COMUM:
+                        return new UsuarioComum(nome, setor, username, senha, email);
+                    default:
+                        throw new IllegalArgumentException("Tipo de usuário desconhecido: " + tipo);
+                }
+            }
+        } catch (SQLException ex) {
+            System.out.println("Erro ao validar login: " + ex.getMessage());
         }
-    }
-
-    public void setOnCadastroClickListener(CadastroListener listener) {
-        this.onCadastroClickListener = listener;
+        return null; // Retorno null se não encontrar usuário com as credenciais informadas
     }
 }
