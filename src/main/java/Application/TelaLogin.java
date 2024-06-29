@@ -60,10 +60,10 @@ public class TelaLogin {
     }
 
     private Usuario validarLogin(String login, String senha) {
-        try (Connection connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/seu_banco_de_dados", "usuario", "senha")) {
+        try (Connection connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/sistema_pagamentos", "root", "123456789")) {
             UsuarioDAO usuarioDAO = new UsuarioDAO(connection);
-            Usuario usuario = usuarioDAO.getUsuarioByLogin(login);
-            if (usuario != null && usuario.getSenha().equals(senha)) {
+            Usuario usuario = usuarioDAO.getUsuarioByLogin(login, senha);
+            if (usuario != null) {
                 return usuario;
             }
         } catch (SQLException e) {

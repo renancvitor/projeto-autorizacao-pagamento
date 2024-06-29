@@ -1,4 +1,4 @@
-package Entities;
+package Servicoes;
 
 import java.util.Date;
 
@@ -12,7 +12,8 @@ public class Solicitacao {
     private int parcelas;
     private double valorParcela;
     private double valorTotal;
-    private int idUsuario; // novo campo para referenciar o usuário
+    private int idUsuario;
+    private StatusSolicitacao status; // Campo para armazenar o status da solicitação
 
     public Solicitacao(int id, String fornecedor, String descricao, Date dataCriacao, Date dataPagamento,
                        String formaPagamento, int parcelas, double valorParcela, double valorTotal, int idUsuario) {
@@ -26,6 +27,7 @@ public class Solicitacao {
         this.valorParcela = valorParcela;
         this.valorTotal = valorTotal;
         this.idUsuario = idUsuario;
+        this.status = StatusSolicitacao.PENDENTE; // Inicializa como pendente por padrão
     }
 
     // Getters e Setters
@@ -107,5 +109,39 @@ public class Solicitacao {
 
     public void setIdUsuario(int idUsuario) {
         this.idUsuario = idUsuario;
+    }
+
+    public StatusSolicitacao getStatus() {
+        return status;
+    }
+
+    public void setStatus(StatusSolicitacao status) {
+        this.status = status;
+    }
+
+    // Métodos para verificar e manipular o status
+    public void setStatusByString(String statusStr) {
+        // Converte a string para o enum StatusSolicitacao
+        if ("PENDENTE".equalsIgnoreCase(statusStr)) {
+            this.status = StatusSolicitacao.PENDENTE;
+        } else if ("APROVADA".equalsIgnoreCase(statusStr)) {
+            this.status = StatusSolicitacao.APROVADA;
+        } else if ("REJEITADA".equalsIgnoreCase(statusStr)) {
+            this.status = StatusSolicitacao.REJEITADA;
+        } else {
+            throw new IllegalArgumentException("Status desconhecido: " + statusStr);
+        }
+    }
+
+    public void aprovarSolicitacao() {
+        this.status = StatusSolicitacao.APROVADA;
+    }
+
+    public void rejeitarSolicitacao() {
+        this.status = StatusSolicitacao.REJEITADA;
+    }
+
+    public boolean estaPendente() {
+        return this.status == StatusSolicitacao.PENDENTE;
     }
 }

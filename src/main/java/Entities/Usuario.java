@@ -6,17 +6,21 @@ public class Usuario {
     private int id;
     private String login;
     private String senha;
-    private String email;
-    private String nome;
     private int idTipoUsuario;
-    private List<String> roles; // Lista de papéis (roles) do usuário
+    private List<String> roles;
 
-    public Usuario(int id, String login, String senha, List<String> roles) {
+    public Usuario(String login, String senha, int idTipoUsuario) {
+        this.login = login;
+        this.senha = senha;
+        this.idTipoUsuario = idTipoUsuario;
+    }
+
+    public Usuario(int id, String login, String senha, int idTipoUsuario, List<String> roles) {
         this.id = id;
         this.login = login;
         this.senha = senha;
+        this.idTipoUsuario = idTipoUsuario;
         this.roles = roles;
-        // this.idTipoUsuario = idTipoUsuario;
     }
 
     // Getters e Setters
@@ -44,14 +48,13 @@ public class Usuario {
         this.senha = senha;
     }
 
-//    public int getIdTipoUsuario() {
-//        return idTipoUsuario;
-//    }
+    public int getIdTipoUsuario() {
+        return idTipoUsuario;
+    }
 
-//    public void setIdTipoUsuario(int idTipoUsuario) {
-//        this.idTipoUsuario = idTipoUsuario;
-//    }
-
+    public void setIdTipoUsuario(int idTipoUsuario) {
+        this.idTipoUsuario = idTipoUsuario;
+    }
 
     public List<String> getRoles() {
         return roles;
@@ -59,5 +62,15 @@ public class Usuario {
 
     public void setRoles(List<String> roles) {
         this.roles = roles;
+    }
+
+    public boolean isAdmin() {
+        // Verifica se o login do usuário é "admin"
+        if (this.getLogin() != null && "admin".equals(this.getLogin())) {
+            return true;
+        } else {
+            System.out.println("Acesso negado!");
+            return false;
+        }
     }
 }

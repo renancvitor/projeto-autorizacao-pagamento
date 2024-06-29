@@ -6,7 +6,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class UsuarioDAO {
@@ -16,16 +16,37 @@ public class UsuarioDAO {
         this.connection = connection;
     }
 
-    public Usuario getUsuarioByLogin(String login) {
-        String sql = "SELECT * FROM usuarios WHERE login = ?";
+    // Método para inserir um novo usuário
+    public void inserirUsuario(Usuario usuario) {
+        String sql = "INSERT INTO usuarios (login, senha, id_tipo_usuario, tipo_usuario) VALUES (?, ?, ?, ?)";
+        try (PreparedStatement pstmt = connection.prepareStatement(sql)) {
+            pstmt.setString(1, usuario.getLogin());
+            pstmt.setString(2, usuario.getSenha());
+            pstmt.setInt(3, usuario.getIdTipoUsuario());
+            pstmt.setString(4, String.join(",", usuario.getRoles())); // Convertendo a lista de roles para uma string
+            pstmt.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    // Método para buscar um usuário pelo login
+    public Usuario getUsuarioByLogin(String login, String senha) {
+        String sql = "SELECT * FROM usuarios WHERE login = ? AND senha = ?";
         try (PreparedStatement pstmt = connection.prepareStatement(sql)) {
             pstmt.setString(1, login);
+            pstmt.setString(2, senha);
             ResultSet rs = pstmt.executeQuery();
             if (rs.next()) {
-                int id = rs.getInt("id");
-                String senha = rs.getString("senha");
-                List<String> roles = getRolesByUserId(id); // Obtém os papéis do usuário
-                return new Usuario(id, login, senha, roles); // Instancia o objeto Usuario com os papéis
+                login = rs.getString("login");
+                senha = rs.getString("senha");
+                int idTipoUsuario = rs.getInt("id_tipo_usuario");
+               // String tipoUsuario = rs.getString("tipo_usuario");
+
+                // Convertendo a string de tipo_usuario para uma lista de roles
+               // List<String> roles = Arrays.asList(tipoUsuario.split(","));
+
+                return new Usuario(login, senha, idTipoUsuario);
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -33,18 +54,5 @@ public class UsuarioDAO {
         return null;
     }
 
-    private List<String> getRolesByUserId(int userId) throws SQLException {
-        List<String> roles = new ArrayList<>();
-        String sql = "SELECT tipo_usuario FROM tipos_usuarios WHERE id = ?";
-        try (PreparedStatement pstmt = connection.prepareStatement(sql)) {
-            pstmt.setInt(1, userId);
-            ResultSet rs = pstmt.executeQuery();
-            while (rs.next()) {
-                roles.add(rs.getString("tipo_usuario"));
-            }
-        }
-        return roles;
-    }
-
-    // Outros métodos CRUD (inserir, atualizar, deletar) podem ser adicionados aqui
+    // Outros métodos CRUD podem ser adicionados conforme necessário
 }

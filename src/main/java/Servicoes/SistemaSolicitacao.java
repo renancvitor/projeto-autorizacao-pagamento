@@ -1,5 +1,7 @@
 package Servicoes;
 
+import Servicoes.Solicitacao;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -34,10 +36,10 @@ public class SistemaSolicitacao {
     }
 
     public void aprovarSolicitacao(Solicitacao solicitacao) {
-        solicitacao.setStatus(StatusSolicitacao.APROVADA.toString());
+        solicitacao.setStatus(StatusSolicitacao.valueOf(StatusSolicitacao.APROVADA.toString()));
     }
 
     public void rejeitarSolicitacao(Solicitacao solicitacao) {
-        solicitacao.setStatus(StatusSolicitacao.REJEITADA.toString());
+        solicitacao.setStatus(StatusSolicitacao.valueOf(StatusSolicitacao.REJEITADA.toString()));
     }
 }
