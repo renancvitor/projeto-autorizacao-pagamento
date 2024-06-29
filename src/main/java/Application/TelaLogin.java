@@ -1,6 +1,7 @@
 package Application;
 
-import Entities.*;
+import DAO.UsuarioDAO;
+import Entities.Usuario;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
@@ -11,8 +12,6 @@ import javafx.stage.Stage;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import java.sql.SQLException;
 
 public class TelaLogin {
@@ -40,17 +39,15 @@ public class TelaLogin {
         grid.add(loginButton, 1, 2);
 
         loginButton.setOnAction(e -> {
-            String username = usernameField.getText();
+            String login = usernameField.getText();
             String senha = passwordField.getText();
 
             // Valida login e redireciona para a tela apropriada
-            Usuario usuario = validarLogin(username, senha);
+            Usuario usuario = validarLogin(login, senha);
             if (usuario != null) {
-                // Redireciona para a tela principal do sistema, independente do tipo de usuário
-                TelaPrincipal telaPrincipal = new TelaPrincipal(usuario);
-                Stage stage = new Stage();
-                telaPrincipal.start(stage);
-                primaryStage.close();
+                // Redireciona para a tela apropriada com base no tipo de usuário
+                System.out.println("Login bem-sucedido para o usuário: " + usuario.getLogin());
+                // Aqui você pode adicionar a lógica para redirecionar para a tela correta
             } else {
                 // Exibe mensagem de erro
                 System.out.println("Login inválido");
@@ -62,35 +59,16 @@ public class TelaLogin {
         primaryStage.show();
     }
 
-    private Usuario validarLogin(String username, String senha) {
-        String sql = "SELECT * FROM usuarios WHERE username = ? AND senha = ?";
-        try (Connection conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/seu_banco_de_dados", "usuario", "senha");
-             PreparedStatement pstmt = conn.prepareStatement(sql)) {
-            pstmt.setString(1, username);
-            pstmt.setString(2, senha);
-            ResultSet rs = pstmt.executeQuery();
-            if (rs.next()) {
-                String nome = rs.getString("nome");
-                String setor = rs.getString("setor");
-                String email = rs.getString("email");
-                String tipo = rs.getString("tipo");
-
-                switch (UserType.valueOf(tipo.toUpperCase())) {
-                    case ADMIN:
-                        return new Admin(nome, setor, username, senha, email);
-                    case GESTOR:
-                        return new Gestor(nome, setor, username, senha, email);
-                    case VISUALIZADOR:
-                        return new Visualizador(nome, setor, username, senha, email);
-                    case COMUM:
-                        return new UsuarioComum(nome, setor, username, senha, email);
-                    default:
-                        throw new IllegalArgumentException("Tipo de usuário desconhecido: " + tipo);
-                }
+    private Usuario validarLogin(String login, String senha) {
+        try (Connection connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/seu_banco_de_dados", "usuario", "senha")) {
+            UsuarioDAO usuarioDAO = new UsuarioDAO(connection);
+            Usuario usuario = usuarioDAO.getUsuarioByLogin(login);
+            if (usuario != null && usuario.getSenha().equals(senha)) {
+                return usuario;
             }
-        } catch (SQLException ex) {
-            System.out.println("Erro ao validar login: " + ex.getMessage());
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
-        return null; // Retorno null se não encontrar usuário com as credenciais informadas
+        return null;
     }
 }

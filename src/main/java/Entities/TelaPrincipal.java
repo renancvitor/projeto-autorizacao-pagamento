@@ -16,7 +16,7 @@ public class TelaPrincipal {
         primaryStage.setTitle("Sistema Principal");
 
         VBox layout = new VBox();
-        Label welcomeLabel = new Label("Bem-vindo, " + usuario.getNome() + "!");
+        Label welcomeLabel = new Label("Bem-vindo, " + usuario.getLogin() + "!");
         layout.getChildren().add(welcomeLabel);
 
         // Adicione componentes e lógica específica da tela principal aqui,

@@ -1,45 +1,63 @@
 package Entities;
 
-public abstract class Usuario {
-    private String nome;
-    private String setor;
-    private String username;
+import java.util.List;
+
+public class Usuario {
+    private int id;
+    private String login;
     private String senha;
     private String email;
-    private UserType tipo;
+    private String nome;
+    private int idTipoUsuario;
+    private List<String> roles; // Lista de papéis (roles) do usuário
 
-    public Usuario(String nome, String setor, String username, String senha, String email, UserType tipo) {
-        this.nome = nome;
-        this.setor = setor;
-        this.username = username;
+    public Usuario(int id, String login, String senha, List<String> roles) {
+        this.id = id;
+        this.login = login;
         this.senha = senha;
-        this.email = email;
-        this.tipo = tipo;
+        this.roles = roles;
+        // this.idTipoUsuario = idTipoUsuario;
     }
 
-    public String getEmail() {
-        return email;
+    // Getters e Setters
+    public int getId() {
+        return id;
     }
 
-    public String getNome() {
-        return nome;
+    public void setId(int id) {
+        this.id = id;
     }
 
-    public String getSetor() {
-        return setor;
+    public String getLogin() {
+        return login;
     }
 
-    public String getUsername() {
-        return username;
+    public void setLogin(String login) {
+        this.login = login;
     }
 
     public String getSenha() {
         return senha;
     }
 
-    public UserType getTipo() {
-        return tipo;
+    public void setSenha(String senha) {
+        this.senha = senha;
     }
 
-    public abstract void cadastrarUsuario();
+//    public int getIdTipoUsuario() {
+//        return idTipoUsuario;
+//    }
+
+//    public void setIdTipoUsuario(int idTipoUsuario) {
+//        this.idTipoUsuario = idTipoUsuario;
+//    }
+
+
+    public List<String> getRoles() {
+        return roles;
+    }
+
+    public void setRoles(List<String> roles) {
+        this.roles = roles;
+    }
 }
