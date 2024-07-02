@@ -1,6 +1,7 @@
 package Application;
 
 import DAO.UsuarioDAO;
+import Entities.TelaPrincipal;
 import Entities.Usuario;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
@@ -45,9 +46,9 @@ public class TelaLogin {
             // Valida login e redireciona para a tela apropriada
             Usuario usuario = validarLogin(login, senha);
             if (usuario != null) {
-                // Redireciona para a tela apropriada com base no tipo de usuário
-                System.out.println("Login bem-sucedido para o usuário: " + usuario.getLogin());
-                // Aqui você pode adicionar a lógica para redirecionar para a tela correta
+                // Login bem-sucedido, redireciona para TelaPrincipal
+                TelaPrincipal telaPrincipal = new TelaPrincipal(usuario);
+                telaPrincipal.start(primaryStage);
             } else {
                 // Exibe mensagem de erro
                 System.out.println("Login inválido");

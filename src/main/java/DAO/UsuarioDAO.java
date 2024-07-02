@@ -41,10 +41,10 @@ public class UsuarioDAO {
                 login = rs.getString("login");
                 senha = rs.getString("senha");
                 int idTipoUsuario = rs.getInt("id_tipo_usuario");
-               // String tipoUsuario = rs.getString("tipo_usuario");
 
+                // String tipoUsuario = rs.getString("tipo_usuario");
                 // Convertendo a string de tipo_usuario para uma lista de roles
-               // List<String> roles = Arrays.asList(tipoUsuario.split(","));
+                // List<String> roles = Arrays.asList(tipoUsuario.split(","));
 
                 return new Usuario(login, senha, idTipoUsuario);
             }
