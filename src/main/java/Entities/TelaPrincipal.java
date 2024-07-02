@@ -1,5 +1,7 @@
 package Entities;
 
+import Servicoes.TelaSolicitacao;
+import javafx.scene.control.Button;
 import javafx.stage.Stage;
 import javafx.scene.Scene;
 import javafx.scene.layout.VBox;
@@ -19,8 +21,12 @@ public class TelaPrincipal {
         Label welcomeLabel = new Label("Bem-vindo, " + usuario.getLogin() + "!");
         layout.getChildren().add(welcomeLabel);
 
-        // Adicione componentes e lógica específica da tela principal aqui,
-        // incluindo a lógica para gerenciar permissões com base no tipo de usuário
+        Button novaSolicitacaoButton = new Button("Nova Solicitação");
+        novaSolicitacaoButton.setOnAction(e -> {
+            TelaSolicitacao telaSolicitacao = new TelaSolicitacao(usuario);
+            telaSolicitacao.start(new Stage());
+        });
+        layout.getChildren().add(novaSolicitacaoButton);
 
         Scene scene = new Scene(layout, 400, 300);
         primaryStage.setScene(scene);
