@@ -11,6 +11,7 @@ module org.projetoexecutavel.projetoautorizacaopagamento {
     requires eu.hansolo.tilesfx;
     requires com.almasb.fxgl.all;
     requires java.sql;
+    requires com.google.protobuf;
 
     opens org.projetoexecutavel.projetoautorizacaopagamento to javafx.fxml;
     exports org.projetoexecutavel.projetoautorizacaopagamento;

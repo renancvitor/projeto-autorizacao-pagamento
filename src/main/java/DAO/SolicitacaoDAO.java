@@ -2,12 +2,9 @@ package DAO;
 
 import Servicoes.Solicitacao;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
+import java.sql.Timestamp;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 public class SolicitacaoDAO {
@@ -17,26 +14,35 @@ public class SolicitacaoDAO {
         this.connection = connection;
     }
 
-    public void inserirSolicitacao(Solicitacao solicitacao) {
-        String sql = "INSERT INTO solicitacoes (fornecedor, descricao, data_criacao, data_pagamento, " +
-                "forma_pagamento, parcelas, valor_parcela, valor_total, id_usuario) " +
-                "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
-        try (PreparedStatement pstmt = connection.prepareStatement(sql)) {
-            pstmt.setString(1, solicitacao.getFornecedor());
-            pstmt.setString(2, solicitacao.getDescricao());
-            pstmt.setDate(3, new java.sql.Date(solicitacao.getDataCriacao().getTime()));
-            pstmt.setDate(4, new java.sql.Date(solicitacao.getDataPagamento().getTime()));
-            pstmt.setString(5, solicitacao.getFormaPagamento());
-            pstmt.setInt(6, solicitacao.getParcelas());
-            pstmt.setDouble(7, solicitacao.getValorParcela());
-            pstmt.setDouble(8, solicitacao.getValorTotal());
-            pstmt.setInt(9, solicitacao.getIdUsuario());
+    public List<Solicitacao> getTodasSolicitacoes() {
+        List<Solicitacao> solicitacoes = new ArrayList<>();
+        String sql = "SELECT * FROM solicitacoes";
+        try (PreparedStatement pstmt = connection.prepareStatement(sql);
+             ResultSet rs = pstmt.executeQuery()) {
 
-            pstmt.executeUpdate();
+            while (rs.next()) {
+                int id = rs.getInt("id");
+                String fornecedor = rs.getString("fornecedor");
+                String descricao = rs.getString("descricao");
+                Timestamp dataCriacao = rs.getTimestamp("data_criacao"); // Mantendo como Timestamp
+                Date dataPagamento = rs.getDate("data_pagamento"); // Mantendo como Date
+                String formaPagamento = rs.getString("forma_pagamento");
+                int parcelas = rs.getInt("parcelas");
+                double valorParcelas = rs.getDouble("valor_parcelas");
+                double valorTotal = rs.getDouble("valor_total");
+                int idUsuario = rs.getInt("id_usuario");
+
+                // Convertendo Timestamp para String
+                String strDataCriacao = dataCriacao.toString();
+                // Convertendo Date para String
+                String strDataPagamento = dataPagamento.toString();
+
+                Solicitacao solicitacao = new Solicitacao(id, fornecedor, descricao, dataCriacao, dataPagamento, formaPagamento, parcelas, valorParcelas, valorTotal, idUsuario);
+                solicitacoes.add(solicitacao);
+            }
         } catch (SQLException e) {
             e.printStackTrace();
         }
+        return solicitacoes;
     }
-
-    // Outros métodos CRUD (atualizar, deletar, selecionar) podem ser adicionados aqui
 }
