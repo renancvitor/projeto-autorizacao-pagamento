@@ -1,5 +1,6 @@
 package Servicoes;
 
+import DAO.SolicitacaoDAO;
 import Entities.Usuario;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
@@ -9,11 +10,17 @@ import javafx.scene.control.TextField;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
+import java.sql.Connection;
+import java.sql.Date;
+import java.sql.SQLException;
+
 public class TelaSolicitacao {
     private Usuario usuario;
+    private Connection connection;
 
     public TelaSolicitacao(Usuario usuario) {
         this.usuario = usuario;
+        this.connection = connection;
     }
 
     public void start(Stage stage) {
@@ -56,14 +63,22 @@ public class TelaSolicitacao {
             // Lógica para enviar a solicitação
             String fornecedor = fornecedorField.getText();
             String descricao = descricaoField.getText();
-            String dataPagamento = dataPagamentoField.getValue().toString();
+            Date dataPagamento = Date.valueOf(dataPagamentoField.getValue());
             String formaPagamento = formaPagamentoField.getText();
             int parcelas = Integer.parseInt(parcelasField.getText());
             double valorParcelas = Double.parseDouble(valorParcelasField.getText());
             double valorTotal = Double.parseDouble(valorTotalField.getText());
 
-            // Chame o método para enviar a solicitação usando os dados acima
-            enviarSolicitacao(fornecedor, descricao, dataPagamento, formaPagamento, parcelas, valorParcelas, valorTotal);
+            // Crie uma nova solicitação
+            Solicitacao solicitacao = new Solicitacao(0, fornecedor, descricao, new java.sql.Timestamp(System.currentTimeMillis()), dataPagamento, formaPagamento, parcelas, valorParcelas, valorTotal, usuario.getId());
+
+            // Insira a solicitação no banco de dados
+            SolicitacaoDAO solicitacaoDAO = new SolicitacaoDAO(connection);
+            try {
+                solicitacaoDAO.inserirSolicitacao(solicitacao);
+            } catch (SQLException ex) {
+                throw new RuntimeException(ex);
+            }
 
             System.out.println("Solicitação enviada por: " + usuario.getLogin());
             stage.close();
@@ -73,9 +88,5 @@ public class TelaSolicitacao {
         Scene scene = new Scene(layout, 400, 400);
         stage.setScene(scene);
         stage.show();
-    }
-
-    private void enviarSolicitacao(String fornecedor, String descricao, String dataPagamento, String formaPagamento, int parcelas, double valorParcelas, double valorTotal) {
-        // Lógica para enviar a solicitação
     }
 }

@@ -1,15 +1,14 @@
 package Servicoes;
 
 import java.sql.Timestamp;
-
 import java.util.Date;
 
 public class Solicitacao {
     private int id;
     private String fornecedor;
     private String descricao;
-    private Timestamp dataCriacao; // Alterado para Timestamp
-    private Date dataPagamento; // Alterado para Date
+    private Timestamp dataCriacao;
+    private Date dataPagamento;
     private String formaPagamento;
     private int parcelas;
     private double valorParcelas;
@@ -29,8 +28,7 @@ public class Solicitacao {
         this.idUsuario = idUsuario;
     }
 
-    // Getters e Setters
-
+    // Getters
     public int getId() {
         return id;
     }
@@ -65,5 +63,50 @@ public class Solicitacao {
 
     public double getValorTotal() {
         return valorTotal;
+    }
+
+    public int getIdUsuario() {
+        return idUsuario;
+    }
+
+    // Setters
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public void setFornecedor(String fornecedor) {
+        this.fornecedor = fornecedor;
+    }
+
+    public void setDescricao(String descricao) {
+        this.descricao = descricao;
+    }
+
+    public void setDataCriacao(Timestamp dataCriacao) {
+        this.dataCriacao = dataCriacao;
+    }
+
+    public void setDataPagamento(Date dataPagamento) {
+        this.dataPagamento = dataPagamento;
+    }
+
+    public void setFormaPagamento(String formaPagamento) {
+        this.formaPagamento = formaPagamento;
+    }
+
+    public void setParcelas(int parcelas) {
+        this.parcelas = parcelas;
+    }
+
+    public void setValorParcelas(double valorParcelas) {
+        this.valorParcelas = valorParcelas;
+    }
+
+    public void setValorTotal(double valorTotal) {
+        this.valorTotal = valorTotal;
+    }
+
+    public void setIdUsuario(int idUsuario) {
+        this.idUsuario = idUsuario;
     }
 }
