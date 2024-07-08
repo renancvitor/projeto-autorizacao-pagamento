@@ -9,7 +9,8 @@ public class Usuario {
     private int idTipoUsuario;
     private List<String> roles;
 
-    public Usuario(String login, String senha, int idTipoUsuario) {
+    public Usuario(int id, String login, String senha, int idTipoUsuario) {
+        this.id = id;
         this.login = login;
         this.senha = senha;
         this.idTipoUsuario = idTipoUsuario;

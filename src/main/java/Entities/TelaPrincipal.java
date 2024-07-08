@@ -5,12 +5,12 @@ import Servicoes.Solicitacao;
 import Servicoes.TelaSolicitacao;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.layout.HBox;
-import javafx.stage.Stage;
-import javafx.scene.Scene;
 import javafx.scene.layout.VBox;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.stage.Stage;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -44,22 +44,12 @@ public class TelaPrincipal {
         Label totalRejeitadasLabel = new Label("Rejeitadas: 2");
         layout.getChildren().addAll(resumoLabel, totalPendentesLabel, totalAprovadasLabel, totalRejeitadasLabel);
 
-        // Filtros de Solicitações
-//        ComboBox<String> filterBox = new ComboBox<>();
-//        filterBox.getItems().addAll("Todas", "Pendentes", "Aprovadas", "Rejeitadas");
-//        filterBox.setValue("Todas");
-//        layout.getChildren().add(filterBox);
-
-        // Barra de Pesquisa
-//        TextField searchField = new TextField();
-//        searchField.setPromptText("Buscar solicitações...");
-//        layout.getChildren().add(searchField);
-
         // Botão para novas solicitações
         Button novaSolicitacaoButton = new Button("Nova Solicitação");
         novaSolicitacaoButton.setOnAction(e -> {
-            TelaSolicitacao telaSolicitacao = new TelaSolicitacao(usuario);
-            telaSolicitacao.start(new Stage());
+            TelaSolicitacao telaSolicitacao = new TelaSolicitacao(connection, usuario);
+            Stage stage = new Stage();
+            telaSolicitacao.start(stage);
         });
         layout.getChildren().add(novaSolicitacaoButton);
 
@@ -104,10 +94,6 @@ public class TelaPrincipal {
         Scene scene = new Scene(layout, 800, 600);
         primaryStage.setScene(scene);
         primaryStage.show();
-
-//        Scene scene = new Scene(layout, 400, 300);
-//        primaryStage.setScene(scene);
-//        primaryStage.show();
     }
 
     private ObservableList<Solicitacao> getSolicitacoes() {

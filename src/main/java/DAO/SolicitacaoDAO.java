@@ -71,7 +71,12 @@ package DAO;
 
 import Servicoes.Solicitacao;
 
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.Date;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -82,22 +87,26 @@ public class SolicitacaoDAO {
         this.connection = connection;
     }
 
+    // Método para inserir uma nova solicitação
     public void inserirSolicitacao(Solicitacao solicitacao) throws SQLException {
-        String sql = "INSERT INTO solicitacao (fornecedor, descricao, data_criacao, data_pagamento, forma_pagamento, parcelas, valor_parcelas, valor_total, id_usuario) " +
+        String sql = "INSERT INTO solicitacoes (fornecedor, descricao, data_criacao, data_pagamento, forma_pagamento, parcelas, valor_parcelas, valor_total, id_usuario) " +
                 "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
+        try (PreparedStatement pstmt = connection.prepareStatement(sql)) {
+            pstmt.setString(1, solicitacao.getFornecedor());
+            pstmt.setString(2, solicitacao.getDescricao());
+            pstmt.setTimestamp(3, new Timestamp(solicitacao.getDataCriacao().getTime()));
+            pstmt.setDate(4, new Date(solicitacao.getDataPagamento().getTime()));
+            pstmt.setString(5, solicitacao.getFormaPagamento());
+            pstmt.setInt(6, solicitacao.getParcelas());
+            pstmt.setDouble(7, solicitacao.getValorParcelas());
+            pstmt.setDouble(8, solicitacao.getValorTotal());
+            pstmt.setInt(9, solicitacao.getIdUsuario());
 
-        PreparedStatement stmt = connection.prepareStatement(sql);
-        stmt.setString(1, solicitacao.getFornecedor());
-        stmt.setString(2, solicitacao.getDescricao());
-        // Define os demais parâmetros da declaração preparada
-
-        int rowsInserted = stmt.executeUpdate();
-        if (rowsInserted > 0) {
-            System.out.println("A solicitação foi inserida com sucesso!");
+            pstmt.executeUpdate();
         }
-        stmt.close();
     }
 
+    // Método para obter todas as solicitações
     public List<Solicitacao> getTodasSolicitacoes() {
         List<Solicitacao> solicitacoes = new ArrayList<>();
         String sql = "SELECT * FROM solicitacoes";

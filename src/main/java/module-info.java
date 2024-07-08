@@ -19,6 +19,8 @@ module org.projetoexecutavel.projetoautorizacaopagamento {
     // Exporta o pacote Application para o módulo javafx.graphics
     exports Application;
     exports Entities;
+    exports DAO;
+    opens Servicoes;
 }
 
 //module org.projetoexecutavel.projetoautorizacaopagamento {

@@ -45,8 +45,8 @@ public class Solicitacao {
         return dataCriacao;
     }
 
-    public Date getDataPagamento() {
-        return dataPagamento;
+    public java.sql.Date getDataPagamento() {
+        return (java.sql.Date) dataPagamento;
     }
 
     public String getFormaPagamento() {

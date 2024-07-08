@@ -15,12 +15,24 @@ import java.sql.Date;
 import java.sql.SQLException;
 
 public class TelaSolicitacao {
-    private Usuario usuario;
     private Connection connection;
+    private SolicitacaoDAO solicitacaoDAO;
 
-    public TelaSolicitacao(Usuario usuario) {
-        this.usuario = usuario;
+    private TextField fornecedorField;
+    private TextField descricaoField;
+    private DatePicker dataPagamentoField;
+    private TextField formaPagamentoField;
+    private TextField parcelasField;
+    private TextField valorParcelasField;
+    private TextField valorTotalField;
+    private Button submitButton;
+
+    private Usuario usuarioLogado;
+
+    public TelaSolicitacao(Connection connection, Usuario usuarioLogado) {
         this.connection = connection;
+        this.usuarioLogado = usuarioLogado;
+        this.solicitacaoDAO = new SolicitacaoDAO(connection);
     }
 
     public void start(Stage stage) {
@@ -30,37 +42,45 @@ public class TelaSolicitacao {
         Label label = new Label("Preencha os dados da solicitação:");
         layout.getChildren().add(label);
 
-        TextField fornecedorField = new TextField();
+        fornecedorField = new TextField();
         fornecedorField.setPromptText("Fornecedor");
         layout.getChildren().add(fornecedorField);
 
-        TextField descricaoField = new TextField();
+        descricaoField = new TextField();
         descricaoField.setPromptText("Descrição");
         layout.getChildren().add(descricaoField);
 
-        DatePicker dataPagamentoField = new DatePicker();
+        dataPagamentoField = new DatePicker();
         dataPagamentoField.setPromptText("Data de Pagamento");
         layout.getChildren().add(dataPagamentoField);
 
-        TextField formaPagamentoField = new TextField();
+        formaPagamentoField = new TextField();
         formaPagamentoField.setPromptText("Forma de Pagamento");
         layout.getChildren().add(formaPagamentoField);
 
-        TextField parcelasField = new TextField();
+        parcelasField = new TextField();
         parcelasField.setPromptText("Parcelas");
         layout.getChildren().add(parcelasField);
 
-        TextField valorParcelasField = new TextField();
+        valorParcelasField = new TextField();
         valorParcelasField.setPromptText("Valor das Parcelas");
         layout.getChildren().add(valorParcelasField);
 
-        TextField valorTotalField = new TextField();
+        valorTotalField = new TextField();
         valorTotalField.setPromptText("Valor Total");
         layout.getChildren().add(valorTotalField);
 
-        Button submitButton = new Button("Enviar Solicitação");
-        submitButton.setOnAction(e -> {
-            // Lógica para enviar a solicitação
+        submitButton = new Button("Enviar Solicitação");
+        submitButton.setOnAction(e -> enviarSolicitacao());
+        layout.getChildren().add(submitButton);
+
+        Scene scene = new Scene(layout, 400, 400);
+        stage.setScene(scene);
+        stage.show();
+    }
+
+    private void enviarSolicitacao() {
+        try {
             String fornecedor = fornecedorField.getText();
             String descricao = descricaoField.getText();
             Date dataPagamento = Date.valueOf(dataPagamentoField.getValue());
@@ -69,24 +89,20 @@ public class TelaSolicitacao {
             double valorParcelas = Double.parseDouble(valorParcelasField.getText());
             double valorTotal = Double.parseDouble(valorTotalField.getText());
 
-            // Crie uma nova solicitação
-            Solicitacao solicitacao = new Solicitacao(0, fornecedor, descricao, new java.sql.Timestamp(System.currentTimeMillis()), dataPagamento, formaPagamento, parcelas, valorParcelas, valorTotal, usuario.getId());
+            // Criação do objeto Solicitacao
+            // Note que a data de criação está sendo definida automaticamente como o timestamp atual
+            Solicitacao solicitacao = new Solicitacao(0, fornecedor, descricao, new java.sql.Timestamp(System.currentTimeMillis()), dataPagamento, formaPagamento, parcelas, valorParcelas, valorTotal, usuarioLogado.getId());
 
-            // Insira a solicitação no banco de dados
-            SolicitacaoDAO solicitacaoDAO = new SolicitacaoDAO(connection);
-            try {
-                solicitacaoDAO.inserirSolicitacao(solicitacao);
-            } catch (SQLException ex) {
-                throw new RuntimeException(ex);
-            }
+            // Inserção da solicitação no banco de dados através do DAO
+            solicitacaoDAO.inserirSolicitacao(solicitacao);
 
-            System.out.println("Solicitação enviada por: " + usuario.getLogin());
-            stage.close();
-        });
-        layout.getChildren().add(submitButton);
-
-        Scene scene = new Scene(layout, 400, 400);
-        stage.setScene(scene);
-        stage.show();
+            System.out.println("Solicitação enviada por: " + usuarioLogado.getLogin());
+        } catch (NumberFormatException e) {
+            e.printStackTrace();
+            // Trate aqui erros de conversão de dados (por exemplo, se um campo numérico não puder ser convertido corretamente)
+        } catch (SQLException e) {
+            e.printStackTrace();
+            // Trate aqui erros relacionados ao banco de dados
+        }
     }
 }
