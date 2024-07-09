@@ -9,10 +9,14 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
+import javafx.collections.ObservableList;
+import javafx.collections.FXCollections;
+import javafx.scene.control.TableView;
 
 import java.sql.Connection;
 import java.sql.Date;
 import java.sql.SQLException;
+import java.util.List;
 
 public class TelaSolicitacao {
     private Connection connection;
@@ -28,11 +32,13 @@ public class TelaSolicitacao {
     private Button submitButton;
 
     private Usuario usuarioLogado;
+    private TableView<Solicitacao> tabelaSolicitacoes; // Tabela da TelaPrincipal
 
-    public TelaSolicitacao(Connection connection, Usuario usuarioLogado) {
+    public TelaSolicitacao(Connection connection, Usuario usuarioLogado, TableView<Solicitacao> tabelaSolicitacoes) {
         this.connection = connection;
         this.usuarioLogado = usuarioLogado;
         this.solicitacaoDAO = new SolicitacaoDAO(connection);
+        this.tabelaSolicitacoes = tabelaSolicitacoes; // Inicializa a tabela
     }
 
     public void start(Stage stage) {
@@ -90,13 +96,18 @@ public class TelaSolicitacao {
             double valorTotal = Double.parseDouble(valorTotalField.getText());
 
             // Criação do objeto Solicitacao
-            // Note que a data de criação está sendo definida automaticamente como o timestamp atual
             Solicitacao solicitacao = new Solicitacao(0, fornecedor, descricao, new java.sql.Timestamp(System.currentTimeMillis()), dataPagamento, formaPagamento, parcelas, valorParcelas, valorTotal, usuarioLogado.getId());
 
             // Inserção da solicitação no banco de dados através do DAO
             solicitacaoDAO.inserirSolicitacao(solicitacao);
 
             System.out.println("Solicitação enviada por: " + usuarioLogado.getLogin());
+
+            // Atualização da TableView na TelaPrincipal
+            List<Solicitacao> solicitacoes = solicitacaoDAO.getTodasSolicitacoes();
+            ObservableList<Solicitacao> observableListSolicitacoes = FXCollections.observableArrayList(solicitacoes);
+            tabelaSolicitacoes.setItems(observableListSolicitacoes);
+
         } catch (NumberFormatException e) {
             e.printStackTrace();
             // Trate aqui erros de conversão de dados (por exemplo, se um campo numérico não puder ser convertido corretamente)

@@ -46,8 +46,12 @@ public class TelaPrincipal {
 
         // Botão para novas solicitações
         Button novaSolicitacaoButton = new Button("Nova Solicitação");
+        // Criação da TableView antes do botão
+        TableView<Solicitacao> table = new TableView<>();
+        table.setItems(getSolicitacoes());
+
         novaSolicitacaoButton.setOnAction(e -> {
-            TelaSolicitacao telaSolicitacao = new TelaSolicitacao(connection, usuario);
+            TelaSolicitacao telaSolicitacao = new TelaSolicitacao(connection, usuario, table);
             Stage stage = new Stage();
             telaSolicitacao.start(stage);
         });
@@ -57,7 +61,6 @@ public class TelaPrincipal {
         HBox topoLayout = new HBox(10, resumoLabel, novaSolicitacaoButton);
 
         // TableView para exibir as solicitações
-        TableView<Solicitacao> table = new TableView<>();
         table.setItems(getSolicitacoes());
 
         TableColumn<Solicitacao, Integer> idCol = new TableColumn<>("ID");
