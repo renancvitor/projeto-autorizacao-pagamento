@@ -89,16 +89,16 @@ public class SolicitacaoDAO {
 
     // Método para inserir uma nova solicitação
     public void inserirSolicitacao(Solicitacao solicitacao) throws SQLException {
-        String sql = "INSERT INTO solicitacoes (fornecedor, descricao, data_criacao, data_pagamento, forma_pagamento, parcelas, valor_parcelas, valor_total, id_usuario) " +
-                "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO solicitacoes (fornecedor, descricao, data_criacao, data_pagamento, forma_pagamento,valor_total, id_usuario) " +
+                "VALUES (?, ?, ?, ?, ?, ?, ?)";
         try (PreparedStatement pstmt = connection.prepareStatement(sql)) {
             pstmt.setString(1, solicitacao.getFornecedor());
             pstmt.setString(2, solicitacao.getDescricao());
             pstmt.setTimestamp(3, new Timestamp(solicitacao.getDataCriacao().getTime()));
             pstmt.setDate(4, new Date(solicitacao.getDataPagamento().getTime()));
             pstmt.setString(5, solicitacao.getFormaPagamento());
-            pstmt.setInt(6, solicitacao.getParcelas());
-            pstmt.setDouble(7, solicitacao.getValorParcelas());
+//            pstmt.setInt(6, solicitacao.getParcelas());
+//            pstmt.setDouble(7, solicitacao.getValorParcelas());
             pstmt.setDouble(8, solicitacao.getValorTotal());
             pstmt.setInt(9, solicitacao.getIdUsuario());
 
@@ -120,12 +120,12 @@ public class SolicitacaoDAO {
                 Timestamp dataCriacao = rs.getTimestamp("data_criacao");
                 Date dataPagamento = rs.getDate("data_pagamento");
                 String formaPagamento = rs.getString("forma_pagamento");
-                int parcelas = rs.getInt("parcelas");
-                double valorParcelas = rs.getDouble("valor_parcelas");
+//                int parcelas = rs.getInt("parcelas");
+//                double valorParcelas = rs.getDouble("valor_parcelas");
                 double valorTotal = rs.getDouble("valor_total");
                 int idUsuario = rs.getInt("id_usuario");
 
-                Solicitacao solicitacao = new Solicitacao(id, fornecedor, descricao, dataCriacao, dataPagamento, formaPagamento, parcelas, valorParcelas, valorTotal, idUsuario);
+                Solicitacao solicitacao = new Solicitacao(id, fornecedor, descricao, dataCriacao, dataPagamento, formaPagamento, valorTotal, idUsuario);
                 solicitacoes.add(solicitacao);
             }
         } catch (SQLException e) {

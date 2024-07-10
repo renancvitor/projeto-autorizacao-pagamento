@@ -84,12 +84,12 @@ public class UsuarioDAO {
                 Timestamp dataCriacao = rs.getTimestamp("data_criacao");
                 Date dataPagamento = rs.getDate("data_pagamento");
                 String formaPagamento = rs.getString("forma_pagamento");
-                int parcelas = rs.getInt("parcelas");
-                double valorParcelas = rs.getDouble("valor_parcelas");
+//                int parcelas = rs.getInt("parcelas");
+//                double valorParcelas = rs.getDouble("valor_parcelas");
                 double valorTotal = rs.getDouble("valor_total");
                 int idUsuario = rs.getInt("id_usuario");
 
-                Solicitacao solicitacao = new Solicitacao(id, fornecedor, descricao, dataCriacao, dataPagamento, formaPagamento, parcelas, valorParcelas, valorTotal, idUsuario);
+                Solicitacao solicitacao = new Solicitacao(id, fornecedor, descricao, dataCriacao, dataPagamento, formaPagamento, valorTotal, idUsuario);
                 solicitacoes.add(solicitacao);
             }
         } catch (SQLException e) {

@@ -10,20 +10,20 @@ public class Solicitacao {
     private Timestamp dataCriacao;
     private Date dataPagamento;
     private String formaPagamento;
-    private int parcelas;
-    private double valorParcelas;
+//    private int parcelas;
+//    private double valorParcelas;
     private double valorTotal;
     private int idUsuario;
 
-    public Solicitacao(int id, String fornecedor, String descricao, Timestamp dataCriacao, Date dataPagamento, String formaPagamento, int parcelas, double valorParcelas, double valorTotal, int idUsuario) {
+    public Solicitacao(int id, String fornecedor, String descricao, Timestamp dataCriacao, Date dataPagamento, String formaPagamento, double valorTotal, int idUsuario) {
         this.id = id;
         this.fornecedor = fornecedor;
         this.descricao = descricao;
         this.dataCriacao = dataCriacao;
         this.dataPagamento = dataPagamento;
         this.formaPagamento = formaPagamento;
-        this.parcelas = parcelas;
-        this.valorParcelas = valorParcelas;
+//        this.parcelas = parcelas;
+//        this.valorParcelas = valorParcelas;
         this.valorTotal = valorTotal;
         this.idUsuario = idUsuario;
     }
@@ -53,13 +53,13 @@ public class Solicitacao {
         return formaPagamento;
     }
 
-    public int getParcelas() {
-        return parcelas;
-    }
-
-    public double getValorParcelas() {
-        return valorParcelas;
-    }
+//    public int getParcelas() {
+//        return parcelas;
+//    }
+//
+//    public double getValorParcelas() {
+//        return valorParcelas;
+//    }
 
     public double getValorTotal() {
         return valorTotal;
@@ -94,13 +94,13 @@ public class Solicitacao {
         this.formaPagamento = formaPagamento;
     }
 
-    public void setParcelas(int parcelas) {
-        this.parcelas = parcelas;
-    }
-
-    public void setValorParcelas(double valorParcelas) {
-        this.valorParcelas = valorParcelas;
-    }
+//    public void setParcelas(int parcelas) {
+//        this.parcelas = parcelas;
+//    }
+//
+//    public void setValorParcelas(double valorParcelas) {
+//        this.valorParcelas = valorParcelas;
+//    }
 
     public void setValorTotal(double valorTotal) {
         this.valorTotal = valorTotal;

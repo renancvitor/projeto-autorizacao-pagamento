@@ -26,8 +26,8 @@ public class TelaSolicitacao {
     private TextField descricaoField;
     private DatePicker dataPagamentoField;
     private TextField formaPagamentoField;
-    private TextField parcelasField;
-    private TextField valorParcelasField;
+//    private TextField parcelasField;
+//    private TextField valorParcelasField;
     private TextField valorTotalField;
     private Button submitButton;
 
@@ -64,13 +64,13 @@ public class TelaSolicitacao {
         formaPagamentoField.setPromptText("Forma de Pagamento");
         layout.getChildren().add(formaPagamentoField);
 
-        parcelasField = new TextField();
-        parcelasField.setPromptText("Parcelas");
-        layout.getChildren().add(parcelasField);
-
-        valorParcelasField = new TextField();
-        valorParcelasField.setPromptText("Valor das Parcelas");
-        layout.getChildren().add(valorParcelasField);
+//        parcelasField = new TextField();
+//        parcelasField.setPromptText("Parcelas");
+//        layout.getChildren().add(parcelasField);
+//
+//        valorParcelasField = new TextField();
+//        valorParcelasField.setPromptText("Valor das Parcelas");
+//        layout.getChildren().add(valorParcelasField);
 
         valorTotalField = new TextField();
         valorTotalField.setPromptText("Valor Total");
@@ -91,12 +91,12 @@ public class TelaSolicitacao {
             String descricao = descricaoField.getText();
             Date dataPagamento = Date.valueOf(dataPagamentoField.getValue());
             String formaPagamento = formaPagamentoField.getText();
-            int parcelas = Integer.parseInt(parcelasField.getText());
-            double valorParcelas = Double.parseDouble(valorParcelasField.getText());
+//            int parcelas = Integer.parseInt(parcelasField.getText());
+//            double valorParcelas = Double.parseDouble(valorParcelasField.getText());
             double valorTotal = Double.parseDouble(valorTotalField.getText());
 
             // Criação do objeto Solicitacao
-            Solicitacao solicitacao = new Solicitacao(0, fornecedor, descricao, new java.sql.Timestamp(System.currentTimeMillis()), dataPagamento, formaPagamento, parcelas, valorParcelas, valorTotal, usuarioLogado.getId());
+            Solicitacao solicitacao = new Solicitacao(0, fornecedor, descricao, new java.sql.Timestamp(System.currentTimeMillis()), dataPagamento, formaPagamento, valorTotal, usuarioLogado.getId());
 
             // Inserção da solicitação no banco de dados através do DAO
             solicitacaoDAO.inserirSolicitacao(solicitacao);

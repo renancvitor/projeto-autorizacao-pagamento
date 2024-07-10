@@ -81,16 +81,16 @@ public class TelaPrincipal {
         TableColumn<Solicitacao, String> formaPagamentoCol = new TableColumn<>("Forma Pagamento");
         formaPagamentoCol.setCellValueFactory(new PropertyValueFactory<>("formaPagamento"));
 
-        TableColumn<Solicitacao, Integer> parcelasCol = new TableColumn<>("Parcelas");
-        parcelasCol.setCellValueFactory(new PropertyValueFactory<>("parcelas"));
-
-        TableColumn<Solicitacao, Double> valorParcelasCol = new TableColumn<>("Valor Parcelas");
-        valorParcelasCol.setCellValueFactory(new PropertyValueFactory<>("valorParcelas"));
+//        TableColumn<Solicitacao, Integer> parcelasCol = new TableColumn<>("Parcelas");
+//        parcelasCol.setCellValueFactory(new PropertyValueFactory<>("parcelas"));
+//
+//        TableColumn<Solicitacao, Double> valorParcelasCol = new TableColumn<>("Valor Parcelas");
+//        valorParcelasCol.setCellValueFactory(new PropertyValueFactory<>("valorParcelas"));
 
         TableColumn<Solicitacao, Double> valorTotalCol = new TableColumn<>("Valor Total");
         valorTotalCol.setCellValueFactory(new PropertyValueFactory<>("valorTotal"));
 
-        table.getColumns().addAll(idCol, fornecedorCol, descricaoCol, dataCriacaoCol, dataPagamentoCol, formaPagamentoCol, parcelasCol, valorParcelasCol, valorTotalCol);
+        table.getColumns().addAll(idCol, fornecedorCol, descricaoCol, dataCriacaoCol, dataPagamentoCol, formaPagamentoCol, valorTotalCol);
 
         // Layout Principal
         layout = new VBox(10, topoLayout, table);
