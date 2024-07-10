@@ -2,6 +2,7 @@ package DAO;
 
 import Entities.Usuario;
 import Servicoes.Solicitacao;
+import Servicoes.StatusSolicitacao;
 
 import java.sql.*;
 import java.sql.Timestamp;
@@ -84,12 +85,15 @@ public class UsuarioDAO {
                 Timestamp dataCriacao = rs.getTimestamp("data_criacao");
                 Date dataPagamento = rs.getDate("data_pagamento");
                 String formaPagamento = rs.getString("forma_pagamento");
-//                int parcelas = rs.getInt("parcelas");
-//                double valorParcelas = rs.getDouble("valor_parcelas");
                 double valorTotal = rs.getDouble("valor_total");
                 int idUsuario = rs.getInt("id_usuario");
 
-                Solicitacao solicitacao = new Solicitacao(id, fornecedor, descricao, dataCriacao, dataPagamento, formaPagamento, valorTotal, idUsuario);
+                // Obtém o status (supondo que você tenha um método para isso)
+                StatusSolicitacao status = getStatusFromResultSet(rs);
+
+                // Criação do objeto Solicitacao
+                Solicitacao solicitacao = new Solicitacao(id, fornecedor, descricao, dataCriacao, dataPagamento, formaPagamento, valorTotal, idUsuario, status);
+
                 solicitacoes.add(solicitacao);
             }
         } catch (SQLException e) {
@@ -97,4 +101,15 @@ public class UsuarioDAO {
         }
         return solicitacoes;
     }
+
+    // Método para obter o status a partir do ResultSet (exemplo)
+    private StatusSolicitacao getStatusFromResultSet(ResultSet rs) throws SQLException {
+        // Implemente aqui a lógica para obter o status do ResultSet
+        // Exemplo:
+        String statusStr = rs.getString("status"); // Supondo que o status seja uma string no ResultSet
+        return StatusSolicitacao.valueOf(statusStr); // Convertendo a string para o enum StatusSolicitacao
+    }
+
+
+
 }

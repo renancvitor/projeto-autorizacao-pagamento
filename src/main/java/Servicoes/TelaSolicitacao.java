@@ -16,6 +16,7 @@ import javafx.scene.control.TableView;
 import java.sql.Connection;
 import java.sql.Date;
 import java.sql.SQLException;
+import java.sql.Timestamp;
 import java.util.List;
 
 public class TelaSolicitacao {
@@ -26,19 +27,17 @@ public class TelaSolicitacao {
     private TextField descricaoField;
     private DatePicker dataPagamentoField;
     private TextField formaPagamentoField;
-//    private TextField parcelasField;
-//    private TextField valorParcelasField;
     private TextField valorTotalField;
     private Button submitButton;
 
     private Usuario usuarioLogado;
-    private TableView<Solicitacao> tabelaSolicitacoes; // Tabela da TelaPrincipal
+    private TableView<Solicitacao> tabelaSolicitacoes;
 
     public TelaSolicitacao(Connection connection, Usuario usuarioLogado, TableView<Solicitacao> tabelaSolicitacoes) {
         this.connection = connection;
         this.usuarioLogado = usuarioLogado;
         this.solicitacaoDAO = new SolicitacaoDAO(connection);
-        this.tabelaSolicitacoes = tabelaSolicitacoes; // Inicializa a tabela
+        this.tabelaSolicitacoes = tabelaSolicitacoes;
     }
 
     public void start(Stage stage) {
@@ -64,14 +63,6 @@ public class TelaSolicitacao {
         formaPagamentoField.setPromptText("Forma de Pagamento");
         layout.getChildren().add(formaPagamentoField);
 
-//        parcelasField = new TextField();
-//        parcelasField.setPromptText("Parcelas");
-//        layout.getChildren().add(parcelasField);
-//
-//        valorParcelasField = new TextField();
-//        valorParcelasField.setPromptText("Valor das Parcelas");
-//        layout.getChildren().add(valorParcelasField);
-
         valorTotalField = new TextField();
         valorTotalField.setPromptText("Valor Total");
         layout.getChildren().add(valorTotalField);
@@ -91,12 +82,24 @@ public class TelaSolicitacao {
             String descricao = descricaoField.getText();
             Date dataPagamento = Date.valueOf(dataPagamentoField.getValue());
             String formaPagamento = formaPagamentoField.getText();
-//            int parcelas = Integer.parseInt(parcelasField.getText());
-//            double valorParcelas = Double.parseDouble(valorParcelasField.getText());
             double valorTotal = Double.parseDouble(valorTotalField.getText());
+            int idUsuario = usuarioLogado.getId(); // Certifique-se de que getId() retorna um int
 
-            // Criação do objeto Solicitacao
-            Solicitacao solicitacao = new Solicitacao(0, fornecedor, descricao, new java.sql.Timestamp(System.currentTimeMillis()), dataPagamento, formaPagamento, valorTotal, usuarioLogado.getId());
+            // Definindo o status como PENDENTE
+            StatusSolicitacao status = StatusSolicitacao.PENDENTE;
+
+            // Criação do objeto Solicitacao passando todos os parâmetros
+            Solicitacao solicitacao = new Solicitacao(
+                    0, // id (normalmente é gerado automaticamente pelo banco de dados)
+                    fornecedor,
+                    descricao,
+                    new java.sql.Timestamp(System.currentTimeMillis()), // dataCriacao
+                    dataPagamento,
+                    formaPagamento,
+                    valorTotal,
+                    idUsuario,
+                    status // status
+            );
 
             // Inserção da solicitação no banco de dados através do DAO
             solicitacaoDAO.inserirSolicitacao(solicitacao);
@@ -110,10 +113,12 @@ public class TelaSolicitacao {
 
         } catch (NumberFormatException e) {
             e.printStackTrace();
-            // Trate aqui erros de conversão de dados (por exemplo, se um campo numérico não puder ser convertido corretamente)
+            // Tratar erros de conversão de dados
         } catch (SQLException e) {
             e.printStackTrace();
-            // Trate aqui erros relacionados ao banco de dados
+            // Tratar erros relacionados ao banco de dados
         }
     }
+
+
 }

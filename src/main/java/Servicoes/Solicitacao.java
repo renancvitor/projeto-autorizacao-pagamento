@@ -10,103 +10,93 @@ public class Solicitacao {
     private Timestamp dataCriacao;
     private Date dataPagamento;
     private String formaPagamento;
-//    private int parcelas;
-//    private double valorParcelas;
     private double valorTotal;
     private int idUsuario;
+    private StatusSolicitacao status;
 
-    public Solicitacao(int id, String fornecedor, String descricao, Timestamp dataCriacao, Date dataPagamento, String formaPagamento, double valorTotal, int idUsuario) {
+    // Construtor correto da classe Solicitacao
+    public Solicitacao(int id, String fornecedor, String descricao, Timestamp dataCriacao, Date dataPagamento, String formaPagamento, double valorTotal, int idUsuario, StatusSolicitacao status) {
         this.id = id;
         this.fornecedor = fornecedor;
         this.descricao = descricao;
         this.dataCriacao = dataCriacao;
         this.dataPagamento = dataPagamento;
         this.formaPagamento = formaPagamento;
-//        this.parcelas = parcelas;
-//        this.valorParcelas = valorParcelas;
         this.valorTotal = valorTotal;
         this.idUsuario = idUsuario;
+        this.status = status;
     }
 
-    // Getters
+    // Métodos getters e setters
     public int getId() {
         return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
     }
 
     public String getFornecedor() {
         return fornecedor;
     }
 
-    public String getDescricao() {
-        return descricao;
-    }
-
-    public Timestamp getDataCriacao() {
-        return dataCriacao;
-    }
-
-    public java.sql.Date getDataPagamento() {
-        return (java.sql.Date) dataPagamento;
-    }
-
-    public String getFormaPagamento() {
-        return formaPagamento;
-    }
-
-//    public int getParcelas() {
-//        return parcelas;
-//    }
-//
-//    public double getValorParcelas() {
-//        return valorParcelas;
-//    }
-
-    public double getValorTotal() {
-        return valorTotal;
-    }
-
-    public int getIdUsuario() {
-        return idUsuario;
-    }
-
-    // Setters
-    public void setId(int id) {
-        this.id = id;
-    }
-
     public void setFornecedor(String fornecedor) {
         this.fornecedor = fornecedor;
+    }
+
+    public String getDescricao() {
+        return descricao;
     }
 
     public void setDescricao(String descricao) {
         this.descricao = descricao;
     }
 
+    public Timestamp getDataCriacao() {
+        return dataCriacao;
+    }
+
     public void setDataCriacao(Timestamp dataCriacao) {
         this.dataCriacao = dataCriacao;
+    }
+
+    public java.sql.Date getDataPagamento() {
+        return (java.sql.Date) dataPagamento;
     }
 
     public void setDataPagamento(Date dataPagamento) {
         this.dataPagamento = dataPagamento;
     }
 
+    public String getFormaPagamento() {
+        return formaPagamento;
+    }
+
     public void setFormaPagamento(String formaPagamento) {
         this.formaPagamento = formaPagamento;
     }
 
-//    public void setParcelas(int parcelas) {
-//        this.parcelas = parcelas;
-//    }
-//
-//    public void setValorParcelas(double valorParcelas) {
-//        this.valorParcelas = valorParcelas;
-//    }
+    public double getValorTotal() {
+        return valorTotal;
+    }
 
     public void setValorTotal(double valorTotal) {
         this.valorTotal = valorTotal;
     }
 
+    public int getIdUsuario() {
+        return idUsuario;
+    }
+
     public void setIdUsuario(int idUsuario) {
         this.idUsuario = idUsuario;
+    }
+
+    public StatusSolicitacao getStatus() {
+        return status;
+    }
+
+    public void setStatus(StatusSolicitacao status) {
+        this.status = status;
     }
 }

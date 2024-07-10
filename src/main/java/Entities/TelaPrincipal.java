@@ -2,15 +2,18 @@ package Entities;
 
 import DAO.SolicitacaoDAO;
 import Servicoes.Solicitacao;
+import Servicoes.StatusSolicitacao;
 import Servicoes.TelaSolicitacao;
 import javafx.collections.FXCollections;
+import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
-import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.stage.Stage;
+import javafx.util.Callback;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -20,6 +23,10 @@ import java.util.List;
 public class TelaPrincipal {
     private Usuario usuario;
     private Connection connection;
+    private TableView<Solicitacao> table;
+    private Label totalPendentesLabel;
+    private Label totalAprovadasLabel;
+    private Label totalRejeitadasLabel;
 
     public TelaPrincipal(Usuario usuario) {
         this.usuario = usuario;
@@ -39,17 +46,13 @@ public class TelaPrincipal {
 
         // Resumo Rápido
         Label resumoLabel = new Label("Resumo Rápido:");
-        Label totalPendentesLabel = new Label("Pendentes: 10");
-        Label totalAprovadasLabel = new Label("Aprovadas: 5");
-        Label totalRejeitadasLabel = new Label("Rejeitadas: 2");
+        totalPendentesLabel = new Label();
+        totalAprovadasLabel = new Label();
+        totalRejeitadasLabel = new Label();
         layout.getChildren().addAll(resumoLabel, totalPendentesLabel, totalAprovadasLabel, totalRejeitadasLabel);
 
         // Botão para novas solicitações
         Button novaSolicitacaoButton = new Button("Nova Solicitação");
-        // Criação da TableView antes do botão
-        TableView<Solicitacao> table = new TableView<>();
-        table.setItems(getSolicitacoes());
-
         novaSolicitacaoButton.setOnAction(e -> {
             TelaSolicitacao telaSolicitacao = new TelaSolicitacao(connection, usuario, table);
             Stage stage = new Stage();
@@ -61,6 +64,7 @@ public class TelaPrincipal {
         HBox topoLayout = new HBox(10, resumoLabel, novaSolicitacaoButton);
 
         // TableView para exibir as solicitações
+        table = new TableView<>();
         table.setItems(getSolicitacoes());
 
         TableColumn<Solicitacao, Integer> idCol = new TableColumn<>("ID");
@@ -81,27 +85,138 @@ public class TelaPrincipal {
         TableColumn<Solicitacao, String> formaPagamentoCol = new TableColumn<>("Forma Pagamento");
         formaPagamentoCol.setCellValueFactory(new PropertyValueFactory<>("formaPagamento"));
 
-//        TableColumn<Solicitacao, Integer> parcelasCol = new TableColumn<>("Parcelas");
-//        parcelasCol.setCellValueFactory(new PropertyValueFactory<>("parcelas"));
-//
-//        TableColumn<Solicitacao, Double> valorParcelasCol = new TableColumn<>("Valor Parcelas");
-//        valorParcelasCol.setCellValueFactory(new PropertyValueFactory<>("valorParcelas"));
-
         TableColumn<Solicitacao, Double> valorTotalCol = new TableColumn<>("Valor Total");
         valorTotalCol.setCellValueFactory(new PropertyValueFactory<>("valorTotal"));
 
-        table.getColumns().addAll(idCol, fornecedorCol, descricaoCol, dataCriacaoCol, dataPagamentoCol, formaPagamentoCol, valorTotalCol);
+        TableColumn<Solicitacao, StatusSolicitacao> statusCol = new TableColumn<>("Status");
+        statusCol.setCellValueFactory(new PropertyValueFactory<>("status"));
+
+        // Coluna para Botão de Aprovar
+        TableColumn<Solicitacao, Void> approveCol = new TableColumn<>("Aprovar");
+        Callback<TableColumn<Solicitacao, Void>, TableCell<Solicitacao, Void>> cellFactoryApprove = new Callback<>() {
+            @Override
+            public TableCell<Solicitacao, Void> call(final TableColumn<Solicitacao, Void> param) {
+                final TableCell<Solicitacao, Void> cell = new TableCell<>() {
+                    private final Button approveButton = new Button("✔");
+
+                    {
+                        approveButton.setOnAction(event -> {
+                            Solicitacao solicitacao = getTableView().getItems().get(getIndex());
+                            aprovarSolicitacao(solicitacao);
+                        });
+                    }
+
+                    @Override
+                    public void updateItem(Void item, boolean empty) {
+                        super.updateItem(item, empty);
+                        if (empty) {
+                            setGraphic(null);
+                        } else {
+                            setGraphic(approveButton);
+                        }
+                    }
+                };
+                return cell;
+            }
+        };
+        approveCol.setCellFactory(cellFactoryApprove);
+
+        // Coluna para Botão de Reprovar
+        TableColumn<Solicitacao, Void> rejectCol = new TableColumn<>("Reprovar");
+        Callback<TableColumn<Solicitacao, Void>, TableCell<Solicitacao, Void>> cellFactoryReject = new Callback<>() {
+            @Override
+            public TableCell<Solicitacao, Void> call(final TableColumn<Solicitacao, Void> param) {
+                final TableCell<Solicitacao, Void> cell = new TableCell<>() {
+                    private final Button rejectButton = new Button("✘");
+
+                    {
+                        rejectButton.setOnAction(event -> {
+                            Solicitacao solicitacao = getTableView().getItems().get(getIndex());
+                            reprovarSolicitacao(solicitacao);
+                        });
+                    }
+
+                    @Override
+                    public void updateItem(Void item, boolean empty) {
+                        super.updateItem(item, empty);
+                        if (empty) {
+                            setGraphic(null);
+                        } else {
+                            setGraphic(rejectButton);
+                        }
+                    }
+                };
+                return cell;
+            }
+        };
+        rejectCol.setCellFactory(cellFactoryReject);
+
+        table.getColumns().addAll(idCol, fornecedorCol, descricaoCol, dataCriacaoCol, dataPagamentoCol, formaPagamentoCol, valorTotalCol, statusCol, approveCol, rejectCol);
 
         // Layout Principal
-        layout = new VBox(10, topoLayout, table);
+        layout.getChildren().add(topoLayout);
+        layout.getChildren().add(table);
+
         Scene scene = new Scene(layout, 800, 600);
         primaryStage.setScene(scene);
         primaryStage.show();
+
+        // Listener para atualizar o resumo rápido
+        table.getItems().addListener(new ListChangeListener<Solicitacao>() {
+            @Override
+            public void onChanged(Change<? extends Solicitacao> c) {
+                atualizarResumoRapido();
+            }
+        });
+
+        // Inicializar o resumo rápido
+        atualizarResumoRapido();
+    }
+
+    private void atualizarResumoRapido() {
+        try {
+            SolicitacaoDAO solicitacaoDAO = new SolicitacaoDAO(connection);
+            int pendentes = solicitacaoDAO.contarSolicitacoesPorStatus(StatusSolicitacao.PENDENTE);
+            int aprovadas = solicitacaoDAO.contarSolicitacoesPorStatus(StatusSolicitacao.APROVADA);
+            int reprovadas = solicitacaoDAO.contarSolicitacoesPorStatus(StatusSolicitacao.REPROVADA);
+
+            totalPendentesLabel.setText("Pendentes: " + pendentes);
+            totalAprovadasLabel.setText("Aprovadas: " + aprovadas);
+            totalRejeitadasLabel.setText("Reprovadas: " + reprovadas);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void aprovarSolicitacao(Solicitacao solicitacao) {
+        try {
+            solicitacao.setStatus(StatusSolicitacao.APROVADA);
+            SolicitacaoDAO solicitacaoDAO = new SolicitacaoDAO(connection);
+            solicitacaoDAO.atualizarSolicitacao(solicitacao);
+            refreshTable();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void reprovarSolicitacao(Solicitacao solicitacao) {
+        try {
+            solicitacao.setStatus(StatusSolicitacao.REPROVADA);
+            SolicitacaoDAO solicitacaoDAO = new SolicitacaoDAO(connection);
+            solicitacaoDAO.atualizarSolicitacao(solicitacao);
+            refreshTable();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 
     private ObservableList<Solicitacao> getSolicitacoes() {
         SolicitacaoDAO solicitacaoDAO = new SolicitacaoDAO(connection);
         List<Solicitacao> solicitacoes = solicitacaoDAO.getTodasSolicitacoes();
         return FXCollections.observableArrayList(solicitacoes);
+    }
+
+    private void refreshTable() {
+        table.setItems(getSolicitacoes());
     }
 }
