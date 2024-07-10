@@ -194,6 +194,7 @@ public class TelaPrincipal {
             SolicitacaoDAO solicitacaoDAO = new SolicitacaoDAO(connection);
             solicitacaoDAO.atualizarSolicitacao(solicitacao);
             refreshTable();
+            atualizarResumoRapido();
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -205,6 +206,7 @@ public class TelaPrincipal {
             SolicitacaoDAO solicitacaoDAO = new SolicitacaoDAO(connection);
             solicitacaoDAO.atualizarSolicitacao(solicitacao);
             refreshTable();
+            atualizarResumoRapido();
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -217,6 +219,9 @@ public class TelaPrincipal {
     }
 
     private void refreshTable() {
-        table.setItems(getSolicitacoes());
+        ObservableList<Solicitacao> solicitacoes = getSolicitacoes();
+        table.setItems(solicitacoes);
+        table.refresh(); // Garantir que a tabela seja atualizada visualmente
+        atualizarResumoRapido(); // Atualizar o resumo rápido após a atualização da tabela
     }
 }
