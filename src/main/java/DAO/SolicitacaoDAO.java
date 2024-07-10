@@ -99,8 +99,8 @@ public class SolicitacaoDAO {
             pstmt.setString(5, solicitacao.getFormaPagamento());
 //            pstmt.setInt(6, solicitacao.getParcelas());
 //            pstmt.setDouble(7, solicitacao.getValorParcelas());
-            pstmt.setDouble(8, solicitacao.getValorTotal());
-            pstmt.setInt(9, solicitacao.getIdUsuario());
+            pstmt.setDouble(6, solicitacao.getValorTotal());
+            pstmt.setInt(7, solicitacao.getIdUsuario());
 
             pstmt.executeUpdate();
         }
