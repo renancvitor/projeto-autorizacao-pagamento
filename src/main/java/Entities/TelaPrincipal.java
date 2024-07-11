@@ -4,6 +4,7 @@ import DAO.SolicitacaoDAO;
 import Servicoes.Solicitacao;
 import Servicoes.StatusSolicitacao;
 import Servicoes.TelaSolicitacao;
+import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
@@ -98,6 +99,15 @@ public class TelaPrincipal {
         TableColumn<Solicitacao, Double> valorTotalCol = new TableColumn<>("Valor Total");
         valorTotalCol.setCellValueFactory(new PropertyValueFactory<>("valorTotal"));
 
+        // Coluna de Status
+        TableColumn<Solicitacao, String> statusCol = new TableColumn<>("Status");
+        statusCol.setCellValueFactory(cellData -> {
+            StatusSolicitacao status = cellData.getValue().getStatus();
+            String statusStr = status == StatusSolicitacao.PENDENTE ? "PENDENTE" : status.toString();
+            return new SimpleStringProperty(statusStr);
+        });
+
+
         // Coluna para Botão de Aprovar
         TableColumn<Solicitacao, Void> approveCol = new TableColumn<>("Aprovar");
         Callback<TableColumn<Solicitacao, Void>, TableCell<Solicitacao, Void>> cellFactoryApprove = new Callback<>() {
@@ -158,7 +168,7 @@ public class TelaPrincipal {
         };
         rejectCol.setCellFactory(cellFactoryReject);
 
-        table.getColumns().addAll(idCol, fornecedorCol, descricaoCol, dataCriacaoCol, dataPagamentoCol, formaPagamentoCol, valorTotalCol, approveCol, rejectCol);
+        table.getColumns().addAll(idCol, fornecedorCol, descricaoCol, dataCriacaoCol, dataPagamentoCol, formaPagamentoCol, valorTotalCol, statusCol, approveCol, rejectCol);
 
         // Layout Principal
         layout.getChildren().add(topoLayout);
