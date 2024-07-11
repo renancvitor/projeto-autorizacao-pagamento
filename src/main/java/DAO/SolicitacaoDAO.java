@@ -90,16 +90,18 @@ public class SolicitacaoDAO {
 
     public int contarSolicitacoesPorStatus(StatusSolicitacao status) throws SQLException {
         String sql = "SELECT COUNT(*) FROM solicitacoes WHERE status = ?";
-        try (PreparedStatement statement = connection.prepareStatement(sql)) {
-            statement.setString(1, status.name());
-            try (ResultSet resultSet = statement.executeQuery()) {
-                if (resultSet.next()) {
-                    return resultSet.getInt(1);
-                }
+        try (PreparedStatement stmt = connection.prepareStatement(sql)) {
+            stmt.setString(1, status.name());
+            ResultSet rs = stmt.executeQuery();
+            if (rs.next()) {
+                return rs.getInt(1);
             }
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
         return 0;
     }
+
 
     public List<Solicitacao> getSolicitacoesAnalisadas() {
         List<Solicitacao> solicitacoes = new ArrayList<>();
@@ -107,6 +109,32 @@ public class SolicitacaoDAO {
         try (PreparedStatement stmt = connection.prepareStatement(sql)) {
             stmt.setString(1, StatusSolicitacao.APROVADA.name());
             stmt.setString(2, StatusSolicitacao.REPROVADA.name());
+            ResultSet rs = stmt.executeQuery();
+            while (rs.next()) {
+                Solicitacao solicitacao = new Solicitacao(
+                        rs.getInt("id"),
+                        rs.getString("fornecedor"),
+                        rs.getString("descricao"),
+                        rs.getTimestamp("data_criacao"),
+                        rs.getDate("data_pagamento"),
+                        rs.getString("forma_pagamento"),
+                        rs.getDouble("valor_total"),
+                        rs.getInt("id_usuario"),
+                        StatusSolicitacao.valueOf(rs.getString("status"))
+                );
+                solicitacoes.add(solicitacao);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return solicitacoes;
+    }
+
+    public List<Solicitacao> getSolicitacoesPorStatus(StatusSolicitacao status) {
+        List<Solicitacao> solicitacoes = new ArrayList<>();
+        String sql = "SELECT * FROM solicitacoes WHERE status = ?";
+        try (PreparedStatement stmt = connection.prepareStatement(sql)) {
+            stmt.setString(1, status.name());
             ResultSet rs = stmt.executeQuery();
             while (rs.next()) {
                 Solicitacao solicitacao = new Solicitacao(

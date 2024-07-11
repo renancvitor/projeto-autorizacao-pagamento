@@ -4,8 +4,6 @@ import DAO.SolicitacaoDAO;
 import Servicoes.Solicitacao;
 import Servicoes.StatusSolicitacao;
 import Servicoes.TelaSolicitacao;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
@@ -61,23 +59,23 @@ public class TelaPrincipal {
             Stage stage = new Stage();
             telaSolicitacao.start(stage);
         });
+        layout.getChildren().add(novaSolicitacaoButton);
 
-        // Botão para solicitações analisadas
-        Button solicitacoesAnalisadasButton = new Button("Solicitações Analisadas");
-        solicitacoesAnalisadasButton.setOnAction(e -> {
+        // Botão para acessar a tela de solicitações analisadas
+        Button analisadosButton = new Button("Solicitações Analisadas");
+        analisadosButton.setOnAction(e -> {
             TelaAnalisados telaAnalisados = new TelaAnalisados(connection);
             Stage stage = new Stage();
             telaAnalisados.start(stage);
         });
-
-        layout.getChildren().addAll(novaSolicitacaoButton, solicitacoesAnalisadasButton);
+        layout.getChildren().add(analisadosButton);
 
         // Layout para Resumo Rápido e Botão
-        HBox topoLayout = new HBox(10, resumoLabel, novaSolicitacaoButton, solicitacoesAnalisadasButton);
+        HBox topoLayout = new HBox(10, resumoLabel, novaSolicitacaoButton, analisadosButton);
 
         // TableView para exibir as solicitações
         table = new TableView<>();
-        table.setItems(getSolicitacoes());
+        table.setItems(getSolicitacoesPendentes());
 
         TableColumn<Solicitacao, Integer> idCol = new TableColumn<>("ID");
         idCol.setCellValueFactory(new PropertyValueFactory<>("id"));
@@ -99,9 +97,6 @@ public class TelaPrincipal {
 
         TableColumn<Solicitacao, Double> valorTotalCol = new TableColumn<>("Valor Total");
         valorTotalCol.setCellValueFactory(new PropertyValueFactory<>("valorTotal"));
-
-        TableColumn<Solicitacao, String> statusCol = new TableColumn<>("Status");
-        statusCol.setCellValueFactory(new PropertyValueFactory<>("status"));
 
         // Coluna para Botão de Aprovar
         TableColumn<Solicitacao, Void> approveCol = new TableColumn<>("Aprovar");
@@ -163,7 +158,7 @@ public class TelaPrincipal {
         };
         rejectCol.setCellFactory(cellFactoryReject);
 
-        table.getColumns().addAll(idCol, fornecedorCol, descricaoCol, dataCriacaoCol, dataPagamentoCol, formaPagamentoCol, valorTotalCol, statusCol, approveCol, rejectCol);
+        table.getColumns().addAll(idCol, fornecedorCol, descricaoCol, dataCriacaoCol, dataPagamentoCol, formaPagamentoCol, valorTotalCol, approveCol, rejectCol);
 
         // Layout Principal
         layout.getChildren().add(topoLayout);
@@ -219,13 +214,13 @@ public class TelaPrincipal {
         }
     }
 
-    private ObservableList<Solicitacao> getSolicitacoes() {
+    private ObservableList<Solicitacao> getSolicitacoesPendentes() {
         SolicitacaoDAO solicitacaoDAO = new SolicitacaoDAO(connection);
-        List<Solicitacao> solicitacoes = solicitacaoDAO.getTodasSolicitacoes();
+        List<Solicitacao> solicitacoes = solicitacaoDAO.getSolicitacoesPorStatus(StatusSolicitacao.PENDENTE);
         return FXCollections.observableArrayList(solicitacoes);
     }
 
     private void refreshTable() {
-        table.setItems(getSolicitacoes());
+        table.setItems(getSolicitacoesPendentes());
     }
 }
