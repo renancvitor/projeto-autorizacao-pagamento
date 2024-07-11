@@ -100,4 +100,32 @@ public class SolicitacaoDAO {
         }
         return 0;
     }
+
+    public List<Solicitacao> getSolicitacoesAnalisadas() {
+        List<Solicitacao> solicitacoes = new ArrayList<>();
+        String sql = "SELECT * FROM solicitacoes WHERE status = ? OR status = ?";
+        try (PreparedStatement stmt = connection.prepareStatement(sql)) {
+            stmt.setString(1, StatusSolicitacao.APROVADA.name());
+            stmt.setString(2, StatusSolicitacao.REPROVADA.name());
+            ResultSet rs = stmt.executeQuery();
+            while (rs.next()) {
+                Solicitacao solicitacao = new Solicitacao(
+                        rs.getInt("id"),
+                        rs.getString("fornecedor"),
+                        rs.getString("descricao"),
+                        rs.getTimestamp("data_criacao"),
+                        rs.getDate("data_pagamento"),
+                        rs.getString("forma_pagamento"),
+                        rs.getDouble("valor_total"),
+                        rs.getInt("id_usuario"),
+                        StatusSolicitacao.valueOf(rs.getString("status"))
+                );
+                solicitacoes.add(solicitacao);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return solicitacoes;
+    }
+
 }

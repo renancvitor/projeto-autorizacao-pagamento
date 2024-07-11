@@ -4,6 +4,8 @@ import DAO.SolicitacaoDAO;
 import Servicoes.Solicitacao;
 import Servicoes.StatusSolicitacao;
 import Servicoes.TelaSolicitacao;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
@@ -49,6 +51,7 @@ public class TelaPrincipal {
         totalPendentesLabel = new Label();
         totalAprovadasLabel = new Label();
         totalRejeitadasLabel = new Label();
+        atualizarResumoRapido();
         layout.getChildren().addAll(resumoLabel, totalPendentesLabel, totalAprovadasLabel, totalRejeitadasLabel);
 
         // Botão para novas solicitações
@@ -58,10 +61,19 @@ public class TelaPrincipal {
             Stage stage = new Stage();
             telaSolicitacao.start(stage);
         });
-        layout.getChildren().add(novaSolicitacaoButton);
+
+        // Botão para solicitações analisadas
+        Button solicitacoesAnalisadasButton = new Button("Solicitações Analisadas");
+        solicitacoesAnalisadasButton.setOnAction(e -> {
+            TelaAnalisados telaAnalisados = new TelaAnalisados(connection);
+            Stage stage = new Stage();
+            telaAnalisados.start(stage);
+        });
+
+        layout.getChildren().addAll(novaSolicitacaoButton, solicitacoesAnalisadasButton);
 
         // Layout para Resumo Rápido e Botão
-        HBox topoLayout = new HBox(10, resumoLabel, novaSolicitacaoButton);
+        HBox topoLayout = new HBox(10, resumoLabel, novaSolicitacaoButton, solicitacoesAnalisadasButton);
 
         // TableView para exibir as solicitações
         table = new TableView<>();
@@ -88,7 +100,7 @@ public class TelaPrincipal {
         TableColumn<Solicitacao, Double> valorTotalCol = new TableColumn<>("Valor Total");
         valorTotalCol.setCellValueFactory(new PropertyValueFactory<>("valorTotal"));
 
-        TableColumn<Solicitacao, StatusSolicitacao> statusCol = new TableColumn<>("Status");
+        TableColumn<Solicitacao, String> statusCol = new TableColumn<>("Status");
         statusCol.setCellValueFactory(new PropertyValueFactory<>("status"));
 
         // Coluna para Botão de Aprovar
@@ -168,9 +180,6 @@ public class TelaPrincipal {
                 atualizarResumoRapido();
             }
         });
-
-        // Inicializar o resumo rápido
-        atualizarResumoRapido();
     }
 
     private void atualizarResumoRapido() {
@@ -194,7 +203,6 @@ public class TelaPrincipal {
             SolicitacaoDAO solicitacaoDAO = new SolicitacaoDAO(connection);
             solicitacaoDAO.atualizarSolicitacao(solicitacao);
             refreshTable();
-            atualizarResumoRapido();
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -206,7 +214,6 @@ public class TelaPrincipal {
             SolicitacaoDAO solicitacaoDAO = new SolicitacaoDAO(connection);
             solicitacaoDAO.atualizarSolicitacao(solicitacao);
             refreshTable();
-            atualizarResumoRapido();
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -219,9 +226,6 @@ public class TelaPrincipal {
     }
 
     private void refreshTable() {
-        ObservableList<Solicitacao> solicitacoes = getSolicitacoes();
-        table.setItems(solicitacoes);
-        table.refresh(); // Garantir que a tabela seja atualizada visualmente
-        atualizarResumoRapido(); // Atualizar o resumo rápido após a atualização da tabela
+        table.setItems(getSolicitacoes());
     }
 }
