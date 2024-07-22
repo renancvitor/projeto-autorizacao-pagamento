@@ -1,13 +1,12 @@
 package DAO;
 
 import Entities.Usuario;
-import Servicoes.Solicitacao;
-import Servicoes.StatusSolicitacao;
 
-import java.sql.*;
-import java.sql.Timestamp;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 public class UsuarioDAO {
@@ -17,99 +16,90 @@ public class UsuarioDAO {
         this.connection = connection;
     }
 
-    // Método para inserir um novo usuário na tabela 'usuarios'
-    public void inserirUsuario(Usuario usuario) {
-        String sql = "INSERT INTO usuarios (login, senha, id_tipo_usuario, tipo_usuario) VALUES (?, ?, ?, ?)";
-        try (PreparedStatement pstmt = connection.prepareStatement(sql)) {
-            pstmt.setString(1, usuario.getLogin());
-            pstmt.setString(2, usuario.getSenha());
-            pstmt.setInt(3, usuario.getIdTipoUsuario());
-            pstmt.setString(4, String.join(",", usuario.getRoles())); // Convertendo a lista de roles para uma string separada por vírgulas
-            pstmt.executeUpdate();
-        } catch (SQLException e) {
-            e.printStackTrace();
+    public Usuario getUsuarioById(int id) throws SQLException {
+        String sql = "SELECT * FROM usuarios WHERE id = ?";
+        try (PreparedStatement stmt = connection.prepareStatement(sql)) {
+            stmt.setInt(1, id);
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    int userId = rs.getInt("id");
+                    String login = rs.getString("login");
+                    String senha = rs.getString("senha");
+
+                    // Obter permissões do usuário
+                    List<String> permissoes = getPermissoesById(userId);
+
+                    return new Usuario(userId, login, senha, permissoes);
+                } else {
+                    return null; // ou lance uma exceção se preferir
+                }
+            }
         }
     }
 
-    // Método para buscar um usuário pelo login e senha na tabela 'usuarios'
-//    public Usuario getUsuarioByLogin(String login, String senha) {
-//        String sql = "SELECT * FROM usuarios WHERE login = ? AND senha = ?";
-//        try (PreparedStatement pstmt = connection.prepareStatement(sql)) {
-//            pstmt.setString(1, login);
-//            pstmt.setString(2, senha);
-//            ResultSet rs = pstmt.executeQuery();
-//            if (rs.next()) {
-//                String usuarioLogin = rs.getString("login");
-//                String usuarioSenha = rs.getString("senha");
-//                int idTipoUsuario = rs.getInt("id_tipo_usuario");
-//
-//                return new Usuario(usuarioLogin, usuarioSenha, idTipoUsuario);
-//            }
-//        } catch (SQLException e) {
-//            e.printStackTrace();
-//        }
-//        return null;
-//    }
-
-    // Método para buscar um usuário pelo login e senha
-    public Usuario getUsuarioByLogin(String login, String senha) {
+    public Usuario getUsuarioByLogin(String login, String senha) throws SQLException {
         String sql = "SELECT * FROM usuarios WHERE login = ? AND senha = ?";
-        try (PreparedStatement pstmt = connection.prepareStatement(sql)) {
-            pstmt.setString(1, login);
-            pstmt.setString(2, senha);
-            ResultSet rs = pstmt.executeQuery();
-            if (rs.next()) {
-                int id = rs.getInt("id");
-                int idTipoUsuario = rs.getInt("id_tipo_usuario");
+        try (PreparedStatement stmt = connection.prepareStatement(sql)) {
+            stmt.setString(1, login);
+            stmt.setString(2, senha);
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    int id = rs.getInt("id");
+                    String retrievedLogin = rs.getString("login");
+                    String retrievedSenha = rs.getString("senha");
 
-                // Retorna um novo objeto Usuario com os dados encontrados no banco de dados
-                return new Usuario(id, login, senha, idTipoUsuario);
+                    // Obter permissões do usuário
+                    List<String> permissoes = getPermissoesById(id);
+
+                    return new Usuario(id, retrievedLogin, retrievedSenha, permissoes);
+                } else {
+                    return null; // ou lance uma exceção se preferir
+                }
             }
-        } catch (SQLException e) {
-            e.printStackTrace();
         }
-        return null;
     }
 
-
-    // Método para recuperar todas as solicitações da tabela 'solicitacoes'
-    public List<Solicitacao> getTodasSolicitacoes() {
-        List<Solicitacao> solicitacoes = new ArrayList<>();
-        String sql = "SELECT * FROM solicitacoes"; // Assumindo que a tabela se chama "solicitacoes"
-        try (PreparedStatement pstmt = connection.prepareStatement(sql)) {
-            ResultSet rs = pstmt.executeQuery();
-            while (rs.next()) {
-                int id = rs.getInt("id");
-                String fornecedor = rs.getString("fornecedor");
-                String descricao = rs.getString("descricao");
-                Timestamp dataCriacao = rs.getTimestamp("data_criacao");
-                Date dataPagamento = rs.getDate("data_pagamento");
-                String formaPagamento = rs.getString("forma_pagamento");
-                double valorTotal = rs.getDouble("valor_total");
-                int idUsuario = rs.getInt("id_usuario");
-
-                // Obtém o status (supondo que você tenha um método para isso)
-                StatusSolicitacao status = getStatusFromResultSet(rs);
-
-                // Criação do objeto Solicitacao
-                Solicitacao solicitacao = new Solicitacao(id, fornecedor, descricao, dataCriacao, dataPagamento, formaPagamento, valorTotal, idUsuario, status);
-
-                solicitacoes.add(solicitacao);
+    private List<String> getPermissoesById(int userId) throws SQLException {
+        String sql = "SELECT permissao FROM permissoes WHERE id_usuario = ?";
+        List<String> permissoes = new ArrayList<>();
+        try (PreparedStatement stmt = connection.prepareStatement(sql)) {
+            stmt.setInt(1, userId);
+            try (ResultSet rs = stmt.executeQuery()) {
+                while (rs.next()) {
+                    permissoes.add(rs.getString("permissao"));
+                }
             }
-        } catch (SQLException e) {
-            e.printStackTrace();
         }
-        return solicitacoes;
+        return permissoes;
     }
 
-    // Método para obter o status a partir do ResultSet (exemplo)
-    private StatusSolicitacao getStatusFromResultSet(ResultSet rs) throws SQLException {
-        // Implemente aqui a lógica para obter o status do ResultSet
-        // Exemplo:
-        String statusStr = rs.getString("status"); // Supondo que o status seja uma string no ResultSet
-        return StatusSolicitacao.valueOf(statusStr); // Convertendo a string para o enum StatusSolicitacao
+    public void inserirUsuario(Usuario usuario) throws SQLException {
+        String sql = "INSERT INTO usuarios (login, senha) VALUES (?, ?)";
+        try (PreparedStatement stmt = connection.prepareStatement(sql, PreparedStatement.RETURN_GENERATED_KEYS)) {
+            stmt.setString(1, usuario.getLogin());
+            stmt.setString(2, usuario.getSenha());
+            stmt.executeUpdate();
+
+            // Recupera o id gerado automaticamente
+            try (ResultSet generatedKeys = stmt.getGeneratedKeys()) {
+                if (generatedKeys.next()) {
+                    int userId = generatedKeys.getInt(1);
+                    usuario.setId(userId);
+                    inserirPermissoesUsuario(usuario);
+                }
+            }
+        }
     }
 
-
-
+    private void inserirPermissoesUsuario(Usuario usuario) throws SQLException {
+        String sql = "INSERT INTO permissoes (id_usuario, permissao) VALUES (?, ?)";
+        try (PreparedStatement stmt = connection.prepareStatement(sql)) {
+            for (String permissao : usuario.getPermissoes()) {
+                stmt.setInt(1, usuario.getId());
+                stmt.setString(2, permissao);
+                stmt.addBatch();
+            }
+            stmt.executeBatch();
+        }
+    }
 }

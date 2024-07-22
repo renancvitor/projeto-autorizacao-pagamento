@@ -1,30 +1,31 @@
 package Entities;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class Usuario {
     private int id;
     private String login;
     private String senha;
-    private int idTipoUsuario;
-    private List<String> roles;
+    private List<String> permissoes;
 
-    public Usuario(int id, String login, String senha, int idTipoUsuario) {
+    // Construtor original
+    public Usuario(int id, String login, String senha) {
         this.id = id;
         this.login = login;
         this.senha = senha;
-        this.idTipoUsuario = idTipoUsuario;
+        this.permissoes = new ArrayList<>();
     }
 
-    public Usuario(int id, String login, String senha, int idTipoUsuario, List<String> roles) {
+    // Construtor adicional
+    public Usuario(int id, String login, String senha, List<String> permissoes) {
         this.id = id;
         this.login = login;
         this.senha = senha;
-        this.idTipoUsuario = idTipoUsuario;
-        this.roles = roles;
+        this.permissoes = permissoes;
     }
 
-    // Getters e Setters
+    // Getters e setters
     public int getId() {
         return id;
     }
@@ -37,41 +38,20 @@ public class Usuario {
         return login;
     }
 
-    public void setLogin(String login) {
-        this.login = login;
-    }
-
     public String getSenha() {
         return senha;
     }
 
-    public void setSenha(String senha) {
-        this.senha = senha;
-    }
-
-    public int getIdTipoUsuario() {
-        return idTipoUsuario;
-    }
-
-    public void setIdTipoUsuario(int idTipoUsuario) {
-        this.idTipoUsuario = idTipoUsuario;
-    }
-
-    public List<String> getRoles() {
-        return roles;
-    }
-
-    public void setRoles(List<String> roles) {
-        this.roles = roles;
+    public List<String> getPermissoes() {
+        return permissoes;
     }
 
     public boolean isAdmin() {
-        // Verifica se o login do usuário é "admin"
-        if (this.getLogin() != null && "admin".equals(this.getLogin())) {
-            return true;
-        } else {
-            System.out.println("Acesso negado!");
-            return false;
-        }
+        return permissoes.contains("ADMIN");
+    }
+
+    public boolean hasPermission(String permissao) {
+        return permissoes.contains(permissao);
     }
 }
+

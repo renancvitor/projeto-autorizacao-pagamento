@@ -2,8 +2,10 @@
 //
 //import DAO.SolicitacaoDAO;
 //import Servicoes.Solicitacao;
+//import Servicoes.SolicitacaoService;
 //import Servicoes.StatusSolicitacao;
 //import Servicoes.TelaSolicitacao;
+//import javafx.application.Platform;
 //import javafx.beans.property.SimpleStringProperty;
 //import javafx.collections.FXCollections;
 //import javafx.collections.ListChangeListener;
@@ -33,6 +35,8 @@
 //        this.usuario = usuario;
 //        try {
 //            this.connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/sistema_pagamentos", "root", "123456789");
+//            SolicitacaoDAO solicitacaoDAO = new SolicitacaoDAO(connection);
+//            this.solicitacaoService = new SolicitacaoService(solicitacaoDAO);
 //        } catch (SQLException e) {
 //            e.printStackTrace();
 //        }
@@ -185,6 +189,30 @@
 //                atualizarResumoRapido();
 //            }
 //        });
+//
+//        // Listener para atualizar a tabela em tempo real
+//        Thread threadAtualizacao = new Thread(() -> {
+//            while (true) {
+//                try {
+//                    Thread.sleep(5000); // Atualiza a cada 5 segundos
+//                    Platform.runLater(() -> {
+//                        refreshTable();
+//                    });
+//                } catch (InterruptedException e) {
+//                    e.printStackTrace();
+//                }
+//            }
+//        });
+//        threadAtualizacao.setDaemon(true);
+//        threadAtualizacao.start();
+//
+//        // Obtendo solicitações visíveis para o usuário
+//        try {
+//            List<Solicitacao> solicitacoesVisiveis = solicitacaoService.getSolicitacoesVisiveisParaUsuario(usuario);
+//            // Atualizar a tabela de solicitações com as solicitações visíveis
+//        } catch (SQLException e) {
+//            e.printStackTrace();
+//        }
 //    }
 //
 //    private void atualizarResumoRapido() {
@@ -226,18 +254,33 @@
 //
 //    private ObservableList<Solicitacao> getSolicitacoesPendentes() {
 //        SolicitacaoDAO solicitacaoDAO = new SolicitacaoDAO(connection);
-//        List<Solicitacao> solicitacoes = solicitacaoDAO.getSolicitacoesPorStatus(StatusSolicitacao.PENDENTE);
-//        return FXCollections.observableArrayList(solicitacoes);
+//        ObservableList<Solicitacao> solicitacoes = FXCollections.observableArrayList(solicitacaoDAO.getSolicitacoesPorStatus(StatusSolicitacao.PENDENTE));
+//
+//        // Listener para atualização em tempo real
+//        solicitacoes.addListener((ListChangeListener<Solicitacao>) c -> {
+//            while (c.next()) {
+//                if (c.wasRemoved()) {
+//                    // Atualiza a tabela ao remover uma solicitação aprovada ou reprovada
+//                    refreshTable();
+//                }
+//            }
+//        });
+//
+//        return solicitacoes;
 //    }
 //
 //    private void refreshTable() {
-//        table.setItems(getSolicitacoesPendentes());
+//        table.getItems().clear();
+//        table.getItems().addAll(getSolicitacoesPendentes());
+//        atualizarResumoRapido(); // Atualiza o resumo rápido junto com a tabela
 //    }
 //}
+
 package Entities;
 
 import DAO.SolicitacaoDAO;
 import Servicoes.Solicitacao;
+import Servicoes.SolicitacaoService;
 import Servicoes.StatusSolicitacao;
 import Servicoes.TelaSolicitacao;
 import javafx.application.Platform;
@@ -265,11 +308,14 @@ public class TelaPrincipal {
     private Label totalPendentesLabel;
     private Label totalAprovadasLabel;
     private Label totalRejeitadasLabel;
+    private SolicitacaoService solicitacaoService;
 
     public TelaPrincipal(Usuario usuario) {
         this.usuario = usuario;
         try {
             this.connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/sistema_pagamentos", "root", "123456789");
+            SolicitacaoDAO solicitacaoDAO = new SolicitacaoDAO(connection);
+            this.solicitacaoService = new SolicitacaoService(solicitacaoDAO);
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -313,7 +359,11 @@ public class TelaPrincipal {
 
         // TableView para exibir as solicitações
         table = new TableView<>();
-        table.setItems(getSolicitacoesPendentes());
+        try {
+            table.setItems(FXCollections.observableArrayList(solicitacaoService.getSolicitacoesVisiveisParaUsuario(usuario)));
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
 
         TableColumn<Solicitacao, Integer> idCol = new TableColumn<>("ID");
         idCol.setCellValueFactory(new PropertyValueFactory<>("id"));
@@ -461,6 +511,7 @@ public class TelaPrincipal {
             SolicitacaoDAO solicitacaoDAO = new SolicitacaoDAO(connection);
             solicitacaoDAO.atualizarSolicitacao(solicitacao);
             refreshTable();
+            atualizarResumoRapido();
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -472,31 +523,19 @@ public class TelaPrincipal {
             SolicitacaoDAO solicitacaoDAO = new SolicitacaoDAO(connection);
             solicitacaoDAO.atualizarSolicitacao(solicitacao);
             refreshTable();
+            atualizarResumoRapido();
         } catch (SQLException e) {
             e.printStackTrace();
         }
     }
 
-    private ObservableList<Solicitacao> getSolicitacoesPendentes() {
-        SolicitacaoDAO solicitacaoDAO = new SolicitacaoDAO(connection);
-        ObservableList<Solicitacao> solicitacoes = FXCollections.observableArrayList(solicitacaoDAO.getSolicitacoesPorStatus(StatusSolicitacao.PENDENTE));
-
-        // Listener para atualização em tempo real
-        solicitacoes.addListener((ListChangeListener<Solicitacao>) c -> {
-            while (c.next()) {
-                if (c.wasRemoved()) {
-                    // Atualiza a tabela ao remover uma solicitação aprovada ou reprovada
-                    refreshTable();
-                }
-            }
-        });
-
-        return solicitacoes;
-    }
-
     private void refreshTable() {
-        table.getItems().clear();
-        table.getItems().addAll(getSolicitacoesPendentes());
-        atualizarResumoRapido(); // Atualiza o resumo rápido junto com a tabela
+        try {
+            List<Solicitacao> solicitacoes = solicitacaoService.getSolicitacoesVisiveisParaUsuario(usuario);
+            table.getItems().clear();
+            table.getItems().addAll(solicitacoes);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 }

@@ -42,9 +42,17 @@ public class LoginController {
         return DriverManager.getConnection(url, username, password);
     }
 
+    public boolean autenticar(String login, String senha) throws SQLException {
+        Usuario usuario = usuarioDAO.getUsuarioByLogin(login, senha);
+        if (usuario != null) {
+            usuarioLogado = usuario;
+            return true;
+        }
+        return false;
+    }
+
     public static void main(String[] args) {
-        // Exemplo de uso na sua aplicação
-        Connection connection = null; // Obtenha sua conexão com o banco de dados aqui
+        Connection connection = null;
 
         try {
             // Criar uma conexão com o banco de dados
@@ -58,10 +66,8 @@ public class LoginController {
             String senha = "adminNewAdmin@1900"; // Senha do usuário admin
 
             // Exemplo de verificação de login
-            Usuario usuario = loginController.usuarioDAO.getUsuarioByLogin(login, senha);
-            if (usuario != null) {
-                loginController.usuarioLogado = usuario; // Define o usuário como logado
-                System.out.println("Login bem-sucedido para: " + usuario.getLogin());
+            if (loginController.autenticar(login, senha)) {
+                System.out.println("Login bem-sucedido para: " + loginController.getUsuarioLogado().getLogin());
             } else {
                 System.out.println("Login falhou. Verifique suas credenciais.");
             }

@@ -202,4 +202,6 @@ public class Solicitacao {
     public void setStatus(StatusSolicitacao status) {
         this.status = status;
     }
+
+
 }

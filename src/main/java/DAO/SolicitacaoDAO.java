@@ -156,4 +156,31 @@ public class SolicitacaoDAO {
         return solicitacoes;
     }
 
+    public List<Solicitacao> getSolicitacoesPorUsuario(int usuario) {
+        List<Solicitacao> solicitacoes = new ArrayList<>();
+        String sql = "SELECT * FROM solicitacoes WHERE id_usuario = ?";
+        try (PreparedStatement pstmt = connection.prepareStatement(sql)) {
+            pstmt.setInt(1,
+                    usuario);
+            ResultSet rs = pstmt.executeQuery();
+            while (rs.next()) {
+                Solicitacao solicitacao = new Solicitacao(
+                        rs.getInt("id"),
+                        rs.getString("fornecedor"),
+                        rs.getString("descricao"),
+                        rs.getTimestamp("data_criacao"),
+                        rs.getDate("data_pagamento"),
+                        rs.getString("forma_pagamento"),
+                        rs.getDouble("valor_total"),
+                        rs.getInt("id_usuario"),
+                        StatusSolicitacao.valueOf(rs.getString("status"))
+                );
+                solicitacoes.add(solicitacao);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return solicitacoes;
+    }
+
 }
