@@ -3,14 +3,11 @@ package DAO;
 import Servicoes.Solicitacao;
 import Servicoes.StatusSolicitacao;
 
-import java.sql.Connection;
-import java.sql.Date;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Timestamp;
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
+
+import static DAO.ConnectionFactory.getConnection;
 
 public class SolicitacaoDAO {
     private Connection connection;
@@ -182,5 +179,39 @@ public class SolicitacaoDAO {
         }
         return solicitacoes;
     }
+
+    public List<Solicitacao> getSolicitacoesPendentes() {
+        List<Solicitacao> solicitacoes = new ArrayList<>();
+        String sql = "SELECT * FROM solicitacoes WHERE status = 'PENDENTE'";
+
+        try (Connection conn = getConnection();
+             Statement stmt = conn.createStatement();
+             ResultSet rs = stmt.executeQuery(sql)) {
+
+            while (rs.next()) {
+                Solicitacao solicitacao = new Solicitacao(
+                        rs.getInt("id"),
+                        rs.getString("fornecedor"),
+                        rs.getString("descricao"),
+                        rs.getTimestamp("data_criacao"),
+                        rs.getDate("data_pagamento"),
+                        rs.getString("forma_pagamento"),
+                        rs.getDouble("valor_total"),
+                        rs.getInt("id_usuario"),
+                        StatusSolicitacao.valueOf(rs.getString("status")) // Converte a string para StatusSolicitacao
+                );
+                solicitacoes.add(solicitacao);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return solicitacoes;
+    }
+
+    private Connection getConnection() {
+        // Implement your connection logic here
+        return null;
+    }
+
 
 }
