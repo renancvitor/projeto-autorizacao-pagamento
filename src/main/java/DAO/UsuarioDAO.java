@@ -59,19 +59,21 @@ public class UsuarioDAO {
         }
     }
 
-    private List<String> getPermissoesById(int userId) throws SQLException {
-        String sql = "SELECT permissao FROM permissoes WHERE id_usuario = ?";
+    public List<String> getPermissoesById(int usuarioId) throws SQLException {
         List<String> permissoes = new ArrayList<>();
+        String sql = "SELECT id_permissao FROM tipos_usuarios_permissoes WHERE id_tipo_usuario = (SELECT id_tipo_usuario FROM usuarios WHERE id = ?)";
+
         try (PreparedStatement stmt = connection.prepareStatement(sql)) {
-            stmt.setInt(1, userId);
+            stmt.setInt(1, usuarioId);
             try (ResultSet rs = stmt.executeQuery()) {
                 while (rs.next()) {
-                    permissoes.add(rs.getString("permissao"));
+                    permissoes.add(rs.getString("id_permissao"));
                 }
             }
         }
         return permissoes;
     }
+
 
     public void inserirUsuario(Usuario usuario) throws SQLException {
         String sql = "INSERT INTO usuarios (login, senha) VALUES (?, ?)";
