@@ -208,6 +208,23 @@ public class SolicitacaoDAO {
         return solicitacoes;
     }
 
+    private List<Solicitacao> mapResultSetToSolicitacoes(ResultSet resultSet) throws SQLException {
+        List<Solicitacao> solicitacoes = new ArrayList<>();
+        while (resultSet.next()) {
+            Solicitacao solicitacao = new Solicitacao();
+            solicitacao.setId(resultSet.getInt("id"));
+            solicitacao.setFornecedor(resultSet.getString("fornecedor"));
+            solicitacao.setDescricao(resultSet.getString("descricao"));
+            solicitacao.setDataCriacao(Timestamp.valueOf(resultSet.getTimestamp("data_criacao").toLocalDateTime()));
+            solicitacao.setDataPagamento(resultSet.getDate("data_pagamento"));
+            solicitacao.setFormaPagamento(resultSet.getString("forma_pagamento"));
+            solicitacao.setValorTotal(resultSet.getDouble("valor_total"));
+            solicitacao.setStatus(StatusSolicitacao.valueOf(resultSet.getString("status")));
+            solicitacoes.add(solicitacao);
+        }
+        return solicitacoes;
+    }
+
     private Connection getConnection() {
         // Implement your connection logic here
         return null;

@@ -130,6 +130,9 @@ public class Solicitacao {
         this.status = status;
     }
 
+    public Solicitacao() {
+    }
+
     // Métodos getters e setters
     public int getId() {
         return id;
