@@ -5,6 +5,8 @@ import Servicoes.Solicitacao;
 import Servicoes.SolicitacaoService;
 import Servicoes.StatusSolicitacao;
 import Servicoes.TelaSolicitacao;
+import javafx.animation.KeyFrame;
+import javafx.animation.Timeline;
 import javafx.application.Platform;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
@@ -17,6 +19,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import javafx.util.Callback;
+import javafx.util.Duration;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -31,6 +34,7 @@ public class TelaPrincipal {
     private Label totalAprovadasLabel;
     private Label totalRejeitadasLabel;
     private SolicitacaoService solicitacaoService;
+    private ObservableList<Solicitacao> observableList;
 
     public TelaPrincipal(Usuario usuario) {
         this.usuario = usuario;
@@ -38,6 +42,7 @@ public class TelaPrincipal {
             this.connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/sistema_pagamentos", "root", "123456789");
             SolicitacaoDAO solicitacaoDAO = new SolicitacaoDAO(connection);
             this.solicitacaoService = new SolicitacaoService(solicitacaoDAO);
+            this.observableList = FXCollections.observableArrayList(); // Inicializa a ObservableList aqui
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -188,21 +193,10 @@ public class TelaPrincipal {
             }
         });
 
-        // Listener para atualizar a tabela em tempo real
-        Thread threadAtualizacao = new Thread(() -> {
-            while (true) {
-                try {
-                    Thread.sleep(5000); // Atualiza a cada 5 segundos
-                    Platform.runLater(() -> {
-                        refreshTable();
-                    });
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-            }
-        });
-        threadAtualizacao.setDaemon(true);
-        threadAtualizacao.start();
+        // Atualização periódica da tabela
+        Timeline timeline = new Timeline(new KeyFrame(Duration.seconds(5), event -> refreshTable()));
+        timeline.setCycleCount(Timeline.INDEFINITE);
+        timeline.play();
 
         // Carrega as solicitações pendentes na tabela
         refreshTable();
@@ -213,11 +207,11 @@ public class TelaPrincipal {
             SolicitacaoDAO solicitacaoDAO = new SolicitacaoDAO(connection);
             int pendentes = solicitacaoDAO.contarSolicitacoesPorStatus(StatusSolicitacao.PENDENTE);
             int aprovadas = solicitacaoDAO.contarSolicitacoesPorStatus(StatusSolicitacao.APROVADA);
-            int rejeitadas = solicitacaoDAO.contarSolicitacoesPorStatus(StatusSolicitacao.REPROVADA);
+            int reprovadas = solicitacaoDAO.contarSolicitacoesPorStatus(StatusSolicitacao.REPROVADA);
 
             totalPendentesLabel.setText("Total Pendentes: " + pendentes);
             totalAprovadasLabel.setText("Total Aprovadas: " + aprovadas);
-            totalRejeitadasLabel.setText("Total Rejeitadas: " + rejeitadas);
+            totalRejeitadasLabel.setText("Total Reprovadas: " + reprovadas);
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -227,12 +221,11 @@ public class TelaPrincipal {
         System.out.println("Refreshing table...");
         try {
             List<Solicitacao> solicitacoesPendentes = solicitacaoService.getSolicitacoesPorStatus(StatusSolicitacao.PENDENTE);
-            System.out.println("Pending requests: " + solicitacoesPendentes.size());
-            for (Solicitacao solicitacao : solicitacoesPendentes) {
-                System.out.println("Request ID: " + solicitacao.getId() + ", Fornecedor: " + solicitacao.getFornecedor());
-            }
-            ObservableList<Solicitacao> observableList = FXCollections.observableArrayList(solicitacoesPendentes);
-            table.setItems(observableList);
+            Platform.runLater(() -> {
+                observableList.setAll(solicitacoesPendentes);
+                table.setItems(observableList);
+                atualizarResumoRapido(); // Atualiza o resumo rápido sempre que a tabela for atualizada
+            });
         } catch (SQLException e) {
             e.printStackTrace();
         }
