@@ -37,7 +37,7 @@ public class SolicitacaoDAO {
     // Método para obter todas as solicitações
     public List<Solicitacao> getTodasSolicitacoes() {
         List<Solicitacao> solicitacoes = new ArrayList<>();
-        String sql = "SELECT * FROM solicitacoes";
+        String sql = "SELECT * FROM solicitacoes WHERE status = 'PENDENTE'";
         try (PreparedStatement pstmt = connection.prepareStatement(sql);
              ResultSet rs = pstmt.executeQuery()) {
 

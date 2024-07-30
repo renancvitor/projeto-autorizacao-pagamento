@@ -193,11 +193,6 @@ public class TelaPrincipal {
             }
         });
 
-        // Atualização periódica da tabela
-        Timeline timeline = new Timeline(new KeyFrame(Duration.seconds(5), event -> refreshTable()));
-        timeline.setCycleCount(Timeline.INDEFINITE);
-        timeline.play();
-
         // Carrega as solicitações pendentes na tabela
         refreshTable();
     }
