@@ -5,8 +5,7 @@ import Servicoes.Solicitacao;
 import Servicoes.SolicitacaoService;
 import Servicoes.StatusSolicitacao;
 import Servicoes.TelaSolicitacao;
-import javafx.animation.KeyFrame;
-import javafx.animation.Timeline;
+import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
@@ -19,14 +18,13 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import javafx.util.Callback;
-import javafx.util.Duration;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.List;
 
-public class TelaPrincipal {
+public class TelaPrincipal extends Application {
     private Usuario usuario;
     private Connection connection;
     private TableView<Solicitacao> table;
@@ -48,12 +46,27 @@ public class TelaPrincipal {
         }
     }
 
+    @Override
     public void start(Stage primaryStage) {
         primaryStage.setTitle("Sistema Principal");
 
         VBox layout = new VBox();
         Label welcomeLabel = new Label("Bem-vindo, " + usuario.getLogin() + "!");
         layout.getChildren().add(welcomeLabel);
+
+        // Menu para gerenciar usuários
+        MenuBar menuBar = new MenuBar();
+        Menu usuarioMenu = new Menu("Gerenciar Usuários");
+
+        MenuItem cadastrarUsuarioItem = new MenuItem("Cadastrar Usuário");
+        cadastrarUsuarioItem.setOnAction(e -> cadastrarUsuario());
+
+        MenuItem editarPermissoesItem = new MenuItem("Editar Permissões");
+        editarPermissoesItem.setOnAction(e -> editarPermissoes());
+
+        usuarioMenu.getItems().addAll(cadastrarUsuarioItem, editarPermissoesItem);
+        menuBar.getMenus().add(usuarioMenu);
+        layout.getChildren().add(menuBar);
 
         // Resumo Rápido
         Label resumoLabel = new Label("Resumo Rápido:");
@@ -234,5 +247,19 @@ public class TelaPrincipal {
     private void reprovarSolicitacao(Solicitacao solicitacao) {
         solicitacaoService.atualizarStatusSolicitacao(solicitacao, StatusSolicitacao.REPROVADA);
         refreshTable();
+    }
+
+    private void cadastrarUsuario() {
+        // Lógica para cadastrar um novo usuário
+        System.out.println("Cadastrar Usuário");
+    }
+
+    private void editarPermissoes() {
+        // Lógica para editar permissões dos usuários
+        System.out.println("Editar Permissões");
+    }
+
+    public static void main(String[] args) {
+        launch(args);
     }
 }
