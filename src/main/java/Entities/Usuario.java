@@ -8,21 +8,25 @@ public class Usuario {
     private String login;
     private String senha;
     private List<String> permissoes;
+    private int idPessoa;
 
     // Construtor original
-    public Usuario(int id, String login, String senha) {
-        this.id = id;
-        this.login = login;
-        this.senha = senha;
-        this.permissoes = new ArrayList<>();
-    }
+//    public Usuario(int id, String login, String senha) {
+//        this.id = id;
+//        this.login = login;
+//        this.senha = senha;
+//        this.permissoes = new ArrayList<>();
+//    }
 
     // Construtor adicional
-    public Usuario(int id, String login, String senha, List<String> permissoes) {
+
+
+    public Usuario(int id, String login, String senha, List<String> permissoes, int idPessoa) {
         this.id = id;
         this.login = login;
         this.senha = senha;
         this.permissoes = permissoes;
+        this.idPessoa = idPessoa;
     }
 
     // Getters e setters
@@ -44,6 +48,14 @@ public class Usuario {
 
     public List<String> getPermissoes() {
         return permissoes;
+    }
+
+    public int getIdPessoa() {
+        return idPessoa;
+    }
+
+    public void setIdPessoa(int idPessoa) {
+        this.idPessoa = idPessoa;
     }
 
     public boolean isAdmin() {
