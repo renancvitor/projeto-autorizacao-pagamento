@@ -1,18 +1,25 @@
 package Entities;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 
 public class Pessoa {
     private int id;
     private String nome;
-    private LocalDateTime datanascimento;
+    private LocalDate datanascimento;
+    private Departamento departamento;
+    private Cargo cargo;
+    private String cpf;
 
-    // Construtor
+    public Pessoa() {
+    }
 
-    public Pessoa(int id, String nome, LocalDateTime datanascimento) {
+    public Pessoa(int id, String nome, LocalDate datanascimento, Departamento departamento, Cargo cargo, String cpf) {
         this.id = id;
         this.nome = nome;
         this.datanascimento = datanascimento;
+        this.departamento = departamento;
+        this.cargo = cargo;
+        this.cpf = cpf;
     }
 
     public int getId() {
@@ -31,11 +38,35 @@ public class Pessoa {
         this.nome = nome;
     }
 
-    public LocalDateTime getDatanascimento() {
+    public LocalDate getDatanascimento() {
         return datanascimento;
     }
 
-    public void setDatanascimento(LocalDateTime datanascimento) {
+    public void setDatanascimento(LocalDate datanascimento) {
         this.datanascimento = datanascimento;
+    }
+
+    public Departamento getDepartamento() {
+        return departamento;
+    }
+
+    public void setDepartamento(Departamento departamento) {
+        this.departamento = departamento;
+    }
+
+    public Cargo getCargo() {
+        return cargo;
+    }
+
+    public void setCargo(Cargo cargo) {
+        this.cargo = cargo;
+    }
+
+    public String getCpf() {
+        return cpf;
+    }
+
+    public void setCpf(String cpf) {
+        this.cpf = cpf;
     }
 }

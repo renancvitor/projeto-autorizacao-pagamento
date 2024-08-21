@@ -12,6 +12,7 @@ module org.projetoexecutavel.projetoautorizacaopagamento {
     requires com.almasb.fxgl.all;
     requires java.sql;
     requires com.google.protobuf;
+    requires java.desktop;
 
     opens org.projetoexecutavel.projetoautorizacaopagamento to javafx.fxml;
     exports org.projetoexecutavel.projetoautorizacaopagamento;
