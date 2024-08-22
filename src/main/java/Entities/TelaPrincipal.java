@@ -1,10 +1,7 @@
 package Entities;
 
 import DAO.SolicitacaoDAO;
-import Servicoes.Solicitacao;
-import Servicoes.SolicitacaoService;
-import Servicoes.StatusSolicitacao;
-import Servicoes.TelaSolicitacao;
+import Servicoes.*;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.beans.property.SimpleStringProperty;
@@ -190,6 +187,15 @@ public class TelaPrincipal extends Application {
 
         table.getColumns().addAll(idCol, fornecedorCol, descricaoCol, dataCriacaoCol, dataPagamentoCol, formaPagamentoCol, valorTotalCol, statusCol, approveCol, rejectCol);
 
+        // Botão cadastro de pessoa
+        Button abrirCadastroPessoaButton = new Button("Cadastrar Pessoa");
+
+        // Ação botão cadastro pessoa
+        abrirCadastroPessoaButton.setOnAction(event -> abrirCadastroPessoa());
+
+        // Adiciona botão ao layout
+        layout.getChildren().add(abrirCadastroPessoaButton);
+
         // Layout Principal
         layout.getChildren().add(topoLayout);
         layout.getChildren().add(table);
@@ -208,6 +214,20 @@ public class TelaPrincipal extends Application {
 
         // Carrega as solicitações pendentes na tabela
         refreshTable();
+    }
+
+    private void abrirCadastroPessoa(Stage primartStage) {
+        // Layout TelaCadastroPessoa
+        TelaCadastroPessoa telaCadastroPessoa = new TelaCadastroPessoa();
+
+        // Stage tela cadastro pessoa
+        Stage cadastroPessoaStage = new Stage();
+        telaCadastroPessoa.mostrarTela(cadastroPessoaStage); // Mostra tela cadastro pessoa
+
+        // Configura e exibe nova janela
+        cadastroPessoaStage.setTitle("Cadastro de Pessoa");
+        cadastroPessoaStage.initOwner(primartStage); // Define palco principal como proprietário
+        cadastroPessoaStage.show();
     }
 
     private void atualizarResumoRapido() {
