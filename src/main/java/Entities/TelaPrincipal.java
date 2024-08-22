@@ -191,7 +191,7 @@ public class TelaPrincipal extends Application {
         Button abrirCadastroPessoaButton = new Button("Cadastrar Pessoa");
 
         // Ação botão cadastro pessoa
-        abrirCadastroPessoaButton.setOnAction(event -> abrirCadastroPessoa());
+        abrirCadastroPessoaButton.setOnAction(event -> abrirCadastroPessoa(primaryStage));
 
         // Adiciona botão ao layout
         layout.getChildren().add(abrirCadastroPessoaButton);
