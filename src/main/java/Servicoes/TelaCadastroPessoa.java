@@ -10,7 +10,6 @@ import javafx.scene.control.*;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
-import javax.swing.*;
 import java.sql.Connection;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -40,20 +39,10 @@ public class TelaCadastroPessoa {
         cpfField.setPromptText("000.000.000-00");
 
         // Máscara data
-        dataNascimentoField.textProperty().addListener(new ChangeListener<String>() {
-            @Override
-            public void changed(ObservableValue<? extends String> observableValue, String oldValue, String newValue) {
-                dataNascimentoField.setText(formatInputAsDate(newValue));
-            }
-        });
+        dataNascimentoField.textProperty().addListener((observableValue, oldValue, newValue) -> dataNascimentoField.setText(formatInputAsDate(newValue)));
 
         // Máscara CPF
-        cpfField.textProperty().addListener(new ChangeListener<String>() {
-            @Override
-            public void changed(ObservableValue<? extends String> observableValue, String oldValue, String newValue) {
-                cpfField.setText(formatInputAsCPF(newValue));
-            }
-        });
+        cpfField.textProperty().addListener((observableValue, oldValue, newValue) -> cpfField.setText(formatInputAsCPF(newValue)));
 
         // Botão salvar
         Button salvarButton = new Button("Salvar");
