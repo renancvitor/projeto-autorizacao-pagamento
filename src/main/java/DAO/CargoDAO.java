@@ -13,7 +13,7 @@ public class CargoDAO {
         this.connection = connection;
     }
 
-    public void salvar(Cargo cargo) throws SQLException {
+    public void salvarCargo(Cargo cargo) throws SQLException {
         if (cargo.getNome() == null || cargo.getNome().isEmpty()) {
             throw new IllegalArgumentException("Nome do cargo não pode ser vazio.");
         }
