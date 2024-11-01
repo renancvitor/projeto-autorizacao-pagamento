@@ -1,8 +1,10 @@
 package Servicoes;
 
 import Application.MainApp;
+import DAO.PessoaDAO;
 import Entities.Cargo;
 import Entities.Departamento;
+import Entities.Pessoa;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.scene.Scene;
@@ -11,12 +13,17 @@ import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
 import java.sql.Connection;
+import java.sql.SQLException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 
 public class TelaCadastroPessoa {
+    private Connection connection;
 
+    public TelaCadastroPessoa(Connection connection) {
+        this.connection = connection;
+    }
     // Definindo formato padrão data
     private static final String DATE_FORMAT = "dd/MM/yyyy";
 
@@ -52,12 +59,21 @@ public class TelaCadastroPessoa {
             String cpf = cpfField.getText();
 
             if (dataNascimento != null && isCPFValid(cpf)) {
-                // Quando os dados são válidos
-                System.out.println("Nome: " + nome);
-                System.out.println("Data de Nascimento: " + dataNascimento);
-                System.out.println("CPF: " + cpf);
+                // Cria o objeto Pessoa com os dados do formulário
+                Pessoa pessoa = new Pessoa();
+                pessoa.setNome(nome);
+                pessoa.setDatanascimento(dataNascimento);
+                pessoa.setCpf(cpf);
+
+                try {
+                    // Salva no banco de dados
+                    PessoaDAO pessoaDAO = new PessoaDAO(connection); // Supondo que 'connection' está disponível aqui
+                    pessoaDAO.salvarPessoa(pessoa);
+                    System.out.println("Pessoa salva com sucesso!");
+                } catch (SQLException e) {
+                    System.err.println("Erro ao salvar pessoa: " + e.getMessage());
+                }
             } else {
-                // Retorna erro quando data nascimento ou CPF são inválidos
                 System.out.println("Data de nascimento ou CPF inválido.");
             }
         });

@@ -217,11 +217,12 @@ public class TelaPrincipal extends Application {
     }
 
     private void abrirCadastroPessoa(Stage primartStage) {
-        // Layout TelaCadastroPessoa
-        TelaCadastroPessoa telaCadastroPessoa = new TelaCadastroPessoa();
-
         // Stage tela cadastro pessoa
         Stage cadastroPessoaStage = new Stage();
+        cadastroPessoaStage.initOwner(primartStage);
+
+        // Layout TelaCadastroPessoa
+        TelaCadastroPessoa telaCadastroPessoa = new TelaCadastroPessoa(connection);
         telaCadastroPessoa.mostrarTela(cadastroPessoaStage); // Mostra tela cadastro pessoa
 
         // Configura e exibe nova janela
