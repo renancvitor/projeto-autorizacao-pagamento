@@ -72,7 +72,7 @@ public class TelaPrincipal extends Application {
         MenuItem cadastrarDeparamentoItem = new MenuItem("Cadastrar Departamento");
         cadastrarDeparamentoItem.setOnAction(e -> cadastrarDepartamento());
 
-        MenuItem cadastrarCargoItem = new MenuItem("Cadastrar Departamento");
+        MenuItem cadastrarCargoItem = new MenuItem("Cadastrar Cargo");
         cadastrarCargoItem.setOnAction(e -> cadastrarCargo());
 
         funcionarioMenu.getItems().addAll(cadastrarDeparamentoItem, cadastrarCargoItem);
@@ -285,8 +285,9 @@ public class TelaPrincipal extends Application {
     }
 
     private void cadastrarUsuario() {
-        // Lógica para cadastrar um novo usuário
-        System.out.println("Cadastrar Usuário");
+        Stage cadastroUsuarioStage = new Stage();
+        TelaCadastroUsuario telaCadastroUsuario = new TelaCadastroUsuario(connection); // Construtor que aceita a conexão
+        telaCadastroUsuario.start(cadastroUsuarioStage); // Exibe a tela de cadastro do usuário
     }
 
     private void editarPermissoes() {
@@ -295,8 +296,10 @@ public class TelaPrincipal extends Application {
     }
 
     private void cadastrarDepartamento() {
-        // Lógica para cadastrar um novo usuário
-        System.out.println("Cadastrar Departamento");
+        Stage cadastroDepartamentoStage = new Stage();
+        TelaCadastroDepartamento telaCadastroDepartamento = new TelaCadastroDepartamento();
+        telaCadastroDepartamento.setConnection(connection); // Configura a conexão
+        telaCadastroDepartamento.start(cadastroDepartamentoStage); // Exibe a tela de cadastro do departamento
     }
 
     private void cadastrarCargo() {
