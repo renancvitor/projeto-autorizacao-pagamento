@@ -52,7 +52,7 @@ public class TelaPrincipal extends Application {
         layout.getChildren().add(welcomeLabel);
 
         // Menu para gerenciar usuários
-        MenuBar menuBar = new MenuBar();
+        MenuBar menuBarUser = new MenuBar();
         Menu usuarioMenu = new Menu("Gerenciar Usuários");
 
         MenuItem cadastrarUsuarioItem = new MenuItem("Cadastrar Usuário");
@@ -62,8 +62,22 @@ public class TelaPrincipal extends Application {
         editarPermissoesItem.setOnAction(e -> editarPermissoes());
 
         usuarioMenu.getItems().addAll(cadastrarUsuarioItem, editarPermissoesItem);
-        menuBar.getMenus().add(usuarioMenu);
-        layout.getChildren().add(menuBar);
+        menuBarUser.getMenus().add(usuarioMenu);
+        layout.getChildren().add(menuBarUser);
+
+        // Menu para gerenciar departamentos e cargos
+        MenuBar menuBarFunc = new MenuBar();
+        Menu funcionarioMenu = new Menu("Gerenciar funcionários");
+
+        MenuItem cadastrarDeparamentoItem = new MenuItem("Cadastrar Departamento");
+        cadastrarDeparamentoItem.setOnAction(e -> cadastrarDepartamento());
+
+        MenuItem cadastrarCargoItem = new MenuItem("Cadastrar Departamento");
+        cadastrarCargoItem.setOnAction(e -> cadastrarCargo());
+
+        funcionarioMenu.getItems().addAll(cadastrarDeparamentoItem, cadastrarCargoItem);
+        menuBarFunc.getMenus().add(funcionarioMenu);
+        layout.getChildren().add(menuBarFunc);
 
         // Resumo Rápido
         Label resumoLabel = new Label("Resumo Rápido:");
@@ -278,6 +292,16 @@ public class TelaPrincipal extends Application {
     private void editarPermissoes() {
         // Lógica para editar permissões dos usuários
         System.out.println("Editar Permissões");
+    }
+
+    private void cadastrarDepartamento() {
+        // Lógica para cadastrar um novo usuário
+        System.out.println("Cadastrar Departamento");
+    }
+
+    private void cadastrarCargo() {
+        // Lógica para cadastrar um novo usuário
+        System.out.println("Cadastrar Cargo");
     }
 
     public static void main(String[] args) {
