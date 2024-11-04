@@ -23,9 +23,6 @@ public class TelaCadastroDepartamento extends Application {
         connection = conn;
     }
 
-//    public TelaCadastroDepartamento(Connection connection) {
-//        this.connection = connection;
-
     @Override
     public void start(Stage primaryStage) {
         if (connection == null) {

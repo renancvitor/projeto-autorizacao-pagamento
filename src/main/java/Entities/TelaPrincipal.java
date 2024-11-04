@@ -303,8 +303,10 @@ public class TelaPrincipal extends Application {
     }
 
     private void cadastrarCargo() {
-        // Lógica para cadastrar um novo usuário
-        System.out.println("Cadastrar Cargo");
+        Stage cadastroCargoStage = new Stage();
+        TelaCadastroCargo telaCadastroCargo = new TelaCadastroCargo();
+        telaCadastroCargo.setConnection(connection);
+        telaCadastroCargo.start(cadastroCargoStage);
     }
 
     public static void main(String[] args) {
