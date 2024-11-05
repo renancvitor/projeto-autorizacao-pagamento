@@ -1,6 +1,8 @@
 package Servicoes;
 
 import Application.MainApp;
+import DAO.CargoDAO;
+import DAO.DepartamentoDAO;
 import DAO.PessoaDAO;
 import Entities.Cargo;
 import Entities.Departamento;
@@ -17,9 +19,13 @@ import java.sql.SQLException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
+import java.util.List;
 
 public class TelaCadastroPessoa {
     private Connection connection;
+
+    private ComboBox<Departamento> departamentoComboBox;
+    private ComboBox<Cargo> cargoComboBox;
 
     public TelaCadastroPessoa(Connection connection) {
         this.connection = connection;
@@ -45,15 +51,13 @@ public class TelaCadastroPessoa {
         TextField cpfField = new TextField();
         cpfField.setPromptText("000.000.000-00");
 
-        // Campo Departamento
-        Label departamentoLabel = new Label("Departamento:");
-        TextField departamentoField = new TextField();
-        departamentoField.setPromptText("");
+        departamentoComboBox = new ComboBox<>();
+        cargoComboBox = new ComboBox<>();
+        departamentoComboBox.setPromptText("Selecionar Departamento");
+        cargoComboBox.setPromptText("Selecionar Cargo");
 
-        // Campo Cargo
-        Label cargoLabel = new Label("Cargo:");
-        TextField cargoField = new TextField();
-        cargoField.setPromptText("");
+        carregarDepartamentos();
+        carregarCargos();
 
         // Máscara data
         dataNascimentoField.textProperty().addListener((observableValue, oldValue, newValue) -> dataNascimentoField.setText(formatInputAsDate(newValue)));
@@ -68,12 +72,18 @@ public class TelaCadastroPessoa {
             LocalDate dataNascimento = parseDate(dataNascimentoField.getText());
             String cpf = cpfField.getText();
 
+            // Captura o departamento e cargo selecionados
+            Departamento departamentoSelecionado = departamentoComboBox.getValue();
+            Cargo cargoSelecionado = cargoComboBox.getValue();
+
             if (dataNascimento != null && isCPFValid(cpf)) {
                 // Cria o objeto Pessoa com os dados do formulário
                 Pessoa pessoa = new Pessoa();
                 pessoa.setNome(nome);
                 pessoa.setDatanascimento(dataNascimento);
                 pessoa.setCpf(cpf);
+                pessoa.setDepartamento(departamentoSelecionado); // Atribui o departamento selecionado
+                pessoa.setCargo(cargoSelecionado); // Atribui o cargo selecionado
 
                 try {
                     // Salva no banco de dados
@@ -89,13 +99,32 @@ public class TelaCadastroPessoa {
         });
 
         // Componentes layout
-        layout.getChildren().addAll(nomeLabel, nomeField, dataNascimentoLabel, dataNascimentoField, cpfLabel, cpfField, salvarButton);
+        layout.getChildren().addAll(
+                nomeLabel, nomeField,
+                dataNascimentoLabel, dataNascimentoField,
+                cpfLabel, cpfField,
+                departamentoComboBox, cargoComboBox,
+                salvarButton
+        );
+        // layout.getChildren().addAll(nomeLabel, nomeField, dataNascimentoLabel, dataNascimentoField, cpfLabel, cpfField, salvarButton);
 
         // Confiração cena e palco
-        Scene scene = new Scene(layout, 300, 250);
+        Scene scene = new Scene(layout, 400, 350);
         primaryStage.setScene(scene);
         primaryStage.setTitle("Cadastro de Pessoa");
         primaryStage.show();
+    }
+
+    private void carregarDepartamentos() {
+        DepartamentoDAO departamentoDAO = new DepartamentoDAO(connection);
+        List<Departamento> departamentos = departamentoDAO.buscarTodosDepartamentos();
+        departamentoComboBox.getItems().addAll(departamentos);
+    }
+
+    private void carregarCargos() {
+        CargoDAO cargoDAO = new CargoDAO(connection);
+        List<Cargo> cargos = cargoDAO.buscarTodosCargos();
+        cargoComboBox.getItems().addAll(cargos);
     }
 
     // Método máscara data
@@ -146,5 +175,4 @@ public class TelaCadastroPessoa {
             return null; // Caso a data não possa ser analisada
         }
     }
-
 }

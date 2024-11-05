@@ -4,7 +4,11 @@ import Entities.Departamento;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
+
 
 public class DepartamentoDAO {
     private Connection connection;
@@ -25,5 +29,25 @@ public class DepartamentoDAO {
             System.err.println("Erro ao salvar departamento: " + e.getMessage());
             throw e;
         }
+    }
+
+    public List<Departamento> buscarTodosDepartamentos() {
+        List<Departamento> departamentos = new ArrayList<>();
+        String sql = "SELECT * FROM departamento"; // Nome da tabela de departamentos
+
+        try (PreparedStatement stmt = connection.prepareStatement(sql);
+             ResultSet rs = stmt.executeQuery()) {
+
+            while (rs.next()) {
+                Departamento departamento = new Departamento();
+                departamento.setId(rs.getInt("id"));
+                departamento.setNome(rs.getString("nome"));
+                departamentos.add(departamento);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return departamentos;
     }
 }

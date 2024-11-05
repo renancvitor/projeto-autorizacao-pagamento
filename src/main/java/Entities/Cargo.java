@@ -12,6 +12,9 @@ public class Cargo {
         this.nome = nome;
     }
 
+    public Cargo() {
+    }
+
     public int getId() {
         return id;
     }
@@ -26,5 +29,10 @@ public class Cargo {
 
     public void setNome(String nome) {
         this.nome = nome;
+    }
+
+    @Override
+    public String toString() {
+        return nome; // Isso garante que o ComboBox exiba o nome do departamento
     }
 }
