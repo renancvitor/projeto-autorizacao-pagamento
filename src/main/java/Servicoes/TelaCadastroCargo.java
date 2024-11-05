@@ -63,7 +63,7 @@ public class TelaCadastroCargo extends Application {
             Cargo cargo = new Cargo(0, nome);
 
             cargoDAO.salvarCargo(cargo);
-            System.out.println("Cargo criado com sucesso");
+            // System.out.println("Cargo criado com sucesso");
 
             Alert alert = new Alert(Alert.AlertType.INFORMATION, "Cargo criado com sucesso!");
             alert.show();

@@ -18,7 +18,7 @@ public class PessoaDAO {
         if (pessoa.getNome() == null || pessoa.getNome().isEmpty()) {
             throw new IllegalArgumentException("Nome da pessoa não pode ser vazio.");
         }
-        String sql = "INSERT INTO pessoa (nome, datanascimento, departamento, cargo, cpf) VALUES (?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO pessoa (nome, datanascimento, iddepartamento, idcargo, cpf) VALUES (?, ?, ?, ?, ?)";
         try (PreparedStatement stmt = connection.prepareStatement(sql)) {
             stmt.setString(1, pessoa.getNome());
             stmt.setDate(2, Date.valueOf(pessoa.getDatanascimento()));

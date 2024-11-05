@@ -81,20 +81,27 @@ public class TelaCadastroPessoa {
                 Pessoa pessoa = new Pessoa();
                 pessoa.setNome(nome);
                 pessoa.setDatanascimento(dataNascimento);
-                pessoa.setCpf(cpf);
                 pessoa.setDepartamento(departamentoSelecionado); // Atribui o departamento selecionado
                 pessoa.setCargo(cargoSelecionado); // Atribui o cargo selecionado
+                pessoa.setCpf(cpf);
 
                 try {
                     // Salva no banco de dados
                     PessoaDAO pessoaDAO = new PessoaDAO(connection); // Supondo que 'connection' está disponível aqui
                     pessoaDAO.salvarPessoa(pessoa);
-                    System.out.println("Pessoa salva com sucesso!");
+                    // System.out.println("Pessoa salva com sucesso!");
+
+                    Alert alert = new Alert(Alert.AlertType.INFORMATION, "Pessoa salva com sucesso!");
+                    alert.show();
+
                 } catch (SQLException e) {
-                    System.err.println("Erro ao salvar pessoa: " + e.getMessage());
+                    Alert alert = new Alert(Alert.AlertType.ERROR, "Erro ao salvar pessoa: " + e.getMessage());
+                    alert.show();
+
+                    // System.err.println("Erro ao salvar pessoa: " + e.getMessage());
                 }
             } else {
-                System.out.println("Data de nascimento ou CPF inválido.");
+                System.out.println("Data de nascimento ou CPF inválidos.");
             }
         });
 
@@ -106,7 +113,6 @@ public class TelaCadastroPessoa {
                 departamentoComboBox, cargoComboBox,
                 salvarButton
         );
-        // layout.getChildren().addAll(nomeLabel, nomeField, dataNascimentoLabel, dataNascimentoField, cpfLabel, cpfField, salvarButton);
 
         // Confiração cena e palco
         Scene scene = new Scene(layout, 400, 350);
