@@ -45,6 +45,16 @@ public class TelaCadastroPessoa {
         TextField cpfField = new TextField();
         cpfField.setPromptText("000.000.000-00");
 
+        // Campo Departamento
+        Label departamentoLabel = new Label("Departamento:");
+        TextField departamentoField = new TextField();
+        departamentoField.setPromptText("");
+
+        // Campo Cargo
+        Label cargoLabel = new Label("Cargo:");
+        TextField cargoField = new TextField();
+        cargoField.setPromptText("");
+
         // Máscara data
         dataNascimentoField.textProperty().addListener((observableValue, oldValue, newValue) -> dataNascimentoField.setText(formatInputAsDate(newValue)));
 

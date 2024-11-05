@@ -201,14 +201,15 @@ public class TelaPrincipal extends Application {
 
         table.getColumns().addAll(idCol, fornecedorCol, descricaoCol, dataCriacaoCol, dataPagamentoCol, formaPagamentoCol, valorTotalCol, statusCol, approveCol, rejectCol);
 
-        // Botão cadastro de pessoa
-        Button abrirCadastroPessoaButton = new Button("Cadastrar Pessoa");
+        MenuBar menuBarPessoa = new MenuBar();
+        Menu pessoaMenu = new Menu("Cadastrar");
 
-        // Ação botão cadastro pessoa
-        abrirCadastroPessoaButton.setOnAction(event -> abrirCadastroPessoa(primaryStage));
+        MenuItem cadastrarPessoaItem = new MenuItem("Cadastrar Pessoa");
+        cadastrarPessoaItem.setOnAction(e -> abrirCadastroPessoa(primaryStage));
 
-        // Adiciona botão ao layout
-        layout.getChildren().add(abrirCadastroPessoaButton);
+        pessoaMenu.getItems().add(cadastrarPessoaItem);
+        menuBarPessoa.getMenus().add(pessoaMenu);
+        layout.getChildren().add(menuBarPessoa);
 
         // Layout Principal
         layout.getChildren().add(topoLayout);
@@ -241,7 +242,6 @@ public class TelaPrincipal extends Application {
 
         // Configura e exibe nova janela
         cadastroPessoaStage.setTitle("Cadastro de Pessoa");
-        cadastroPessoaStage.initOwner(primartStage); // Define palco principal como proprietário
         cadastroPessoaStage.show();
     }
 
