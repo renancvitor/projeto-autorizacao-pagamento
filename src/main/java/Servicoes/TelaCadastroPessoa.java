@@ -89,7 +89,6 @@ public class TelaCadastroPessoa {
                     // Salva no banco de dados
                     PessoaDAO pessoaDAO = new PessoaDAO(connection); // Supondo que 'connection' está disponível aqui
                     pessoaDAO.salvarPessoa(pessoa);
-                    // System.out.println("Pessoa salva com sucesso!");
 
                     Alert alert = new Alert(Alert.AlertType.INFORMATION, "Pessoa salva com sucesso!");
                     alert.show();
@@ -97,8 +96,6 @@ public class TelaCadastroPessoa {
                 } catch (SQLException e) {
                     Alert alert = new Alert(Alert.AlertType.ERROR, "Erro ao salvar pessoa: " + e.getMessage());
                     alert.show();
-
-                    // System.err.println("Erro ao salvar pessoa: " + e.getMessage());
                 }
             } else {
                 System.out.println("Data de nascimento ou CPF inválidos.");

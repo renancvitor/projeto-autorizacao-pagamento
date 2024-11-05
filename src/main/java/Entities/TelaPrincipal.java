@@ -79,6 +79,24 @@ public class TelaPrincipal extends Application {
         menuBarFunc.getMenus().add(funcionarioMenu);
         layout.getChildren().add(menuBarFunc);
 
+        // Menu para cadastrar pessoas
+        MenuBar menuBarPessoa = new MenuBar();
+        Menu pessoaMenu = new Menu("Cadastrar");
+
+        MenuItem cadastrarPessoaItem = new MenuItem("Cadastrar Pessoa");
+        cadastrarPessoaItem.setOnAction(e -> abrirCadastroPessoa(primaryStage));
+
+        pessoaMenu.getItems().add(cadastrarPessoaItem);
+        menuBarPessoa.getMenus().add(pessoaMenu);
+        layout.getChildren().add(menuBarPessoa);
+
+        HBox menuBarContainer = new HBox();
+        menuBarContainer.setSpacing(10);
+
+        menuBarContainer.getChildren().addAll(menuBarUser, menuBarFunc, menuBarPessoa);
+
+        layout.getChildren().add(menuBarContainer);
+
         // Resumo Rápido
         Label resumoLabel = new Label("Resumo Rápido:");
         totalPendentesLabel = new Label();
@@ -200,16 +218,6 @@ public class TelaPrincipal extends Application {
         rejectCol.setCellFactory(cellFactoryReject);
 
         table.getColumns().addAll(idCol, fornecedorCol, descricaoCol, dataCriacaoCol, dataPagamentoCol, formaPagamentoCol, valorTotalCol, statusCol, approveCol, rejectCol);
-
-        MenuBar menuBarPessoa = new MenuBar();
-        Menu pessoaMenu = new Menu("Cadastrar");
-
-        MenuItem cadastrarPessoaItem = new MenuItem("Cadastrar Pessoa");
-        cadastrarPessoaItem.setOnAction(e -> abrirCadastroPessoa(primaryStage));
-
-        pessoaMenu.getItems().add(cadastrarPessoaItem);
-        menuBarPessoa.getMenus().add(pessoaMenu);
-        layout.getChildren().add(menuBarPessoa);
 
         // Layout Principal
         layout.getChildren().add(topoLayout);
