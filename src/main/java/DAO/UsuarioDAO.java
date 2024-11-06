@@ -15,30 +15,7 @@ public class UsuarioDAO {
     public UsuarioDAO(Connection connection) {
         this.connection = connection;
     }
-
-    // Referência para alteração / exclusão.
-//    public Usuario getUsuarioById(int id) throws SQLException {
-//        String sql = "SELECT * FROM usuarios WHERE id = ?";
-//        try (PreparedStatement stmt = connection.prepareStatement(sql)) {
-//            stmt.setInt(1, id);
-//            try (ResultSet rs = stmt.executeQuery()) {
-//                if (rs.next()) {
-//                    int userId = rs.getInt("id");
-//                    String login = rs.getString("login");
-//                    String senha = rs.getString("senha");
-//                    Integer idPessoa = rs.getInt("idPessoa");
-//
-//                    // Obter permissões do usuário
-//                    List<String> permissoes = getPermissoesById(userId);
-//
-//                    return new Usuario(userId, login, senha, permissoes, idPessoa);
-//                } else {
-//                    return null; // ou lance uma exceção se preferir
-//                }
-//            }
-//        }
-//    }
-
+    
     public Usuario getUsuarioByLogin(String login, String senha) throws SQLException {
         String sql = "SELECT * FROM usuarios WHERE login = ? AND senha = ?";
         try (PreparedStatement stmt = connection.prepareStatement(sql)) {
