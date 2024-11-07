@@ -2,16 +2,27 @@ package DAO;
 
 import Entities.Pessoa;
 
-import java.sql.Connection;
-import java.sql.Date;
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
+import java.sql.*;
 
 public class PessoaDAO {
     private Connection connection;
 
     public PessoaDAO(Connection connection) {
         this.connection = connection;
+    }
+
+    public boolean existeCpf(String cpf) {
+        String sql = "SELECT COUNT(*) FROM Pessoa WHERE cpf = ?";
+        try (PreparedStatement stmt = connection.prepareStatement(sql)) {
+            stmt.setString(1, cpf);
+            ResultSet rs = stmt.executeQuery();
+            if (rs.next()) {
+                return rs.getInt(1) > 0;
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
     }
 
     public void salvarPessoa(Pessoa pessoa) throws SQLException {

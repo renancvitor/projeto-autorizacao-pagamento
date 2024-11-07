@@ -1,7 +1,12 @@
 package Entities;
 
 import DAO.PessoaDAO;
+import Servicoes.TelaCadastroPessoa;
+import javafx.scene.control.Alert;
+import javafx.scene.control.ComboBox;
 
+import java.sql.Connection;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -14,12 +19,12 @@ public class Usuario {
     private List<String> permissoes;
 
     // Construtor adicional
-    public Usuario(int id, String login, String senha, String cpf, List<String> permissoes) {
+    public Usuario(int id, String login, String senha, List<String> permissoes, String cpf) {
         this.id = id;
         this.login = login;
         this.senha = senha;
-        this.cpf = cpf;
         this.permissoes = permissoes;
+        this.cpf = cpf;
     }
 
     public int getId() {
@@ -62,9 +67,12 @@ public class Usuario {
         this.permissoes = permissoes;
     }
 
-    // Validação CPF
-    public boolean validarCpfPessoa(PessoaDAO pessoaDAO) {
-        return pessoaDAO.existeCpf(cpf);
+    public boolean isAdmin() {
+        return permissoes.contains("ADMIN");
+    }
+
+    public boolean hasPermission(String permissao) {
+        return permissoes.contains(permissao);
     }
 
     // Validação login único
@@ -81,12 +89,12 @@ public class Usuario {
         return Objects.hash(login);
     }
 
-    public boolean isAdmin() {
-        return permissoes.contains("ADMIN");
+    // Método para criar ComboBox de permissões
+    public static ComboBox<String> criarComboBoxPermissoes() {
+        ComboBox<String> comboBox = new ComboBox<>();
+        comboBox.getItems().addAll("Admin", "User", "Viewer");
+        return comboBox;
     }
 
-    public boolean hasPermission(String permissao) {
-        return permissoes.contains(permissao);
-    }
 }
 

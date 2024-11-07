@@ -12,11 +12,11 @@ public class CadastroUsuarios {
         this.usuarioDAO = usuarioDAO;
     }
 
-    public void cadastrarUsuario(int id, String login, String senha, List<String> permissoes, int idPessoa) throws SQLException {
+    public void cadastrarUsuario(int id, String login, String senha, List<String> permissoes, String cpf) throws SQLException {
         Usuario usuarioLogado = usuarioDAO.getUsuarioByLogin(login, senha);
 
         if (usuarioLogado.isAdmin()) {
-            Usuario novoUsuario = new Usuario(0, login, senha, permissoes, idPessoa);
+            Usuario novoUsuario = new Usuario(0, login, senha, permissoes, cpf);
             usuarioDAO.inserirUsuario(novoUsuario);
         } else {
             throw new RuntimeException("Apenas administradores podem cadastrar novos usuários.");

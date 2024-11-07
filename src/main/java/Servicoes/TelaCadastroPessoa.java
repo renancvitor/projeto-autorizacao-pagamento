@@ -30,6 +30,7 @@ public class TelaCadastroPessoa {
     public TelaCadastroPessoa(Connection connection) {
         this.connection = connection;
     }
+
     // Definindo formato padrão data
     private static final String DATE_FORMAT = "dd/MM/yyyy";
 
@@ -161,7 +162,7 @@ public class TelaCadastroPessoa {
     }
 
     // Valida CPF
-    private boolean isCPFValid(String cpf) {
+    public boolean isCPFValid(String cpf) {
         // Remoção caracteres especiais para validação
         String digitsOnly = cpf.replaceAll("[^\\d]", "");
 
