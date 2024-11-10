@@ -16,15 +16,17 @@ public class Usuario {
     private String login;
     private String senha;
     private String cpf;
+    private int idTipoUsuario;
     private List<String> permissoes;
 
     // Construtor adicional
-    public Usuario(int id, String login, String senha, List<String> permissoes, String cpf) {
+    public Usuario(int id, String login, String senha, List<String> permissoes, String cpf, int idTipoUsuario) {
         this.id = id;
         this.login = login;
         this.senha = senha;
         this.permissoes = permissoes;
         this.cpf = cpf;
+        this.idTipoUsuario = idTipoUsuario;
     }
 
     public int getId() {
@@ -41,6 +43,10 @@ public class Usuario {
 
     public String getCpf() {
         return cpf;
+    }
+
+    public int getIdTipoUsuario() {
+        return idTipoUsuario;
     }
 
     public List<String> getPermissoes() {
@@ -61,6 +67,10 @@ public class Usuario {
 
     public void setCpf(String cpf) {
         this.cpf = cpf;
+    }
+
+    public void setIdTipoUsuario(int idTipoUsuario) {
+        this.idTipoUsuario = idTipoUsuario;
     }
 
     public void setPermissoes(List<String> permissoes) {
@@ -94,6 +104,13 @@ public class Usuario {
         ComboBox<String> comboBox = new ComboBox<>();
         comboBox.getItems().addAll("Admin", "User", "Viewer");
         return comboBox;
+    }
+
+    public void adicionarPermissao(String permissao) {
+        if (this.permissoes == null) {
+            this.permissoes = new ArrayList<>();
+        }
+        this.permissoes.add(permissao);
     }
 
 }

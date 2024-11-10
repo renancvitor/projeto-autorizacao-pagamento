@@ -1,11 +1,11 @@
 package Servicoes;
 
+import DAO.UserPermissionsDAO;
 import javafx.scene.control.*;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import java.sql.Connection;
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.List;
 
 import DAO.UsuarioDAO;
@@ -14,9 +14,11 @@ import Entities.Usuario;
 public class TelaCadastroUsuario {
 
     private Connection connection;
+    private ComboBox<String> tipoUsuarioComboBox;
 
     public TelaCadastroUsuario(Connection connection) {
         this.connection = connection;
+        this.tipoUsuarioComboBox = new ComboBox<>();
     }
 
     public void start(Stage stage) {
@@ -41,10 +43,8 @@ public class TelaCadastroUsuario {
             }
         });
 
-        // ComboBox para seleção de permissões
-        ComboBox<String> permissaoComboBox = new ComboBox<>();
-        permissaoComboBox.getItems().addAll("ADMIN", "User", "Manager"); // Exemplos de permissões
-        permissaoComboBox.setPromptText("Selecione a Permissão");
+        // Carregar os tipos de usuários no ComboBox
+        carregarTiposUsuario();
 
         // Botão para salvar
         Button saveButton = new Button("Salvar");
@@ -54,49 +54,65 @@ public class TelaCadastroUsuario {
             String login = loginField.getText();
             String senha = senhaField.getText();
             String cpf = cpfField.getText();
-            String permissoes = permissaoComboBox.getValue();
+            String tipoUsuarioSelecionado = tipoUsuarioComboBox.getValue();
 
             // Validar campos
-            if (login.isEmpty() || senha.isEmpty() || cpf.isEmpty() || permissoes == null) {
-                // Adicionar lógica para mostrar mensagem de erro se necessário
+            if (login.isEmpty() || senha.isEmpty() || cpf.isEmpty() || tipoUsuarioSelecionado == null) {
                 Alert alert = new Alert(Alert.AlertType.WARNING, "Preencha todos os campos!");
                 alert.show();
             } else {
                 try {
                     UsuarioDAO usuarioDAO = new UsuarioDAO(connection);
 
-                    // Criar uma lista com a permissão selecionada
-                    List<String> permissoesList = new ArrayList<>();
-                    permissoesList.add(permissoes);  // Adiciona a permissão selecionada
+                    // Obtenha o idTipoUsuario com base no tipo selecionado
+                    int idTipoUsuario = getIdTipoUsuarioByNome(tipoUsuarioSelecionado);
 
-                    // Passar a lista de permissões para o construtor
-                    Usuario novoUsuario = new Usuario(0, login, senha, permissoesList, cpf);
+                    // Obtenha as permissões de acordo com o tipo de usuário selecionado
+                    UserPermissionsDAO permissionsDAO = new UserPermissionsDAO(connection);
+                    List<String> permissoes = permissionsDAO.getPermissoesByTipo(tipoUsuarioSelecionado);
+
+                    // Cria o usuário com o tipo selecionado e as permissões
+                    Usuario novoUsuario = new Usuario(0, login, senha, permissoes, cpf, idTipoUsuario);
                     usuarioDAO.inserirUsuario(novoUsuario);
+
                     Alert alert = new Alert(Alert.AlertType.INFORMATION, "Usuário cadastrado com sucesso!");
                     alert.show();
-
-                    // Fechar a janela após o cadastro
                     stage.close();
                 } catch (SQLException e) {
                     e.printStackTrace();
-                    // Adicionar lógica para exibir mensagem de erro de SQL, se necessário
                 }
             }
         });
 
-        layout.getChildren().addAll(loginField, senhaField, cpfField, permissaoComboBox, saveButton);
+        layout.getChildren().addAll(loginField, senhaField, cpfField, tipoUsuarioComboBox, saveButton);
 
         stage.setScene(new javafx.scene.Scene(layout, 300, 250));  // Define o tamanho da tela
         stage.setTitle("Cadastro de Usuário");
         stage.show();
     }
 
+    // Método para carregar os tipos de usuário no ComboBox
+    private void carregarTiposUsuario() {
+        UserPermissionsDAO permissionsDAO = new UserPermissionsDAO(connection);
+        try {
+            // Aqui você deve carregar os tipos de usuários e não as permissões
+            List<String> tiposUsuarios = permissionsDAO.getTiposUsuarios(); // Método que deve retornar os tipos de usuário
+            tipoUsuarioComboBox.getItems().setAll(tiposUsuarios);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    // Método para obter o ID do tipo de usuário com base no nome
+    private int getIdTipoUsuarioByNome(String tipoUsuarioNome) throws SQLException {
+        UserPermissionsDAO permissionsDAO = new UserPermissionsDAO(connection);
+        return permissionsDAO.getIdTipoUsuarioByNome(tipoUsuarioNome);
+    }
+
     // Método para formatar o CPF
     private String formatInputAsCPF(String input) {
-        // Limpa caracteres não numéricos
         String digitsOnly = input.replaceAll("[^\\d]", "");
 
-        // Formata inserindo pontos e traço
         if (digitsOnly.length() > 9) {
             return digitsOnly.substring(0, 3) + "." + digitsOnly.substring(3, 6) + "." + digitsOnly.substring(6, 9) + "-" + digitsOnly.substring(9);
         } else if (digitsOnly.length() > 6) {
@@ -109,10 +125,7 @@ public class TelaCadastroUsuario {
 
     // Valida CPF
     public boolean isCPFValid(String cpf) {
-        // Remoção caracteres especiais para validação
         String digitsOnly = cpf.replaceAll("[^\\d]", "");
-
-        // Valida se CPF tem 11 digitos
         return digitsOnly.length() == 11;
     }
 }

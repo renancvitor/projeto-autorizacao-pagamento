@@ -2,10 +2,7 @@ package DAO;
 
 import Entities.UserType;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -14,6 +11,25 @@ public class UserPermissionsDAO {
 
     public UserPermissionsDAO(Connection connection) {
         this.connection = connection;
+    }
+
+    public List<String> getPermissoesByTipo(String tipoUsuario) throws SQLException {
+        List<String> permissoes = new ArrayList<>();
+        String sql = "SELECT p.nome_permissao FROM permissoes p "
+                + "JOIN tipos_usuarios_permissoes tup ON p.id = tup.id_permissao "
+                + "JOIN tipos_usuarios tu ON tu.id = tup.id_tipo_usuario "
+                + "WHERE tu.tipo_usuario = ?";
+
+        try (PreparedStatement stmt = connection.prepareStatement(sql)) {
+            stmt.setString(1, tipoUsuario);  // Define o tipo de usuário na consulta
+            ResultSet rs = stmt.executeQuery();
+
+            while (rs.next()) {
+                permissoes.add(rs.getString("nome_permissao"));
+            }
+        }
+
+        return permissoes;
     }
 
     public List<String> buscarTodasPermissoes() {
@@ -86,4 +102,44 @@ public class UserPermissionsDAO {
             }
         }
     }
+
+    public List<String> getTiposUsuarios() throws SQLException {
+        List<String> tiposUsuarios = new ArrayList<>();
+        String query = "SELECT tipo_usuario FROM tipos_usuarios";  // Consulta para buscar tipos de usuários
+
+        try (Statement stmt = connection.createStatement(); ResultSet rs = stmt.executeQuery(query)) {
+            while (rs.next()) {
+                tiposUsuarios.add(rs.getString("tipo_usuario"));
+            }
+        }
+
+        return tiposUsuarios;
+    }
+
+
+    public List<String> getAllPermissions() throws SQLException {
+        List<String> permissions = new ArrayList<>();
+        String query = "SELECT nome_permissao FROM permissoes";
+        try (PreparedStatement stmt = connection.prepareStatement(query);
+             ResultSet rs = stmt.executeQuery()) {
+            while (rs.next()) {
+                permissions.add(rs.getString("nome_permissao"));
+            }
+        }
+        return permissions;
+    }
+
+    public int getIdTipoUsuarioByNome(String tipoUsuarioNome) throws SQLException {
+        String sql = "SELECT id FROM tipos_usuarios WHERE tipo_usuario = ?";
+        try (PreparedStatement stmt = connection.prepareStatement(sql)) {
+            stmt.setString(1, tipoUsuarioNome);
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getInt("id");
+                }
+            }
+        }
+        throw new SQLException("Tipo de usuário não encontrado");
+    }
+
 }
