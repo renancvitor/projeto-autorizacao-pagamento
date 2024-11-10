@@ -299,8 +299,9 @@ public class TelaPrincipal extends Application {
     }
 
     private void editarPermissoes() {
-        // Lógica para editar permissões dos usuários
-        System.out.println("Editar Permissões");
+        Stage editarPermissoesStage = new Stage();
+        TelaEditarPermissoes telaEditarPermissoes = new TelaEditarPermissoes(connection); // Passa a conexão
+        telaEditarPermissoes.start(editarPermissoesStage);
     }
 
     private void cadastrarDepartamento() {
