@@ -30,13 +30,18 @@ public class TelaPrincipal extends Application {
     private Label totalRejeitadasLabel;
     private SolicitacaoService solicitacaoService;
     private ObservableList<Solicitacao> observableList;
+    private PermissaoService permissaoService; // NOVO
+    private UsuarioController usuarioController; // NOVO
 
     public TelaPrincipal(Usuario usuario) {
         this.usuario = usuario;
         try {
             this.connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/sistema_pagamentos", "root", "123456789");
             SolicitacaoDAO solicitacaoDAO = new SolicitacaoDAO(connection);
-            this.solicitacaoService = new SolicitacaoService(solicitacaoDAO);
+            this.usuarioController = new UsuarioController(permissaoService); // NOVO
+            this.permissaoService = new PermissaoService(); // NOVO
+            // this.solicitacaoService = new SolicitacaoService(solicitacaoDAO); ANTERIOR AO ABAIXO
+            this.solicitacaoService = new SolicitacaoService(solicitacaoDAO, permissaoService); // NOVO APENAS permissaoService
             this.observableList = FXCollections.observableArrayList(); // Inicializa a ObservableList aqui
         } catch (SQLException e) {
             e.printStackTrace();
@@ -168,7 +173,8 @@ public class TelaPrincipal extends Application {
                     {
                         approveButton.setOnAction(event -> {
                             Solicitacao solicitacao = getTableView().getItems().get(getIndex());
-                            aprovarSolicitacao(solicitacao);
+                            // aprovarSolicitacao(solicitacao); ANTERIOR AO ABAIXO
+                            aprovarSolicitacao(usuario, permissaoService, solicitacao);
                         });
                     }
 
@@ -198,7 +204,8 @@ public class TelaPrincipal extends Application {
                     {
                         rejectButton.setOnAction(event -> {
                             Solicitacao solicitacao = getTableView().getItems().get(getIndex());
-                            reprovarSolicitacao(solicitacao);
+                            // reprovarSolicitacao(solicitacao); ANTERIOR AO ABAIXO
+                            reprovarSolicitacao(usuario, permissaoService, solicitacao);
                         });
                     }
 
@@ -282,19 +289,28 @@ public class TelaPrincipal extends Application {
         }
     }
 
-    private void aprovarSolicitacao(Solicitacao solicitacao) {
-        solicitacaoService.atualizarStatusSolicitacao(solicitacao, StatusSolicitacao.APROVADA);
+    // SUBSTITUÍDO PELO MÉTODO NOVO ABAIXO
+//    private void aprovarSolicitacao(Solicitacao solicitacao) {
+//        solicitacaoService.atualizarStatusSolicitacao(solicitacao, StatusSolicitacao.APROVADA);
+//    }
+    private void aprovarSolicitacao(Usuario usuario, PermissaoService permissaoService, Solicitacao solicitacao) {
+        solicitacaoService.atualizarStatusSolicitacao(usuario, permissaoService, solicitacao, StatusSolicitacao.APROVADA);
         refreshTable();
     }
 
-    private void reprovarSolicitacao(Solicitacao solicitacao) {
-        solicitacaoService.atualizarStatusSolicitacao(solicitacao, StatusSolicitacao.REPROVADA);
+    // SUBSTITUÍDO PELO MÉTODO NOVO ABAIXO
+//    private void reprovarSolicitacao(Solicitacao solicitacao) {
+//        solicitacaoService.atualizarStatusSolicitacao(solicitacao, StatusSolicitacao.REPROVADA);
+//    }
+    private void reprovarSolicitacao(Usuario usuario, PermissaoService permissaoService, Solicitacao solicitacao) {
+        solicitacaoService.atualizarStatusSolicitacao(usuario, permissaoService, solicitacao, StatusSolicitacao.REPROVADA);
         refreshTable();
     }
 
     private void cadastrarUsuario() {
         Stage cadastroUsuarioStage = new Stage();
         TelaCadastroUsuario telaCadastroUsuario = new TelaCadastroUsuario(connection); // Construtor que aceita a conexão
+        telaCadastroUsuario.setUsuarioController(usuarioController); // NOVO
         telaCadastroUsuario.start(cadastroUsuarioStage); // Exibe a tela de cadastro do usuário
     }
 

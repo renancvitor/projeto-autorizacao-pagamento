@@ -15,10 +15,15 @@ public class TelaCadastroUsuario {
 
     private Connection connection;
     private ComboBox<String> tipoUsuarioComboBox;
+    private UsuarioController usuarioController; // NOVO
 
     public TelaCadastroUsuario(Connection connection) {
         this.connection = connection;
         this.tipoUsuarioComboBox = new ComboBox<>();
+    }
+
+    public void setUsuarioController(UsuarioController usuarioController) { // NOVO
+        this.usuarioController = usuarioController;
     }
 
     public void start(Stage stage) {
