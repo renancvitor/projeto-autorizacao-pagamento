@@ -64,11 +64,14 @@ public class TelaCadastroUsuario {
                 try {
                     UsuarioDAO usuarioDAO = new UsuarioDAO(connection);
 
+                    UserPermissionsDAO permissionsDAO = new UserPermissionsDAO(connection);
+
                     // Obtenha o idTipoUsuario com base no tipo selecionado
-                    int idTipoUsuario = getIdTipoUsuarioByNome(tipoUsuarioSelecionado);
+                    // int idTipoUsuario = getIdTipoUsuarioByNome(tipoUsuarioSelecionado);
+                    int idTipoUsuario = permissionsDAO.getIdTipoUsuario(tipoUsuarioSelecionado);
 
                     // Obtenha as permissões de acordo com o tipo de usuário selecionado
-                    UserPermissionsDAO permissionsDAO = new UserPermissionsDAO(connection);
+                    // UserPermissionsDAO permissionsDAO = new UserPermissionsDAO(connection);
                     List<String> permissoes = permissionsDAO.getPermissoesByTipo(tipoUsuarioSelecionado);
 
                     // Cria o usuário com o tipo selecionado e as permissões
