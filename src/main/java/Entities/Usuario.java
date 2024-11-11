@@ -29,6 +29,11 @@ public class Usuario {
         this.idTipoUsuario = idTipoUsuario;
     }
 
+    // Método para verificar se o usuário possui uma permissão específica
+    public boolean hasPermission(List<String> permissao) {
+        return permissoes.contains(permissao);
+    }
+
     public int getId() {
         return id;
     }
@@ -100,11 +105,11 @@ public class Usuario {
     }
 
     // Método para criar ComboBox de permissões
-    public static ComboBox<String> criarComboBoxPermissoes() {
-        ComboBox<String> comboBox = new ComboBox<>();
-        comboBox.getItems().addAll("Admin", "User", "Viewer");
-        return comboBox;
-    }
+//    public static ComboBox<String> criarComboBoxPermissoes() {
+//        ComboBox<String> comboBox = new ComboBox<>();
+//        comboBox.getItems().addAll("Admin", "User", "Viewer");
+//        return comboBox;
+//    }
 
     public void adicionarPermissao(String permissao) {
         if (this.permissoes == null) {
