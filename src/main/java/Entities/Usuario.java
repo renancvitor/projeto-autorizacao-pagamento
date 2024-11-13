@@ -16,17 +16,19 @@ public class Usuario {
     private String login;
     private String senha;
     private String cpf;
-    private int idTipoUsuario;
+    // private int idTipoUsuario;
+    private UserType userType;
     private List<String> permissoes;
 
     // Construtor adicional
-    public Usuario(int id, String login, String senha, List<String> permissoes, String cpf, int idTipoUsuario) {
+    public Usuario(int id, String login, String senha, List<String> permissoes, String cpf, int idTipoUsuario, UserType userType) {
         this.id = id;
         this.login = login;
         this.senha = senha;
         this.permissoes = permissoes;
         this.cpf = cpf;
-        this.idTipoUsuario = idTipoUsuario;
+        // this.idTipoUsuario = idTipoUsuario;
+        this.userType = userType;
     }
 
     // Método para verificar se o usuário possui uma permissão específica
@@ -50,8 +52,12 @@ public class Usuario {
         return cpf;
     }
 
-    public int getIdTipoUsuario() {
-        return idTipoUsuario;
+//    public int getIdTipoUsuario() {
+//        return idTipoUsuario;
+//    }
+
+    public UserType getUserType() {
+        return userType;
     }
 
     public List<String> getPermissoes() {
@@ -74,9 +80,9 @@ public class Usuario {
         this.cpf = cpf;
     }
 
-    public void setIdTipoUsuario(int idTipoUsuario) {
-        this.idTipoUsuario = idTipoUsuario;
-    }
+//    public void setIdTipoUsuario(int idTipoUsuario) {
+//        this.idTipoUsuario = idTipoUsuario;
+//    }
 
     public void setPermissoes(List<String> permissoes) {
         this.permissoes = permissoes;

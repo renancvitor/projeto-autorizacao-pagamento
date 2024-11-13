@@ -1,5 +1,6 @@
 package DAO;
 
+import Entities.UserType;
 import Entities.Usuario;
 
 import java.sql.*;
@@ -41,6 +42,26 @@ public class UsuarioDAO {
         return false;
     }
 
+    // Método estático para obter UserType pelo id_tipo_usuario
+    private UserType getUserTypeFromId(int idTipoUsuario) {
+        return switch (idTipoUsuario) {
+            case 1 -> UserType.ADMIN;
+            case 2 -> UserType.GESTOR;
+            case 3 -> UserType.VISUALIZADOR;
+            case 4 -> UserType.COMUM;
+            default -> throw new IllegalArgumentException("Tipo de usuário inválido: " + idTipoUsuario);
+        };
+    }
+
+    private int getIdFromUserType(UserType userType) {
+        return switch (userType) {
+            case ADMIN -> 1;
+            case GESTOR -> 2;
+            case VISUALIZADOR -> 3;
+            case COMUM -> 4;
+        };
+    }
+
     public Usuario getUsuarioByLogin(String login, String senha) throws SQLException {
         String sql = "SELECT * FROM usuarios WHERE login = ? AND senha = ?";
         try (PreparedStatement stmt = connection.prepareStatement(sql)) {
@@ -53,11 +74,12 @@ public class UsuarioDAO {
                     String retrievedSenha = rs.getString("senha");
                     String cpf = rs.getString("cpf");
                     int idTipoUsuario = rs.getInt("id_tipo_usuario");
+                    UserType userType = getUserTypeFromId(idTipoUsuario);
 
                     // Obter permissões do usuário
                     List<String> permissoes = getPermissoesByUsuarioId(id);
 
-                    return new Usuario(id, retrievedLogin, retrievedSenha, permissoes, cpf, idTipoUsuario);
+                    return new Usuario(id, retrievedLogin, retrievedSenha, permissoes, cpf, idTipoUsuario, userType);
                 }
             }
         }
@@ -74,6 +96,8 @@ public class UsuarioDAO {
                 WHERE u.id = ?
             """;
 
+        // BUSCAR id_tipo_usuario banco para retornar valor válido
+
         try (PreparedStatement stmt = connection.prepareStatement(sql)) {
             stmt.setInt(1, usuarioId);
             try (ResultSet rs = stmt.executeQuery()) {
@@ -85,37 +109,6 @@ public class UsuarioDAO {
         return permissoes;
     }
 
-//    public void inserirUsuario(Usuario usuario) throws SQLException {
-//        // Valida o CPF antes de inserir o usuário
-//        int idPessoa = getIdPessoaByCpf(usuario.getCpf());
-//        if (idPessoa == -1) {
-//            throw new IllegalArgumentException("CPF não cadastrado na tabela Pessoa!");
-//        }
-//
-//        // Verifica se já existe um usuário vinculado à pessoa
-//        if (isUsuarioExistente(idPessoa)) {
-//            throw new IllegalArgumentException("Esta pessoa já tem um usuário vinculado!");
-//        }
-//
-//        // Inserir o usuário com o idpessoa ao invés de CPF
-//        String sql = "INSERT INTO usuarios (login, senha, idpessoa) VALUES (?, ?, ?)";
-//        try (PreparedStatement stmt = connection.prepareStatement(sql, PreparedStatement.RETURN_GENERATED_KEYS)) {
-//            stmt.setString(1, usuario.getLogin());
-//            stmt.setString(2, usuario.getSenha());
-//            stmt.setInt(3, idPessoa); // Usa o idpessoa para vincular o usuário
-//            stmt.executeUpdate();
-//
-//            // Recupera o id gerado automaticamente
-//            try (ResultSet generatedKeys = stmt.getGeneratedKeys()) {
-//                if (generatedKeys.next()) {
-//                    int userId = generatedKeys.getInt(1);
-//                    usuario.setId(userId);
-//                    consultarPermissoesUsuario(usuario);
-//                }
-//            }
-//        }
-//    }
-
     public void inserirUsuario(Usuario usuario) throws SQLException {
         // Valida o CPF antes de inserir o usuário
         int idPessoa = getIdPessoaByCpf(usuario.getCpf());
@@ -123,23 +116,20 @@ public class UsuarioDAO {
             throw new IllegalArgumentException("CPF não cadastrado na tabela Pessoa!");
         }
 
-        // Verifica se já existe um usuário vinculado à pessoa
         if (isUsuarioExistente(idPessoa)) {
             throw new IllegalArgumentException("Esta pessoa já tem um usuário vinculado!");
         }
 
-        // Inserir o usuário com o idpessoa, id_tipo_usuario e cpf
         String sql = "INSERT INTO usuarios (login, senha, idpessoa, id_tipo_usuario, cpf) VALUES (?, ?, ?, ?, ?)";
         try (PreparedStatement stmt = connection.prepareStatement(sql, PreparedStatement.RETURN_GENERATED_KEYS)) {
             stmt.setString(1, usuario.getLogin());
             stmt.setString(2, usuario.getSenha());
             stmt.setInt(3, idPessoa); // Usa o idpessoa para vincular o usuário
-            stmt.setInt(4, usuario.getIdTipoUsuario()); // Passa o id_tipo_usuario
-            stmt.setString(5, usuario.getCpf()); // Passa o cpf
+            stmt.setInt(4, getIdFromUserType(usuario.getUserType())); // Obtém o id_tipo_usuario do UserType
+            stmt.setString(5, usuario.getCpf());
 
             stmt.executeUpdate();
 
-            // Recupera o id gerado automaticamente
             try (ResultSet generatedKeys = stmt.getGeneratedKeys()) {
                 if (generatedKeys.next()) {
                     int userId = generatedKeys.getInt(1);
@@ -149,7 +139,6 @@ public class UsuarioDAO {
             }
         }
     }
-
 
     // Método para buscar o ID da permissão a partir do nome
     private int obterIdPermissaoPorNome(String nomePermissao) throws SQLException {
@@ -184,20 +173,5 @@ public class UsuarioDAO {
             }
         }
     }
-
-//    private void inserirPermissoesUsuario(Usuario usuario) throws SQLException {
-//        String sql = "INSERT INTO tipos_usuarios_permissoes (id_tipo_usuario, id_permissao) VALUES (?, ?)";
-//        try (PreparedStatement stmt = connection.prepareStatement(sql)) {
-//            for (String permissao : usuario.getPermissoes()) {
-//                // Obter o ID da permissão a partir do nome
-//                int idPermissao = obterIdPermissaoPorNome(permissao);
-//
-//                stmt.setInt(1, usuario.getId());
-//                stmt.setInt(2, idPermissao); // Agora estamos inserindo o ID da permissão
-//                stmt.addBatch();
-//            }
-//            stmt.executeBatch();
-//        }
-//    }
 
 }

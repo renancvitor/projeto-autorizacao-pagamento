@@ -1,6 +1,7 @@
 package Servicoes;
 
 import DAO.UserPermissionsDAO;
+import Entities.UserType;
 import javafx.scene.control.*;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
@@ -15,15 +16,25 @@ public class TelaCadastroUsuario {
 
     private Connection connection;
     private ComboBox<String> tipoUsuarioComboBox;
-    private UsuarioController usuarioController; // NOVO
+    private UsuarioController usuarioController;
 
     public TelaCadastroUsuario(Connection connection) {
         this.connection = connection;
         this.tipoUsuarioComboBox = new ComboBox<>();
     }
 
-    public void setUsuarioController(UsuarioController usuarioController) { // NOVO
+    public void setUsuarioController(UsuarioController usuarioController) {
         this.usuarioController = usuarioController;
+    }
+
+    private UserType getUserTypeFromId(int idTipoUsuario) {
+        return switch (idTipoUsuario) {
+            case 1 -> UserType.ADMIN;
+            case 2 -> UserType.GESTOR;
+            case 3 -> UserType.VISUALIZADOR;
+            case 4 -> UserType.COMUM;
+            default -> throw new IllegalArgumentException("Tipo de usuário inválido: " + idTipoUsuario);
+        };
     }
 
     public void start(Stage stage) {
@@ -68,19 +79,17 @@ public class TelaCadastroUsuario {
             } else {
                 try {
                     UsuarioDAO usuarioDAO = new UsuarioDAO(connection);
-
                     UserPermissionsDAO permissionsDAO = new UserPermissionsDAO(connection);
 
                     // Obtenha o idTipoUsuario com base no tipo selecionado
-                    // int idTipoUsuario = getIdTipoUsuarioByNome(tipoUsuarioSelecionado);
-                    int idTipoUsuario = permissionsDAO.getIdTipoUsuario(tipoUsuarioSelecionado);
+                    int idTipoUsuario = getIdTipoUsuarioByNome(tipoUsuarioSelecionado);
+                    UserType userType = getUserTypeFromId(idTipoUsuario);
 
                     // Obtenha as permissões de acordo com o tipo de usuário selecionado
-                    // UserPermissionsDAO permissionsDAO = new UserPermissionsDAO(connection);
                     List<String> permissoes = permissionsDAO.getPermissoesByTipo(tipoUsuarioSelecionado);
 
                     // Cria o usuário com o tipo selecionado e as permissões
-                    Usuario novoUsuario = new Usuario(0, login, senha, permissoes, cpf, idTipoUsuario);
+                    Usuario novoUsuario = new Usuario(0, login, senha, permissoes, cpf, idTipoUsuario, userType);
                     usuarioDAO.inserirUsuario(novoUsuario);
 
                     Alert alert = new Alert(Alert.AlertType.INFORMATION, "Usuário cadastrado com sucesso!");
@@ -103,8 +112,7 @@ public class TelaCadastroUsuario {
     private void carregarTiposUsuario() {
         UserPermissionsDAO permissionsDAO = new UserPermissionsDAO(connection);
         try {
-            // Aqui você deve carregar os tipos de usuários e não as permissões
-            List<String> tiposUsuarios = permissionsDAO.getTiposUsuarios(); // Método que deve retornar os tipos de usuário
+            List<String> tiposUsuarios = permissionsDAO.getTiposUsuarios(); // Método que retorna nomes dos tipos de usuário
             tipoUsuarioComboBox.getItems().setAll(tiposUsuarios);
         } catch (SQLException e) {
             e.printStackTrace();

@@ -39,7 +39,7 @@ public class TelaPrincipal extends Application {
             this.connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/sistema_pagamentos", "root", "123456789");
             SolicitacaoDAO solicitacaoDAO = new SolicitacaoDAO(connection);
             this.usuarioController = new UsuarioController(permissaoService); // NOVO
-            this.permissaoService = new PermissaoService(); // NOVO
+            this.permissaoService = new PermissaoService(usuario.getUserType()); // NOVO
             // this.solicitacaoService = new SolicitacaoService(solicitacaoDAO); ANTERIOR AO ABAIXO
             this.solicitacaoService = new SolicitacaoService(solicitacaoDAO, permissaoService); // NOVO APENAS permissaoService
             this.observableList = FXCollections.observableArrayList(); // Inicializa a ObservableList aqui
