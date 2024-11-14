@@ -2,6 +2,7 @@ package DAO;
 
 import Entities.UserType;
 import Entities.Usuario;
+import Servicoes.PermissaoService;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -9,9 +10,11 @@ import java.util.List;
 
 public class UsuarioDAO {
     private Connection connection;
+    private final PermissaoService permissaoService;
 
     public UsuarioDAO(Connection connection) {
         this.connection = connection;
+        this.permissaoService = new PermissaoService();
     }
 
     // Método para obter o idpessoa pelo CPF
@@ -86,27 +89,31 @@ public class UsuarioDAO {
         return null;
     }
 
-    private List<String> getPermissoesByUsuarioId(int usuarioId) throws SQLException {
-        List<String> permissoes = new ArrayList<>();
-        String sql = """
-                SELECT p.nome_permissao 
-                FROM permissoes p
-                INNER JOIN tipos_usuarios_permissoes tup ON p.id = tup.id_permissao
-                INNER JOIN usuarios u ON tup.id_tipo_usuario = u.id_tipo_usuario
-                WHERE u.id = ?
-            """;
-
-        // BUSCAR id_tipo_usuario banco para retornar valor válido
+    public List<String> getPermissoesByUsuarioId(int usuarioId) throws SQLException {
+        // Buscar o id_tipo_usuario do usuário no banco de dados
+        String sql = "SELECT id_tipo_usuario FROM usuarios WHERE id = ?";
+        int tipoUsuarioId = -1;
 
         try (PreparedStatement stmt = connection.prepareStatement(sql)) {
             stmt.setInt(1, usuarioId);
             try (ResultSet rs = stmt.executeQuery()) {
-                while (rs.next()) {
-                    permissoes.add(rs.getString("nome_permissao"));
+                if (rs.next()) {
+                    tipoUsuarioId = rs.getInt("id_tipo_usuario");
                 }
             }
         }
-        return permissoes;
+
+        // Verifica se o tipoUsuarioId foi encontrado e mapeia o UserType
+        UserType userType = switch (tipoUsuarioId) {
+            case 1 -> UserType.ADMIN;
+            case 2 -> UserType.GESTOR;
+            case 3 -> UserType.VISUALIZADOR;
+            case 4 -> UserType.COMUM;
+            default -> null;
+        };
+
+        // Retorna as permissões baseadas no UserType
+        return (userType != null) ? permissaoService.getPermissoesByUserType(userType) : List.of();
     }
 
     public void inserirUsuario(Usuario usuario) throws SQLException {
