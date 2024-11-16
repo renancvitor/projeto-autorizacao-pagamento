@@ -20,9 +20,11 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.sql.Timestamp;
+import java.text.NumberFormat;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
+import java.util.Locale;
 
 public class TelaPrincipal extends Application {
     private Usuario usuario;
@@ -223,6 +225,24 @@ public class TelaPrincipal extends Application {
         TableColumn<Solicitacao, Double> valorTotalCol = new TableColumn<>("Valor Total");
         valorTotalCol.setCellValueFactory(new PropertyValueFactory<>("valorTotal"));
         valorTotalCol.setPrefWidth(100);
+        valorTotalCol.setCellFactory(new Callback<TableColumn<Solicitacao, Double>, TableCell<Solicitacao, Double>>() {
+            @Override
+            public TableCell<Solicitacao, Double> call(TableColumn<Solicitacao, Double> param) {
+                return new TableCell<Solicitacao, Double>() {
+                    @Override
+                    protected void updateItem(Double item, boolean empty) {
+                        super.updateItem(item, empty);
+                        if (empty || item == null) {
+                            setText(null);
+                        } else {
+                            // Formatar o valor como moeda
+                            NumberFormat currencyFormat = NumberFormat.getCurrencyInstance(new Locale("pt", "BR"));
+                            setText(currencyFormat.format(item));
+                        }
+                    }
+                };
+            }
+        });
 
         TableColumn<Solicitacao, String> statusCol = new TableColumn<>("Status");
         statusCol.setCellValueFactory(cellData -> {
@@ -298,7 +318,7 @@ public class TelaPrincipal extends Application {
         layout.getChildren().add(topoLayout);
         layout.getChildren().add(table);
 
-        Scene scene = new Scene(layout, 1220, 600);
+        Scene scene = new Scene(layout, 1223, 600);
         primaryStage.setScene(scene);
         primaryStage.show();
 

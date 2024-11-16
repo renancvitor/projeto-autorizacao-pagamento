@@ -10,10 +10,13 @@ import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
+import javafx.util.Callback;
 
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.text.NumberFormat;
 import java.util.List;
+import java.util.Locale;
 
 public class TelaAnalisados {
     private Connection connection;
@@ -100,6 +103,24 @@ public class TelaAnalisados {
         TableColumn<Solicitacao, Double> valorTotalCol = new TableColumn<>("Valor Total");
         valorTotalCol.setCellValueFactory(new PropertyValueFactory<>("valorTotal"));
         valorTotalCol.setPrefWidth(100);
+        valorTotalCol.setCellFactory(new Callback<TableColumn<Solicitacao, Double>, TableCell<Solicitacao, Double>>() {
+            @Override
+            public TableCell<Solicitacao, Double> call(TableColumn<Solicitacao, Double> param) {
+                return new TableCell<Solicitacao, Double>() {
+                    @Override
+                    protected void updateItem(Double item, boolean empty) {
+                        super.updateItem(item, empty);
+                        if (empty || item == null) {
+                            setText(null);
+                        } else {
+                            // Formatar o valor como moeda
+                            NumberFormat currencyFormat = NumberFormat.getCurrencyInstance(new Locale("pt", "BR"));
+                            setText(currencyFormat.format(item));
+                        }
+                    }
+                };
+            }
+        });
 
         TableColumn<Solicitacao, String> statusCol = new TableColumn<>("Status");
         statusCol.setCellValueFactory(new PropertyValueFactory<>("status"));
@@ -109,7 +130,7 @@ public class TelaAnalisados {
 
         layout.getChildren().add(table);
 
-        Scene scene = new Scene(layout, 1085, 600);
+        Scene scene = new Scene(layout, 1086, 600);
         stage.setScene(scene);
         stage.show();
 
