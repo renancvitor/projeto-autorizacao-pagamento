@@ -51,6 +51,33 @@
 .table-view .cell {
     -fx-background-color: #1e1e2f;
     -fx-text-fill: #ffffff;
+    -fx-wrap-text: true;
+}
+
+.table-view .cell:hover {
+    position: relative;
+}
+
+.table-view .cell:hover::after {
+    content: attr(data-tooltip);  /* O conteúdo do tooltip será o texto armazenado no atributo data-tooltip */
+    position: absolute;
+    bottom: 100%; /* Aparece acima da célula */
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: #333;  /* Cor de fundo do balão */
+    color: #fff;  /* Cor do texto */
+    padding: 5px;
+    font-size: 12px;
+    border-radius: 5px;
+    white-space: nowrap; /* Impede que o texto seja quebrado */
+    opacity: 0;
+    transition: opacity 0.3s ease; /* Animação suave */
+    pointer-events: none; /* Impede que o mouse interaja com o tooltip */
+}
+
+/* Exibe o tooltip quando passar o mouse sobre a célula */
+.table-view .cell:hover::after {
+    opacity: 1;
 }
 
 /* Menus */

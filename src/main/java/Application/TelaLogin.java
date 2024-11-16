@@ -44,10 +44,8 @@ public class TelaLogin {
             // Valida login e redireciona para a tela apropriada
             Usuario usuario = validarLogin(login, senha);
             if (usuario != null) {
-                // Login bem-sucedido, redireciona para TelaPrincipal
                 TelaPrincipal telaPrincipal = new TelaPrincipal(usuario);
-                telaPrincipal.start(primaryStage); // Abre uma nova janela para a tela principal
-                // primaryStage.close(); // Fecha a janela de login
+                telaPrincipal.start(primaryStage);
             } else {
                 // Exibe mensagem de erro
                 System.out.println("Login inválido");

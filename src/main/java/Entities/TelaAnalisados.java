@@ -6,8 +6,7 @@ import Servicoes.StatusSolicitacao;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.scene.Scene;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableView;
+import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
@@ -35,29 +34,76 @@ public class TelaAnalisados {
 
         TableColumn<Solicitacao, Integer> idCol = new TableColumn<>("ID");
         idCol.setCellValueFactory(new PropertyValueFactory<>("id"));
+        idCol.setPrefWidth(50);
 
         TableColumn<Solicitacao, String> fornecedorCol = new TableColumn<>("Fornecedor");
         fornecedorCol.setCellValueFactory(new PropertyValueFactory<>("fornecedor"));
         fornecedorCol.setPrefWidth(150);
+        fornecedorCol.setCellFactory(column -> new TableCell<Solicitacao, String>() {
+            @Override
+            protected void updateItem(String item, boolean empty) {
+                super.updateItem(item, empty);
+                if (empty || item == null) {
+                    setText(null);
+                    setTooltip(null);
+                } else {
+                    setText(item);
+                    Tooltip tooltip = new Tooltip("Fornecedor: " + item);
+                    setTooltip(tooltip);
+                }
+            }
+        });
 
         TableColumn<Solicitacao, String> descricaoCol = new TableColumn<>("Descrição");
         descricaoCol.setCellValueFactory(new PropertyValueFactory<>("descricao"));
+        descricaoCol.setPrefWidth(215);
+        descricaoCol.setCellFactory(tc -> new TableCell<>() {
+            private final Label label = new Label();
+            private final Tooltip tooltip = new Tooltip();
+
+            {
+                label.setWrapText(true);
+                label.setStyle("-fx-font-size: 12px; -fx-text-fill: #ffffff;");
+                label.setMaxWidth(Double.MAX_VALUE);
+                tooltip.setWrapText(true);
+                tooltip.setStyle("-fx-font-size: 12px;");
+
+                // Associar o Tooltip ao Label
+                Tooltip.install(label, tooltip);
+            }
+
+            @Override
+            protected void updateItem(String item, boolean empty) {
+                super.updateItem(item, empty);
+                if (empty || item == null) {
+                    setGraphic(null);
+                } else {
+                    label.setText(item);
+                    tooltip.setText(item);
+                    setGraphic(label);
+                }
+            }
+        });
 
         TableColumn<Solicitacao, String> dataCriacaoCol = new TableColumn<>("Data Criação");
         dataCriacaoCol.setCellValueFactory(new PropertyValueFactory<>("dataCriacao"));
+        dataCriacaoCol.setPrefWidth(150);
 
         TableColumn<Solicitacao, String> dataPagamentoCol = new TableColumn<>("Data Pagamento");
         dataPagamentoCol.setCellValueFactory(new PropertyValueFactory<>("dataPagamento"));
-        dataPagamentoCol.setPrefWidth(150);
+        dataPagamentoCol.setPrefWidth(120);
 
         TableColumn<Solicitacao, String> formaPagamentoCol = new TableColumn<>("Forma Pagamento");
         formaPagamentoCol.setCellValueFactory(new PropertyValueFactory<>("formaPagamento"));
+        formaPagamentoCol.setPrefWidth(140);
 
         TableColumn<Solicitacao, Double> valorTotalCol = new TableColumn<>("Valor Total");
         valorTotalCol.setCellValueFactory(new PropertyValueFactory<>("valorTotal"));
+        valorTotalCol.setPrefWidth(100);
 
         TableColumn<Solicitacao, String> statusCol = new TableColumn<>("Status");
         statusCol.setCellValueFactory(new PropertyValueFactory<>("status"));
+        statusCol.setPrefWidth(80);
 
         table.getColumns().addAll(idCol, fornecedorCol, descricaoCol, dataCriacaoCol, dataPagamentoCol, formaPagamentoCol, valorTotalCol, statusCol);
 

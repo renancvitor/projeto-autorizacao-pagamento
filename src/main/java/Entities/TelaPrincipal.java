@@ -13,13 +13,15 @@ import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
-import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import javafx.util.Callback;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
+import java.sql.Timestamp;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 public class TelaPrincipal extends Application {
@@ -41,9 +43,8 @@ public class TelaPrincipal extends Application {
             SolicitacaoDAO solicitacaoDAO = new SolicitacaoDAO(connection);
             this.usuarioController = new UsuarioController(permissaoService); // NOVO
             this.permissaoService = new PermissaoService(); // NOVO
-            // this.solicitacaoService = new SolicitacaoService(solicitacaoDAO); ANTERIOR AO ABAIXO
-            this.solicitacaoService = new SolicitacaoService(solicitacaoDAO, permissaoService); // NOVO APENAS permissaoService
-            this.observableList = FXCollections.observableArrayList(); // Inicializa a ObservableList aqui
+            this.solicitacaoService = new SolicitacaoService(solicitacaoDAO, permissaoService);
+            this.observableList = FXCollections.observableArrayList();
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -61,7 +62,6 @@ public class TelaPrincipal extends Application {
 
         if (permissaoService.gerenciarUsuarios(usuarioAtual)) {
 
-            // Menu para gerenciar usuários
             MenuBar menuBarUser = new MenuBar();
             Menu usuarioMenu = new Menu("Gerenciar Usuários");
 
@@ -75,7 +75,6 @@ public class TelaPrincipal extends Application {
             menuBarUser.getMenus().add(usuarioMenu);
             layout.getChildren().add(menuBarUser);
 
-            // Menu para gerenciar departamentos e cargos
             MenuBar menuBarFunc = new MenuBar();
             Menu funcionarioMenu = new Menu("Gerenciar funcionários");
 
@@ -89,7 +88,6 @@ public class TelaPrincipal extends Application {
             menuBarFunc.getMenus().add(funcionarioMenu);
             layout.getChildren().add(menuBarFunc);
 
-            // Menu para cadastrar pessoas
             MenuBar menuBarPessoa = new MenuBar();
             Menu pessoaMenu = new Menu("Cadastrar");
 
@@ -109,7 +107,6 @@ public class TelaPrincipal extends Application {
 
         }
 
-        // Resumo Rápido
         Label resumoLabel = new Label(""); // Resumo Rápido:
         totalPendentesLabel = new Label();
         totalAprovadasLabel = new Label();
@@ -117,7 +114,6 @@ public class TelaPrincipal extends Application {
         atualizarResumoRapido();
         layout.getChildren().addAll(resumoLabel, totalPendentesLabel, totalAprovadasLabel, totalRejeitadasLabel);
 
-        // Botão para novas solicitações
         Button novaSolicitacaoButton = new Button("Nova Solicitação");
         novaSolicitacaoButton.setOnAction(e -> {
             TelaSolicitacao telaSolicitacao = new TelaSolicitacao(connection, usuario, table);
@@ -126,7 +122,6 @@ public class TelaPrincipal extends Application {
         });
         layout.getChildren().add(novaSolicitacaoButton);
 
-        // Botão para acessar a tela de solicitações analisadas
         Button analisadosButton = new Button("Solicitações Analisadas");
         analisadosButton.setOnAction(e -> {
             TelaAnalisados telaAnalisados = new TelaAnalisados(connection);
@@ -135,29 +130,61 @@ public class TelaPrincipal extends Application {
         });
         layout.getChildren().add(analisadosButton);
 
-        // Layout para Resumo Rápido e Botão
         HBox topoLayout = new HBox(10, resumoLabel, novaSolicitacaoButton, analisadosButton);
 
-        // TableView para exibir as solicitações
         table = new TableView<>();
         TableColumn<Solicitacao, Integer> idCol = new TableColumn<>("ID");
         idCol.setCellValueFactory(new PropertyValueFactory<>("id"));
         idCol.setPrefWidth(50);
+        idCol.setCellFactory(column -> new TableCell<Solicitacao, Integer>() {
+            @Override
+            protected void updateItem(Integer item, boolean empty) {
+                super.updateItem(item, empty);
+                if (empty || item == null) {
+                    setText(null);
+                    setTooltip(null);
+                } else {
+                    setText(item.toString());
+                    Tooltip tooltip = new Tooltip("ID: "+ item);
+                    setTooltip(tooltip);
+                }
+            }
+        });
 
         TableColumn<Solicitacao, String> fornecedorCol = new TableColumn<>("Fornecedor");
         fornecedorCol.setCellValueFactory(new PropertyValueFactory<>("fornecedor"));
         fornecedorCol.setPrefWidth(150);
+        fornecedorCol.setCellFactory(column -> new TableCell<Solicitacao, String>() {
+            @Override
+            protected void updateItem(String item, boolean empty) {
+                super.updateItem(item, empty);
+                if (empty || item == null) {
+                    setText(null);
+                    setTooltip(null);
+                } else {
+                    setText(item);
+                    Tooltip tooltip = new Tooltip("Fornecedor: " + item);
+                    setTooltip(tooltip);
+                }
+            }
+        });
 
         TableColumn<Solicitacao, String> descricaoCol = new TableColumn<>("Descrição");
         descricaoCol.setCellValueFactory(new PropertyValueFactory<>("descricao"));
         descricaoCol.setPrefWidth(215);
         descricaoCol.setCellFactory(tc -> new TableCell<>() {
             private final Label label = new Label();
+            private final Tooltip tooltip = new Tooltip();
 
             {
-                label.setWrapText(true);  // Habilita a quebra de linha automática
-                label.setStyle("-fx-font-size: 12px; -fx-text-fill: #ffffff;");  // Exemplo de estilização (pode ser ajustado)
+                label.setWrapText(true);
+                label.setStyle("-fx-font-size: 12px; -fx-text-fill: #ffffff;");
                 label.setMaxWidth(Double.MAX_VALUE);
+                tooltip.setWrapText(true);
+                tooltip.setStyle("-fx-font-size: 12px;");
+
+                // Associar o Tooltip ao Label
+                Tooltip.install(label, tooltip);
             }
 
             @Override
@@ -167,14 +194,15 @@ public class TelaPrincipal extends Application {
                     setGraphic(null);
                 } else {
                     label.setText(item);
+                    tooltip.setText(item);
                     setGraphic(label);
                 }
             }
         });
 
-        TableColumn<Solicitacao, String> dataCriacaoCol = new TableColumn<>("Data Criação");
+        TableColumn<Solicitacao, LocalDate> dataCriacaoCol = new TableColumn<>("Data de Criação");
         dataCriacaoCol.setCellValueFactory(new PropertyValueFactory<>("dataCriacao"));
-        dataCriacaoCol.setPrefWidth(120);
+        dataCriacaoCol.setPrefWidth(150);
 
         TableColumn<Solicitacao, String> dataPagamentoCol = new TableColumn<>("Data Pagamento");
         dataPagamentoCol.setCellValueFactory(new PropertyValueFactory<>("dataPagamento"));
@@ -188,7 +216,6 @@ public class TelaPrincipal extends Application {
         valorTotalCol.setCellValueFactory(new PropertyValueFactory<>("valorTotal"));
         valorTotalCol.setPrefWidth(100);
 
-        // Coluna de Status
         TableColumn<Solicitacao, String> statusCol = new TableColumn<>("Status");
         statusCol.setCellValueFactory(cellData -> {
             StatusSolicitacao status = cellData.getValue().getStatus();
@@ -197,7 +224,6 @@ public class TelaPrincipal extends Application {
         });
         statusCol.setPrefWidth(80);
 
-        // Coluna para Botão de Aprovar
         TableColumn<Solicitacao, Void> approveCol = new TableColumn<>("Aprovar");
         Callback<TableColumn<Solicitacao, Void>, TableCell<Solicitacao, Void>> cellFactoryApprove = new Callback<>() {
             @Override
@@ -208,7 +234,6 @@ public class TelaPrincipal extends Application {
                     {
                         approveButton.setOnAction(event -> {
                             Solicitacao solicitacao = getTableView().getItems().get(getIndex());
-                            // aprovarSolicitacao(solicitacao); ANTERIOR AO ABAIXO
                             aprovarSolicitacao(usuario, permissaoService, solicitacao);
                         });
                     }
@@ -229,7 +254,6 @@ public class TelaPrincipal extends Application {
         approveCol.setCellFactory(cellFactoryApprove);
         approveCol.setPrefWidth(80);
 
-        // Coluna para Botão de Reprovar
         TableColumn<Solicitacao, Void> rejectCol = new TableColumn<>("Reprovar");
         Callback<TableColumn<Solicitacao, Void>, TableCell<Solicitacao, Void>> cellFactoryReject = new Callback<>() {
             @Override
@@ -263,15 +287,16 @@ public class TelaPrincipal extends Application {
 
         table.getColumns().addAll(idCol, fornecedorCol, descricaoCol, dataCriacaoCol, dataPagamentoCol, formaPagamentoCol, valorTotalCol, statusCol, approveCol, rejectCol);
 
-        // Layout Principal
         layout.getChildren().add(topoLayout);
         layout.getChildren().add(table);
 
-        Scene scene = new Scene(layout, 1200, 1000);
+        Scene scene = new Scene(layout, 1200, 600);
         primaryStage.setScene(scene);
         primaryStage.show();
 
-        // Listener para atualizar o resumo rápido
+        primaryStage.centerOnScreen();
+        primaryStage.show();
+
         table.getItems().addListener(new ListChangeListener<Solicitacao>() {
             @Override
             public void onChanged(Change<? extends Solicitacao> c) {
@@ -279,22 +304,18 @@ public class TelaPrincipal extends Application {
             }
         });
 
-        // Carrega as solicitações pendentes na tabela
         refreshTable();
 
         scene.getStylesheets().add(getClass().getResource("/styles.css").toExternalForm());
     }
 
     private void abrirCadastroPessoa(Stage primartStage) {
-        // Stage tela cadastro pessoa
         Stage cadastroPessoaStage = new Stage();
         cadastroPessoaStage.initOwner(primartStage);
 
-        // Layout TelaCadastroPessoa
         TelaCadastroPessoa telaCadastroPessoa = new TelaCadastroPessoa(connection);
         telaCadastroPessoa.mostrarTela(cadastroPessoaStage); // Mostra tela cadastro pessoa
 
-        // Configura e exibe nova janela
         cadastroPessoaStage.setTitle("Cadastro de Pessoa");
         cadastroPessoaStage.show();
     }
@@ -328,19 +349,11 @@ public class TelaPrincipal extends Application {
         }
     }
 
-    // SUBSTITUÍDO PELO MÉTODO NOVO ABAIXO
-//    private void aprovarSolicitacao(Solicitacao solicitacao) {
-//        solicitacaoService.atualizarStatusSolicitacao(solicitacao, StatusSolicitacao.APROVADA);
-//    }
     private void aprovarSolicitacao(Usuario usuario, PermissaoService permissaoService, Solicitacao solicitacao) {
         solicitacaoService.atualizarStatusSolicitacao(usuario, permissaoService, solicitacao, StatusSolicitacao.APROVADA);
         refreshTable();
     }
 
-    // SUBSTITUÍDO PELO MÉTODO NOVO ABAIXO
-//    private void reprovarSolicitacao(Solicitacao solicitacao) {
-//        solicitacaoService.atualizarStatusSolicitacao(solicitacao, StatusSolicitacao.REPROVADA);
-//    }
     private void reprovarSolicitacao(Usuario usuario, PermissaoService permissaoService, Solicitacao solicitacao) {
         solicitacaoService.atualizarStatusSolicitacao(usuario, permissaoService, solicitacao, StatusSolicitacao.REPROVADA);
         refreshTable();

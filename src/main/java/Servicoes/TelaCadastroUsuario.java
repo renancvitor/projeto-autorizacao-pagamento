@@ -2,6 +2,7 @@ package Servicoes;
 
 import DAO.UserPermissionsDAO;
 import Entities.UserType;
+import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
@@ -50,7 +51,6 @@ public class TelaCadastroUsuario {
         TextField cpfField = new TextField();
         cpfField.setPromptText("CPF");
 
-        // Evento para formatar o CPF enquanto o usuário digita
         cpfField.textProperty().addListener((observable, oldValue, newValue) -> {
             String formattedCpf = formatInputAsCPF(newValue);
             if (!newValue.equals(formattedCpf)) {
@@ -59,20 +59,16 @@ public class TelaCadastroUsuario {
             }
         });
 
-        // Carregar os tipos de usuários no ComboBox
         carregarTiposUsuario();
 
-        // Botão para salvar
         Button saveButton = new Button("Salvar");
 
-        // Evento para salvar os dados ao clicar no botão
         saveButton.setOnAction(event -> {
             String login = loginField.getText();
             String senha = senhaField.getText();
             String cpf = cpfField.getText();
             String tipoUsuarioSelecionado = tipoUsuarioComboBox.getValue();
 
-            // Validar campos
             if (login.isEmpty() || senha.isEmpty() || cpf.isEmpty() || tipoUsuarioSelecionado == null) {
                 Alert alert = new Alert(Alert.AlertType.WARNING, "Preencha todos os campos!");
                 alert.show();
@@ -81,14 +77,11 @@ public class TelaCadastroUsuario {
                     UsuarioDAO usuarioDAO = new UsuarioDAO(connection);
                     UserPermissionsDAO permissionsDAO = new UserPermissionsDAO(connection);
 
-                    // Obtenha o idTipoUsuario com base no tipo selecionado
                     int idTipoUsuario = getIdTipoUsuarioByNome(tipoUsuarioSelecionado);
                     UserType userType = getUserTypeFromId(idTipoUsuario);
 
-                    // Obtenha as permissões de acordo com o tipo de usuário selecionado
                     List<String> permissoes = permissionsDAO.getPermissoesByTipo(tipoUsuarioSelecionado);
 
-                    // Cria o usuário com o tipo selecionado e as permissões
                     Usuario novoUsuario = new Usuario(0, login, senha, permissoes, cpf, idTipoUsuario, userType);
                     usuarioDAO.inserirUsuario(novoUsuario);
 
@@ -103,12 +96,15 @@ public class TelaCadastroUsuario {
 
         layout.getChildren().addAll(loginField, senhaField, cpfField, tipoUsuarioComboBox, saveButton);
 
-        stage.setScene(new javafx.scene.Scene(layout, 300, 250));  // Define o tamanho da tela
+        Scene scene = new Scene(layout, 400, 350);
+        scene.getStylesheets().add(getClass().getResource("/styles.css").toExternalForm());
+
+        // stage.setScene(new javafx.scene.Scene(layout, 300, 250));
         stage.setTitle("Cadastro de Usuário");
+        stage.setScene(scene);
         stage.show();
     }
 
-    // Método para carregar os tipos de usuário no ComboBox
     private void carregarTiposUsuario() {
         UserPermissionsDAO permissionsDAO = new UserPermissionsDAO(connection);
         try {
@@ -119,13 +115,11 @@ public class TelaCadastroUsuario {
         }
     }
 
-    // Método para obter o ID do tipo de usuário com base no nome
     private int getIdTipoUsuarioByNome(String tipoUsuarioNome) throws SQLException {
         UserPermissionsDAO permissionsDAO = new UserPermissionsDAO(connection);
         return permissionsDAO.getIdTipoUsuarioByNome(tipoUsuarioNome);
     }
 
-    // Método para formatar o CPF
     private String formatInputAsCPF(String input) {
         String digitsOnly = input.replaceAll("[^\\d]", "");
 
@@ -139,7 +133,6 @@ public class TelaCadastroUsuario {
         return digitsOnly;
     }
 
-    // Valida CPF
     public boolean isCPFValid(String cpf) {
         String digitsOnly = cpf.replaceAll("[^\\d]", "");
         return digitsOnly.length() == 11;
