@@ -57,6 +57,8 @@ public class TelaLogin {
         Scene scene = new Scene(grid, 300, 200);
         primaryStage.setScene(scene);
         primaryStage.show();
+
+        scene.getStylesheets().add(getClass().getResource("/styles.css").toExternalForm());
     }
 
     private Usuario validarLogin(String login, String senha) {

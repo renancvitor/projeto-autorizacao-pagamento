@@ -117,6 +117,8 @@ public class TelaCadastroPessoa {
         primaryStage.setScene(scene);
         primaryStage.setTitle("Cadastro de Pessoa");
         primaryStage.show();
+
+        scene.getStylesheets().add(getClass().getResource("/styles.css").toExternalForm());
     }
 
     private void carregarDepartamentos() {

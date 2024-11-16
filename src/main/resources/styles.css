@@ -1,0 +1,98 @@
+/* styles.css */
+
+/* Background geral */
+.root {
+    -fx-background-color: #1e1e2f;
+    -fx-padding: 20px;
+}
+
+/* Títulos e labels */
+.label {
+    -fx-font-family: "Arial";
+    -fx-font-size: 14px;
+    -fx-text-fill: #a1ecfb; /* Azul claro */
+}
+
+/* Botões */
+.button {
+    -fx-background-color: #27496d; /* Azul escuro */
+    -fx-text-fill: #ffffff;
+    -fx-font-size: 14px;
+    -fx-padding: 5px 10px;
+    -fx-border-color: #a1ecfb; /* Acento azul */
+    -fx-border-width: 2px;
+    -fx-border-radius: 5px;
+    -fx-background-radius: 5px;
+}
+
+.button:hover {
+    -fx-background-color: #00909e; /* Azul ciano ao passar o mouse */
+}
+
+.button:pressed {
+    -fx-background-color: #00adb5; /* Azul mais claro */
+}
+
+/* TableView */
+.table-view {
+    -fx-background-color: #1e1e2f;
+    -fx-border-color: #5bc0be; /* Verde água */
+    -fx-border-width: 2px;
+    -fx-border-radius: 5px;
+    -fx-padding: 10px;
+}
+
+.table-view .column-header {
+    -fx-background-color: #0f3057; /* Azul profundo */
+    -fx-text-fill: #ffffff;
+    -fx-font-weight: bold;
+}
+
+.table-view .cell {
+    -fx-background-color: #1e1e2f;
+    -fx-text-fill: #ffffff;
+}
+
+/* Menus */
+.menu-bar {
+    -fx-background-color: #0f3057; /* Azul profundo */
+    -fx-border-color: #5bc0be; /* Verde água */
+    -fx-border-width: 2px;
+    -fx-border-radius: 5px;
+    -fx-padding: 5px;
+}
+
+.menu {
+    -fx-text-fill: #ffffff;
+    -fx-font-size: 12px;
+}
+
+.menu:hover {
+    -fx-background-color: #5bc0be; /* Destaque ao passar o mouse */
+}
+
+/* Separadores entre menus */
+.menu-bar .menu-button {
+    -fx-padding: 5px;
+    -fx-text-fill: #ffffff;
+}
+
+/* Barra de Resumo */
+.hbox {
+    -fx-spacing: 15px;
+    -fx-alignment: center;
+}
+
+.hbox > .label {
+    -fx-font-size: 12px;
+    -fx-text-fill: #ffffff;
+}
+
+/* Outros elementos */
+.vbox {
+    -fx-spacing: 10px;
+}
+
+.hbox {
+    -fx-spacing: 10px;
+}

@@ -48,6 +48,8 @@ public class TelaCadastroCargo extends Application {
         Scene scene = new Scene(layout, 400, 400);
         primaryStage.setScene(scene);
         primaryStage.show();
+
+        scene.getStylesheets().add(getClass().getResource("/styles.css").toExternalForm());
     }
 
     private void cadastrarCargo() {

@@ -75,6 +75,8 @@ public class TelaSolicitacao {
         Scene scene = new Scene(layout, 400, 400);
         stage.setScene(scene);
         stage.show();
+
+        scene.getStylesheets().add(getClass().getResource("/styles.css").toExternalForm());
     }
 
     private void enviarSolicitacao() {

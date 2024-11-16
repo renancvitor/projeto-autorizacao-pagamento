@@ -13,6 +13,7 @@ import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import javafx.util.Callback;
 
@@ -108,10 +109,8 @@ public class TelaPrincipal extends Application {
 
         }
 
-        // Trecho acima DENTRO DO IF sob teste, caso erro voltará aqui
-
         // Resumo Rápido
-        Label resumoLabel = new Label("Resumo Rápido:");
+        Label resumoLabel = new Label(""); // Resumo Rápido:
         totalPendentesLabel = new Label();
         totalAprovadasLabel = new Label();
         totalRejeitadasLabel = new Label();
@@ -143,24 +142,51 @@ public class TelaPrincipal extends Application {
         table = new TableView<>();
         TableColumn<Solicitacao, Integer> idCol = new TableColumn<>("ID");
         idCol.setCellValueFactory(new PropertyValueFactory<>("id"));
+        idCol.setPrefWidth(50);
 
         TableColumn<Solicitacao, String> fornecedorCol = new TableColumn<>("Fornecedor");
         fornecedorCol.setCellValueFactory(new PropertyValueFactory<>("fornecedor"));
+        fornecedorCol.setPrefWidth(150);
 
         TableColumn<Solicitacao, String> descricaoCol = new TableColumn<>("Descrição");
         descricaoCol.setCellValueFactory(new PropertyValueFactory<>("descricao"));
+        descricaoCol.setPrefWidth(215);
+        descricaoCol.setCellFactory(tc -> new TableCell<>() {
+            private final Label label = new Label();
+
+            {
+                label.setWrapText(true);  // Habilita a quebra de linha automática
+                label.setStyle("-fx-font-size: 12px; -fx-text-fill: #ffffff;");  // Exemplo de estilização (pode ser ajustado)
+                label.setMaxWidth(Double.MAX_VALUE);
+            }
+
+            @Override
+            protected void updateItem(String item, boolean empty) {
+                super.updateItem(item, empty);
+                if (empty || item == null) {
+                    setGraphic(null);
+                } else {
+                    label.setText(item);
+                    setGraphic(label);
+                }
+            }
+        });
 
         TableColumn<Solicitacao, String> dataCriacaoCol = new TableColumn<>("Data Criação");
         dataCriacaoCol.setCellValueFactory(new PropertyValueFactory<>("dataCriacao"));
+        dataCriacaoCol.setPrefWidth(120);
 
         TableColumn<Solicitacao, String> dataPagamentoCol = new TableColumn<>("Data Pagamento");
         dataPagamentoCol.setCellValueFactory(new PropertyValueFactory<>("dataPagamento"));
+        dataPagamentoCol.setPrefWidth(120);
 
         TableColumn<Solicitacao, String> formaPagamentoCol = new TableColumn<>("Forma Pagamento");
         formaPagamentoCol.setCellValueFactory(new PropertyValueFactory<>("formaPagamento"));
+        formaPagamentoCol.setPrefWidth(140);
 
         TableColumn<Solicitacao, Double> valorTotalCol = new TableColumn<>("Valor Total");
         valorTotalCol.setCellValueFactory(new PropertyValueFactory<>("valorTotal"));
+        valorTotalCol.setPrefWidth(100);
 
         // Coluna de Status
         TableColumn<Solicitacao, String> statusCol = new TableColumn<>("Status");
@@ -169,6 +195,7 @@ public class TelaPrincipal extends Application {
             String statusStr = status == StatusSolicitacao.PENDENTE ? "PENDENTE" : status.toString();
             return new SimpleStringProperty(statusStr);
         });
+        statusCol.setPrefWidth(80);
 
         // Coluna para Botão de Aprovar
         TableColumn<Solicitacao, Void> approveCol = new TableColumn<>("Aprovar");
@@ -200,6 +227,7 @@ public class TelaPrincipal extends Application {
             }
         };
         approveCol.setCellFactory(cellFactoryApprove);
+        approveCol.setPrefWidth(80);
 
         // Coluna para Botão de Reprovar
         TableColumn<Solicitacao, Void> rejectCol = new TableColumn<>("Reprovar");
@@ -231,6 +259,7 @@ public class TelaPrincipal extends Application {
             }
         };
         rejectCol.setCellFactory(cellFactoryReject);
+        rejectCol.setPrefWidth(80);
 
         table.getColumns().addAll(idCol, fornecedorCol, descricaoCol, dataCriacaoCol, dataPagamentoCol, formaPagamentoCol, valorTotalCol, statusCol, approveCol, rejectCol);
 
@@ -238,7 +267,7 @@ public class TelaPrincipal extends Application {
         layout.getChildren().add(topoLayout);
         layout.getChildren().add(table);
 
-        Scene scene = new Scene(layout, 800, 600);
+        Scene scene = new Scene(layout, 1200, 1000);
         primaryStage.setScene(scene);
         primaryStage.show();
 
@@ -252,6 +281,8 @@ public class TelaPrincipal extends Application {
 
         // Carrega as solicitações pendentes na tabela
         refreshTable();
+
+        scene.getStylesheets().add(getClass().getResource("/styles.css").toExternalForm());
     }
 
     private void abrirCadastroPessoa(Stage primartStage) {

@@ -38,6 +38,7 @@ public class TelaAnalisados {
 
         TableColumn<Solicitacao, String> fornecedorCol = new TableColumn<>("Fornecedor");
         fornecedorCol.setCellValueFactory(new PropertyValueFactory<>("fornecedor"));
+        fornecedorCol.setPrefWidth(150);
 
         TableColumn<Solicitacao, String> descricaoCol = new TableColumn<>("Descrição");
         descricaoCol.setCellValueFactory(new PropertyValueFactory<>("descricao"));
@@ -47,6 +48,7 @@ public class TelaAnalisados {
 
         TableColumn<Solicitacao, String> dataPagamentoCol = new TableColumn<>("Data Pagamento");
         dataPagamentoCol.setCellValueFactory(new PropertyValueFactory<>("dataPagamento"));
+        dataPagamentoCol.setPrefWidth(150);
 
         TableColumn<Solicitacao, String> formaPagamentoCol = new TableColumn<>("Forma Pagamento");
         formaPagamentoCol.setCellValueFactory(new PropertyValueFactory<>("formaPagamento"));
@@ -61,9 +63,11 @@ public class TelaAnalisados {
 
         layout.getChildren().add(table);
 
-        Scene scene = new Scene(layout, 800, 600);
+        Scene scene = new Scene(layout, 1000, 600);
         stage.setScene(scene);
         stage.show();
+
+        scene.getStylesheets().add(getClass().getResource("/styles.css").toExternalForm());
     }
 
     private ObservableList<Solicitacao> getSolicitacoesAnalisadas() {
