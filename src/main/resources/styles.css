@@ -23,6 +23,7 @@
     -fx-border-width: 2px;
     -fx-border-radius: 5px;
     -fx-background-radius: 5px;
+    -fx-margin: 20px;
 }
 
 .button:hover {
@@ -55,6 +56,8 @@
 }
 
 .table-view .cell:hover {
+    -fx-background-color: #333; /* Alterando para um fundo mais claro */
+    -fx-text-fill: #ffffff;
     position: relative;
 }
 
@@ -96,12 +99,42 @@
 
 .menu:hover {
     -fx-background-color: #5bc0be; /* Destaque ao passar o mouse */
+    -fx-text-fill: #ffffff;
 }
 
 /* Separadores entre menus */
 .menu-bar .menu-button {
     -fx-padding: 5px;
     -fx-text-fill: #ffffff;
+}
+
+.menu:focused {
+    -fx-background-color: #0f3057;
+    -fx-text-fill: #a1ecfb; /* Cor azul clara quando o item é clicado */
+    -fx-font-weight: bold; /* Negrito quando o item é clicado */
+}
+
+.menu-bar .menu-item {
+    -fx-background-color: #0f3057;
+    -fx-border-color: #5bc0be;
+}
+
+.menu .menu-item:hover {
+    -fx-background-color: #5bc0be; /* Cor de fundo quando o mouse passa sobre o item */
+    -fx-text-fill: #ffffff; /* Cor do texto quando o mouse passa sobre o item */
+}
+
+.button:pressed {
+    -fx-background-color: #00adb5;
+    -fx-opacity: 0.8; /* Opacidade reduzida ao ser pressionado */
+}
+
+.button, .menu-bar .menu-button {
+    -fx-effect: dropshadow(gaussian, #000000, 5, 0.2, 0, 1);
+}
+
+.menu, .button {
+    -fx-transition: all 0.2s ease-in-out;
 }
 
 /* Barra de Resumo */
@@ -118,8 +151,10 @@
 /* Outros elementos */
 .vbox {
     -fx-spacing: 10px;
+    -fx-padding: 10px;
 }
 
 .hbox {
-    -fx-spacing: 10px;
+    -fx-spacing: 15px;
+    -fx-padding: 10px;
 }
