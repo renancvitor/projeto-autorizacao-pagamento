@@ -109,7 +109,7 @@ public class TelaAnalisados {
 
         layout.getChildren().add(table);
 
-        Scene scene = new Scene(layout, 1000, 600);
+        Scene scene = new Scene(layout, 1085, 600);
         stage.setScene(scene);
         stage.show();
 

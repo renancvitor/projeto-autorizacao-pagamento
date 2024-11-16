@@ -54,7 +54,7 @@ public class TelaPrincipal extends Application {
     public void start(Stage primaryStage) {
         primaryStage.setTitle("Sistema Principal");
 
-        VBox layout = new VBox();
+        VBox layout = new VBox(10);
         Label welcomeLabel = new Label("Bem-vindo, " + usuario.getLogin() + "!");
         layout.getChildren().add(welcomeLabel);
 
@@ -112,7 +112,16 @@ public class TelaPrincipal extends Application {
         totalAprovadasLabel = new Label();
         totalRejeitadasLabel = new Label();
         atualizarResumoRapido();
-        layout.getChildren().addAll(resumoLabel, totalPendentesLabel, totalAprovadasLabel, totalRejeitadasLabel);
+
+        VBox vBox = new VBox();
+
+        VBox.setMargin(resumoLabel, new javafx.geometry.Insets(10, 0, 10, 0));
+        VBox.setMargin(totalPendentesLabel, new javafx.geometry.Insets(1, 0, 1, 0));
+        VBox.setMargin(totalAprovadasLabel, new javafx.geometry.Insets(1, 0, 1, 0));
+        VBox.setMargin(totalRejeitadasLabel, new javafx.geometry.Insets(1, 0, 1, 0));
+
+        vBox.getChildren().addAll(resumoLabel, totalPendentesLabel, totalAprovadasLabel, totalRejeitadasLabel);
+        layout.getChildren().add(vBox);
 
         Button novaSolicitacaoButton = new Button("Nova Solicitação");
         novaSolicitacaoButton.setOnAction(e -> {
@@ -183,7 +192,6 @@ public class TelaPrincipal extends Application {
                 tooltip.setWrapText(true);
                 tooltip.setStyle("-fx-font-size: 12px;");
 
-                // Associar o Tooltip ao Label
                 Tooltip.install(label, tooltip);
             }
 
@@ -342,7 +350,7 @@ public class TelaPrincipal extends Application {
             Platform.runLater(() -> {
                 observableList.setAll(solicitacoesPendentes);
                 table.setItems(observableList);
-                atualizarResumoRapido(); // Atualiza o resumo rápido sempre que a tabela for atualizada
+                atualizarResumoRapido();
             });
         } catch (SQLException e) {
             e.printStackTrace();
