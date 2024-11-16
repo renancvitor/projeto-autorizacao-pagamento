@@ -2,12 +2,10 @@ package Application;
 
 import DAO.UsuarioDAO;
 import Entities.TelaPrincipal;
+import Entities.UserService;
 import Entities.Usuario;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.PasswordField;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.scene.layout.GridPane;
 import javafx.stage.Stage;
 
@@ -66,7 +64,14 @@ public class TelaLogin {
             UsuarioDAO usuarioDAO = new UsuarioDAO(connection);
             Usuario usuario = usuarioDAO.getUsuarioByLogin(login, senha);
             if (usuario != null) {
+                UserService.setUsuarioLogado(usuario); // Definir o usuário logado na sessão
+                Alert alert = new Alert(Alert.AlertType.INFORMATION, "Login bem-sucedido. Bem-vindo, " + usuario.getLogin());
+                alert.show();
+
                 return usuario;
+            } else {
+                Alert alert = new Alert(Alert.AlertType.ERROR, "Usuário ou senha inválidos.");
+                alert.show();
             }
         } catch (SQLException e) {
             e.printStackTrace();

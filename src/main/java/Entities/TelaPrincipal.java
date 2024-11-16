@@ -56,51 +56,59 @@ public class TelaPrincipal extends Application {
         Label welcomeLabel = new Label("Bem-vindo, " + usuario.getLogin() + "!");
         layout.getChildren().add(welcomeLabel);
 
-        // Menu para gerenciar usuários
-        MenuBar menuBarUser = new MenuBar();
-        Menu usuarioMenu = new Menu("Gerenciar Usuários");
+        Usuario usuarioAtual = UserService.getUsuarioLogado();
 
-        MenuItem cadastrarUsuarioItem = new MenuItem("Cadastrar Usuário");
-        cadastrarUsuarioItem.setOnAction(e -> cadastrarUsuario());
+        if (permissaoService.gerenciarUsuarios(usuarioAtual)) {
 
-        MenuItem editarPermissoesItem = new MenuItem("Editar Permissões");
-        editarPermissoesItem.setOnAction(e -> editarPermissoes());
+            // Menu para gerenciar usuários
+            MenuBar menuBarUser = new MenuBar();
+            Menu usuarioMenu = new Menu("Gerenciar Usuários");
 
-        usuarioMenu.getItems().addAll(cadastrarUsuarioItem, editarPermissoesItem);
-        menuBarUser.getMenus().add(usuarioMenu);
-        layout.getChildren().add(menuBarUser);
+            MenuItem cadastrarUsuarioItem = new MenuItem("Cadastrar Usuário");
+            cadastrarUsuarioItem.setOnAction(e -> cadastrarUsuario());
 
-        // Menu para gerenciar departamentos e cargos
-        MenuBar menuBarFunc = new MenuBar();
-        Menu funcionarioMenu = new Menu("Gerenciar funcionários");
+            MenuItem editarPermissoesItem = new MenuItem("Editar Permissões");
+            editarPermissoesItem.setOnAction(e -> editarPermissoes());
 
-        MenuItem cadastrarDeparamentoItem = new MenuItem("Cadastrar Departamento");
-        cadastrarDeparamentoItem.setOnAction(e -> cadastrarDepartamento());
+            usuarioMenu.getItems().addAll(cadastrarUsuarioItem, editarPermissoesItem);
+            menuBarUser.getMenus().add(usuarioMenu);
+            layout.getChildren().add(menuBarUser);
 
-        MenuItem cadastrarCargoItem = new MenuItem("Cadastrar Cargo");
-        cadastrarCargoItem.setOnAction(e -> cadastrarCargo());
+            // Menu para gerenciar departamentos e cargos
+            MenuBar menuBarFunc = new MenuBar();
+            Menu funcionarioMenu = new Menu("Gerenciar funcionários");
 
-        funcionarioMenu.getItems().addAll(cadastrarDeparamentoItem, cadastrarCargoItem);
-        menuBarFunc.getMenus().add(funcionarioMenu);
-        layout.getChildren().add(menuBarFunc);
+            MenuItem cadastrarDeparamentoItem = new MenuItem("Cadastrar Departamento");
+            cadastrarDeparamentoItem.setOnAction(e -> cadastrarDepartamento());
 
-        // Menu para cadastrar pessoas
-        MenuBar menuBarPessoa = new MenuBar();
-        Menu pessoaMenu = new Menu("Cadastrar");
+            MenuItem cadastrarCargoItem = new MenuItem("Cadastrar Cargo");
+            cadastrarCargoItem.setOnAction(e -> cadastrarCargo());
 
-        MenuItem cadastrarPessoaItem = new MenuItem("Cadastrar Pessoa");
-        cadastrarPessoaItem.setOnAction(e -> abrirCadastroPessoa(primaryStage));
+            funcionarioMenu.getItems().addAll(cadastrarDeparamentoItem, cadastrarCargoItem);
+            menuBarFunc.getMenus().add(funcionarioMenu);
+            layout.getChildren().add(menuBarFunc);
 
-        pessoaMenu.getItems().add(cadastrarPessoaItem);
-        menuBarPessoa.getMenus().add(pessoaMenu);
-        layout.getChildren().add(menuBarPessoa);
+            // Menu para cadastrar pessoas
+            MenuBar menuBarPessoa = new MenuBar();
+            Menu pessoaMenu = new Menu("Cadastrar");
 
-        HBox menuBarContainer = new HBox();
-        menuBarContainer.setSpacing(10);
+            MenuItem cadastrarPessoaItem = new MenuItem("Cadastrar Pessoa");
+            cadastrarPessoaItem.setOnAction(e -> abrirCadastroPessoa(primaryStage));
 
-        menuBarContainer.getChildren().addAll(menuBarUser, menuBarFunc, menuBarPessoa);
+            pessoaMenu.getItems().add(cadastrarPessoaItem);
+            menuBarPessoa.getMenus().add(pessoaMenu);
+            layout.getChildren().add(menuBarPessoa);
 
-        layout.getChildren().add(menuBarContainer);
+            HBox menuBarContainer = new HBox();
+            menuBarContainer.setSpacing(10);
+
+            menuBarContainer.getChildren().addAll(menuBarUser, menuBarFunc, menuBarPessoa);
+
+            layout.getChildren().add(menuBarContainer);
+
+        }
+
+        // Trecho acima DENTRO DO IF sob teste, caso erro voltará aqui
 
         // Resumo Rápido
         Label resumoLabel = new Label("Resumo Rápido:");
