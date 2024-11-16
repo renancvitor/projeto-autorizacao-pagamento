@@ -150,11 +150,11 @@
 
 /* Outros elementos */
 .vbox {
-    -fx-spacing: 10px;
-    -fx-padding: 10px;
+    -fx-spacing: 15px;
+    -fx-padding: 10px 0;
 }
 
 .hbox {
-    -fx-spacing: 15px;
-    -fx-padding: 10px;
+    -fx-spacing: 25px;
+    -fx-padding: 10px 0;
 }

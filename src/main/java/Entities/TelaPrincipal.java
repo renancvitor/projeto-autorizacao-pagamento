@@ -290,7 +290,7 @@ public class TelaPrincipal extends Application {
         layout.getChildren().add(topoLayout);
         layout.getChildren().add(table);
 
-        Scene scene = new Scene(layout, 1200, 600);
+        Scene scene = new Scene(layout, 1220, 600);
         primaryStage.setScene(scene);
         primaryStage.show();
 
