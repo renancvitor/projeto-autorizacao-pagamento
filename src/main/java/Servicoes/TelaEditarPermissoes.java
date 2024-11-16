@@ -38,8 +38,11 @@ public class TelaEditarPermissoes extends Application {
         VBox layout = new VBox(10, userTypeComboBox, permissionsContainer, saveButton);
         layout.setPadding(new Insets(20));
 
-        stage.setScene(new Scene(layout, 300, 400));
+        Scene scene = new Scene(layout, 300, 400);
+        scene.getStylesheets().add(getClass().getResource("/styles.css").toExternalForm());
+
         stage.setTitle("Editar Permissões de Usuário");
+        stage.setScene(scene);
         stage.show();
     }
 

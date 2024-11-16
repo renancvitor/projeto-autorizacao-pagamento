@@ -99,7 +99,6 @@ public class TelaCadastroUsuario {
         Scene scene = new Scene(layout, 400, 350);
         scene.getStylesheets().add(getClass().getResource("/styles.css").toExternalForm());
 
-        // stage.setScene(new javafx.scene.Scene(layout, 300, 250));
         stage.setTitle("Cadastro de Usuário");
         stage.setScene(scene);
         stage.show();

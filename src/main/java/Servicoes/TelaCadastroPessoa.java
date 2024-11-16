@@ -66,7 +66,6 @@ public class TelaCadastroPessoa {
             LocalDate dataNascimento = parseDate(dataNascimentoField.getText());
             String cpf = cpfField.getText();
 
-            // Captura o departamento e cargo selecionados
             Departamento departamentoSelecionado = departamentoComboBox.getValue();
             Cargo cargoSelecionado = cargoComboBox.getValue();
 
