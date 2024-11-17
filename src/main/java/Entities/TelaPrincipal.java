@@ -19,10 +19,8 @@ import javafx.util.Callback;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
-import java.sql.Timestamp;
 import java.text.NumberFormat;
 import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Locale;
 
@@ -225,7 +223,6 @@ public class TelaPrincipal extends Application {
                         if (empty || item == null) {
                             setText(null);
                         } else {
-                            // Formatar o valor como moeda
                             NumberFormat currencyFormat = NumberFormat.getCurrencyInstance(new Locale("pt", "BR"));
                             setText(currencyFormat.format(item));
                         }
@@ -282,7 +279,6 @@ public class TelaPrincipal extends Application {
                     {
                         rejectButton.setOnAction(event -> {
                             Solicitacao solicitacao = getTableView().getItems().get(getIndex());
-                            // reprovarSolicitacao(solicitacao); ANTERIOR AO ABAIXO
                             reprovarSolicitacao(usuario, permissaoService, solicitacao);
                         });
                     }
@@ -324,6 +320,21 @@ public class TelaPrincipal extends Application {
 
         refreshTable();
 
+        // Adicionando um botão na tela
+        Button btnAtualizar = new Button("Atualizar");
+
+        // Definindo a ação do botão
+        btnAtualizar.setOnAction(event -> atualizarResumoRapido());
+
+        // Adicionando o botão no layout do resumo rápido
+        VBox vboxResumoRapido = new VBox();
+        vboxResumoRapido.setSpacing(10); // Define o espaçamento entre os elementos do VBox
+        vboxResumoRapido.getChildren().add(btnAtualizar);
+
+        // Certifique-se de adicionar o vboxResumoRapido ao layout principal
+        layout.getChildren().add(vboxResumoRapido);
+
+
         scene.getStylesheets().add(getClass().getResource("/styles.css").toExternalForm());
     }
 
@@ -337,6 +348,8 @@ public class TelaPrincipal extends Application {
         cadastroPessoaStage.setTitle("Cadastro de Pessoa");
         cadastroPessoaStage.show();
     }
+
+
 
     private void atualizarResumoRapido() {
         try {

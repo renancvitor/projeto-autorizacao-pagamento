@@ -16,6 +16,7 @@ import javafx.stage.Stage;
 
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.sql.SQLIntegrityConstraintViolationException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
@@ -81,15 +82,20 @@ public class TelaCadastroPessoa {
                     PessoaDAO pessoaDAO = new PessoaDAO(connection);
                     pessoaDAO.salvarPessoa(pessoa);
 
-                    Alert alert = new Alert(Alert.AlertType.INFORMATION, "Pessoa salva com sucesso!");
+                    Alert alert = new Alert(Alert.AlertType.INFORMATION, "Funcionário salvo com sucesso!");
                     alert.show();
 
+                } catch (SQLIntegrityConstraintViolationException e) {
+                    Alert alert = new Alert(Alert.AlertType.ERROR, "Já existe um funcionário com este login!");
+                    alert.show();
                 } catch (SQLException e) {
-                    Alert alert = new Alert(Alert.AlertType.ERROR, "Erro ao salvar pessoa: " + e.getMessage());
+                    Alert alert = new Alert(Alert.AlertType.ERROR, "Erro ao salvar funcionário: " + e.getMessage());
                     alert.show();
                 }
             } else {
-                System.out.println("Data de nascimento ou CPF inválidos.");
+                // System.out.println("Data de nascimento ou CPF inválidos.");
+                Alert alert = new Alert(Alert.AlertType.ERROR, "Data de nascimento ou CPF inválidos.");
+                alert.show();
             }
         });
 
@@ -156,7 +162,7 @@ public class TelaCadastroPessoa {
         try {
             return LocalDate.parse(dataStr, formater);
         } catch (DateTimeParseException e) {
-            return null; // Caso a data não possa ser analisada
+            return null;
         }
     }
 }

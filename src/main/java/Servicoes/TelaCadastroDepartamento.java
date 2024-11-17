@@ -65,7 +65,7 @@ public class TelaCadastroDepartamento extends Application {
             Departamento departamento = new Departamento(0, nome);
 
             departamentoDAO.salvarDepartamento(departamento);
-            System.out.println("Departamento criado com sucesso");
+            // System.out.println("Departamento criado com sucesso");
 
             Alert alert = new Alert(Alert.AlertType.INFORMATION, "Departamento criado com sucesso!");
             alert.show();

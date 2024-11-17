@@ -4,20 +4,15 @@ import DAO.SolicitacaoDAO;
 import Entities.Usuario;
 import javafx.application.Platform;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.scene.control.DatePicker;
-import javafx.scene.control.Label;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import javafx.collections.ObservableList;
 import javafx.collections.FXCollections;
-import javafx.scene.control.TableView;
 
 import java.sql.Connection;
 import java.sql.Date;
 import java.sql.SQLException;
-import java.sql.Timestamp;
 import java.util.List;
 
 public class TelaSolicitacao {
@@ -86,42 +81,35 @@ public class TelaSolicitacao {
             Date dataPagamento = Date.valueOf(dataPagamentoField.getValue());
             String formaPagamento = formaPagamentoField.getText();
             double valorTotal = Double.parseDouble(valorTotalField.getText());
-            int idUsuario = usuarioLogado.getId(); // Certifique-se de que getId() retorna um int
+            int idUsuario = usuarioLogado.getId();
 
-            // Definindo o status como PENDENTE
             StatusSolicitacao status = StatusSolicitacao.PENDENTE;
 
-            // Criação do objeto Solicitacao passando todos os parâmetros
             Solicitacao solicitacao = new Solicitacao(
-                    0, // id (normalmente é gerado automaticamente pelo banco de dados)
+                    0,
                     fornecedor,
                     descricao,
-                    new java.sql.Timestamp(System.currentTimeMillis()), // dataCriacao
+                    new java.sql.Timestamp(System.currentTimeMillis()),
                     dataPagamento,
                     formaPagamento,
                     valorTotal,
                     idUsuario,
-                    status // status
+                    status
             );
 
-            // Inserção da solicitação no banco de dados através do DAO
             solicitacaoDAO.inserirSolicitacao(solicitacao);
 
-            System.out.println("Solicitação enviada por: " + usuarioLogado.getLogin());
+            Alert alert = new Alert(Alert.AlertType.INFORMATION, "Solicitação enviada com sucesso.");
+            alert.show();
 
-            // Atualização da TableView na TelaPrincipal
             List<Solicitacao> solicitacoes = solicitacaoDAO.getTodasSolicitacoes();
             ObservableList<Solicitacao> observableListSolicitacoes = FXCollections.observableArrayList(solicitacoes);
             tabelaSolicitacoes.setItems(observableListSolicitacoes);
 
         } catch (NumberFormatException e) {
             e.printStackTrace();
-            // Tratar erros de conversão de dados
         } catch (SQLException e) {
             e.printStackTrace();
-            // Tratar erros relacionados ao banco de dados
         }
     }
-
-
 }

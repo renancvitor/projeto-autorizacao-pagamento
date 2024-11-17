@@ -41,7 +41,6 @@ public class TelaLogin {
             String login = usernameField.getText();
             String senha = passwordField.getText();
 
-            // Valida login e redireciona para a tela apropriada
             Usuario usuario = validarLogin(login, senha);
             if (usuario != null) {
                 TelaPrincipal telaPrincipal = new TelaPrincipal(usuario);
