@@ -10,7 +10,7 @@
 .label {
     -fx-font-family: "Arial";
     -fx-font-size: 14px;
-    -fx-text-fill: #a1ecfb; /* Azul claro */
+    -fx-text-fill: #1e1e2f; /* Azul claro */
 }
 
 .calendar {
@@ -161,4 +161,24 @@
 .hbox {
     -fx-spacing: 25px;
     -fx-padding: 10px 0;
+}
+
+
+.date-picker {
+    -fx-background-color: #2a2a2a; /* Fundo escuro */
+    -fx-text-fill: #2a2a2a;; /* Texto branco */
+}
+
+.date-picker .arrow {
+    -fx-background-color: #2a2a2a;; /* Azul claro */
+}
+
+.date-picker .day-cell {
+    -fx-font-family: "Arial";
+    -fx-font-size: 14px;
+    -fx-text-fill: #2a2a2a;;
+}
+
+.date-picker .day-cell:hover {
+    -fx-background-color: #2a2a2a;; /* Azul claro */
 }

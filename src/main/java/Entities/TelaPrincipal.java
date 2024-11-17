@@ -33,16 +33,16 @@ public class TelaPrincipal extends Application {
     private Label totalRejeitadasLabel;
     private SolicitacaoService solicitacaoService;
     private ObservableList<Solicitacao> observableList;
-    private PermissaoService permissaoService; // NOVO
-    private UsuarioController usuarioController; // NOVO
+    private PermissaoService permissaoService;
+    private UsuarioController usuarioController;
 
     public TelaPrincipal(Usuario usuario) {
         this.usuario = usuario;
         try {
             this.connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/sistema_pagamentos", "root", "123456789");
             SolicitacaoDAO solicitacaoDAO = new SolicitacaoDAO(connection);
-            this.usuarioController = new UsuarioController(permissaoService); // NOVO
-            this.permissaoService = new PermissaoService(); // NOVO
+            this.usuarioController = new UsuarioController(permissaoService);
+            this.permissaoService = new PermissaoService();
             this.solicitacaoService = new SolicitacaoService(solicitacaoDAO, permissaoService);
             this.observableList = FXCollections.observableArrayList();
         } catch (SQLException e) {
@@ -320,18 +320,14 @@ public class TelaPrincipal extends Application {
 
         refreshTable();
 
-        // Adicionando um botão na tela
         Button btnAtualizar = new Button("Atualizar");
 
-        // Definindo a ação do botão
         btnAtualizar.setOnAction(event -> atualizarResumoRapido());
 
-        // Adicionando o botão no layout do resumo rápido
         VBox vboxResumoRapido = new VBox();
-        vboxResumoRapido.setSpacing(10); // Define o espaçamento entre os elementos do VBox
+        vboxResumoRapido.setSpacing(10);
         vboxResumoRapido.getChildren().add(btnAtualizar);
 
-        // Certifique-se de adicionar o vboxResumoRapido ao layout principal
         layout.getChildren().add(vboxResumoRapido);
 
 
@@ -343,7 +339,7 @@ public class TelaPrincipal extends Application {
         cadastroPessoaStage.initOwner(primartStage);
 
         TelaCadastroPessoa telaCadastroPessoa = new TelaCadastroPessoa(connection);
-        telaCadastroPessoa.mostrarTela(cadastroPessoaStage); // Mostra tela cadastro pessoa
+        telaCadastroPessoa.mostrarTela(cadastroPessoaStage);
 
         cadastroPessoaStage.setTitle("Cadastro de Pessoa");
         cadastroPessoaStage.show();
@@ -397,17 +393,11 @@ public class TelaPrincipal extends Application {
         telaCadastroUsuario.start(cadastroUsuarioStage); // Exibe a tela de cadastro do usuário
     }
 
-//    private void editarPermissoes() {
-//        Stage editarPermissoesStage = new Stage();
-//        TelaEditarPermissoes telaEditarPermissoes = new TelaEditarPermissoes(connection); // Passa a conexão
-//        telaEditarPermissoes.start(editarPermissoesStage);
-//    }
-
     private void cadastrarDepartamento() {
         Stage cadastroDepartamentoStage = new Stage();
         TelaCadastroDepartamento telaCadastroDepartamento = new TelaCadastroDepartamento();
-        telaCadastroDepartamento.setConnection(connection); // Configura a conexão
-        telaCadastroDepartamento.start(cadastroDepartamentoStage); // Exibe a tela de cadastro do departamento
+        telaCadastroDepartamento.setConnection(connection);
+        telaCadastroDepartamento.start(cadastroDepartamentoStage);
     }
 
     private void cadastrarCargo() {

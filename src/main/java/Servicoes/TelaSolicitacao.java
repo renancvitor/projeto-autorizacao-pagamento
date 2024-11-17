@@ -2,7 +2,6 @@ package Servicoes;
 
 import DAO.SolicitacaoDAO;
 import Entities.Usuario;
-import javafx.application.Platform;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.layout.VBox;
@@ -71,7 +70,7 @@ public class TelaSolicitacao {
         stage.setScene(scene);
         stage.show();
 
-        scene.getStylesheets().add(getClass().getResource("/styles.css").toExternalForm());
+        scene.getStylesheets().add(getClass().getResource("/calendario.css").toExternalForm());
     }
 
     private void enviarSolicitacao() {
