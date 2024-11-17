@@ -65,20 +65,20 @@ public class TelaPrincipal extends Application {
         if (permissaoService.gerenciarUsuarios(usuarioAtual)) {
 
             MenuBar menuBarUser = new MenuBar();
-            Menu usuarioMenu = new Menu("Gerenciar Usuários");
+            Menu usuarioMenu = new Menu("Cadastrar funcionários e usuários");
+
+            MenuItem cadastrarPessoaItem = new MenuItem("Cadastrar Funcionário");
+            cadastrarPessoaItem.setOnAction(e -> abrirCadastroPessoa(primaryStage));
+            usuarioMenu.getItems().add(cadastrarPessoaItem);
 
             MenuItem cadastrarUsuarioItem = new MenuItem("Cadastrar Usuário");
             cadastrarUsuarioItem.setOnAction(e -> cadastrarUsuario());
+            usuarioMenu.getItems().addAll(cadastrarUsuarioItem);
 
-            MenuItem editarPermissoesItem = new MenuItem("Editar Permissões");
-            editarPermissoesItem.setOnAction(e -> editarPermissoes());
-
-            usuarioMenu.getItems().addAll(cadastrarUsuarioItem, editarPermissoesItem);
             menuBarUser.getMenus().add(usuarioMenu);
-            layout.getChildren().add(menuBarUser);
 
             MenuBar menuBarFunc = new MenuBar();
-            Menu funcionarioMenu = new Menu("Gerenciar funcionários");
+            Menu funcionarioMenu = new Menu("Cadastrar departamentos e cargos");
 
             MenuItem cadastrarDeparamentoItem = new MenuItem("Cadastrar Departamento");
             cadastrarDeparamentoItem.setOnAction(e -> cadastrarDepartamento());
@@ -90,20 +90,10 @@ public class TelaPrincipal extends Application {
             menuBarFunc.getMenus().add(funcionarioMenu);
             layout.getChildren().add(menuBarFunc);
 
-            MenuBar menuBarPessoa = new MenuBar();
-            Menu pessoaMenu = new Menu("Cadastrar");
-
-            MenuItem cadastrarPessoaItem = new MenuItem("Cadastrar Pessoa");
-            cadastrarPessoaItem.setOnAction(e -> abrirCadastroPessoa(primaryStage));
-
-            pessoaMenu.getItems().add(cadastrarPessoaItem);
-            menuBarPessoa.getMenus().add(pessoaMenu);
-            layout.getChildren().add(menuBarPessoa);
-
             HBox menuBarContainer = new HBox();
             menuBarContainer.setSpacing(10);
 
-            menuBarContainer.getChildren().addAll(menuBarUser, menuBarFunc, menuBarPessoa);
+            menuBarContainer.getChildren().addAll(menuBarUser, menuBarFunc);
 
             layout.getChildren().add(menuBarContainer);
 
@@ -394,11 +384,11 @@ public class TelaPrincipal extends Application {
         telaCadastroUsuario.start(cadastroUsuarioStage); // Exibe a tela de cadastro do usuário
     }
 
-    private void editarPermissoes() {
-        Stage editarPermissoesStage = new Stage();
-        TelaEditarPermissoes telaEditarPermissoes = new TelaEditarPermissoes(connection); // Passa a conexão
-        telaEditarPermissoes.start(editarPermissoesStage);
-    }
+//    private void editarPermissoes() {
+//        Stage editarPermissoesStage = new Stage();
+//        TelaEditarPermissoes telaEditarPermissoes = new TelaEditarPermissoes(connection); // Passa a conexão
+//        telaEditarPermissoes.start(editarPermissoesStage);
+//    }
 
     private void cadastrarDepartamento() {
         Stage cadastroDepartamentoStage = new Stage();

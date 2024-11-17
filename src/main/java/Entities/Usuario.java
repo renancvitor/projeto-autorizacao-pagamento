@@ -16,22 +16,21 @@ public class Usuario {
     private String login;
     private String senha;
     private String cpf;
-    // private int idTipoUsuario;
     private UserType userType;
     private List<String> permissoes;
 
-    // Construtor adicional
     public Usuario(int id, String login, String senha, List<String> permissoes, String cpf, int idTipoUsuario, UserType userType) {
         this.id = id;
         this.login = login;
         this.senha = senha;
         this.permissoes = permissoes;
         this.cpf = cpf;
-        // this.idTipoUsuario = idTipoUsuario;
         this.userType = userType;
     }
 
-    // Método para verificar se o usuário possui uma permissão específica
+    public Usuario() {
+    }
+
     public boolean hasPermission(List<String> permissao) {
         return permissoes.contains(permissao);
     }
@@ -51,10 +50,6 @@ public class Usuario {
     public String getCpf() {
         return cpf;
     }
-
-//    public int getIdTipoUsuario() {
-//        return idTipoUsuario;
-//    }
 
     public UserType getUserType() {
         return userType;
@@ -80,9 +75,9 @@ public class Usuario {
         this.cpf = cpf;
     }
 
-//    public void setIdTipoUsuario(int idTipoUsuario) {
-//        this.idTipoUsuario = idTipoUsuario;
-//    }
+    public void setUserType(UserType userType) {
+        this.userType = userType;
+    }
 
     public void setPermissoes(List<String> permissoes) {
         this.permissoes = permissoes;
@@ -109,13 +104,6 @@ public class Usuario {
     public int hashCode() {
         return Objects.hash(login);
     }
-
-    // Método para criar ComboBox de permissões
-//    public static ComboBox<String> criarComboBoxPermissoes() {
-//        ComboBox<String> comboBox = new ComboBox<>();
-//        comboBox.getItems().addAll("Admin", "User", "Viewer");
-//        return comboBox;
-//    }
 
     public void adicionarPermissao(String permissao) {
         if (this.permissoes == null) {

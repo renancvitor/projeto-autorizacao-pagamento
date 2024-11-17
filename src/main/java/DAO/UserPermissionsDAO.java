@@ -1,6 +1,7 @@
 package DAO;
 
 import Entities.UserType;
+import Entities.Usuario;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -12,6 +13,28 @@ public class UserPermissionsDAO {
     public UserPermissionsDAO(Connection connection) {
         this.connection = connection;
     }
+
+    public List<Usuario> getUsuariosPorTipo(String tipoUsuario) throws SQLException {
+        List<Usuario> usuarios = new ArrayList<>();
+        String sql = "SELECT u.id, u.nome, u.cpf FROM usuarios u " +
+                "JOIN tipos_usuarios tu ON u.tipo_usuario_id = tu.id " +
+                "WHERE tu.tipo_usuario = ?";
+
+        try (PreparedStatement stmt = connection.prepareStatement(sql)) {
+            stmt.setString(1, tipoUsuario);
+            try (ResultSet rs = stmt.executeQuery()) {
+                while (rs.next()) {
+                    Usuario usuario = new Usuario();
+                    usuario.setId(rs.getInt("id"));
+                    usuario.setLogin(rs.getString("nome"));
+                    usuario.setCpf(rs.getString("cpf"));
+                    usuarios.add(usuario);
+                }
+            }
+        }
+        return usuarios;
+    }
+
 
     public int getIdTipoUsuario(String nomeTipo) throws SQLException {
         String sql = "SELECT id FROM tipos_usuarios WHERE tipo_usuario = ?";
@@ -156,4 +179,43 @@ public class UserPermissionsDAO {
         throw new SQLException("Tipo de usuário não encontrado");
     }
 
+    public List<Usuario> getTodosUsuarios() {
+        List<Usuario> usuarios = new ArrayList<>();
+        String sql = "SELECT u.id, u.login, u.cpf, tu.tipo_usuario " +
+                "FROM usuarios u " +
+                "JOIN tipos_usuarios tu ON u.id_tipo_usuario = tu.id";  // Ajuste para buscar as colunas necessárias de ambas as tabelas
+
+        try (PreparedStatement stmt = connection.prepareStatement(sql)) {
+            ResultSet rs = stmt.executeQuery();
+
+            while (rs.next()) {
+                Usuario usuario = new Usuario();
+                usuario.setId(rs.getInt("id"));             // Assumindo que a coluna 'id' está na tabela 'usuarios'
+                usuario.setLogin(rs.getString("login"));     // A coluna 'nome' aqui é para o login (nome do usuário)
+                usuario.setCpf(rs.getString("cpf"));         // Assumindo que a coluna 'cpf' está na tabela 'usuarios'
+
+                // Associa o tipo de usuário, que está vindo da tabela 'tipos_usuarios'
+                String tipoUsuario = rs.getString("tipo_usuario");
+                usuario.setUserType(UserType.valueOf(tipoUsuario));  // Convertendo para o enum UserType
+
+                usuarios.add(usuario);  // Adiciona o usuário à lista
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return usuarios;
+    }
+
+    public void atualizarTipoUsuario(Usuario usuario, UserType tipoUsuario) {
+        String sql = "UPDATE usuarios SET tipo_usuario = ? WHERE id = ?";
+
+        try (PreparedStatement stmt = connection.prepareStatement(sql)) {
+            stmt.setString(1, tipoUsuario.name());  // Atualiza o tipo de usuário no banco
+            stmt.setInt(2, usuario.getId());  // Atualiza o usuário com base no ID
+            stmt.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+            throw new RuntimeException("Erro ao atualizar tipo de usuário.", e);
+        }
+    }
 }
