@@ -1,0 +1,168 @@
+/* styles.css */
+
+/* Background geral */
+.root {
+    -fx-background-color: #1e1e2f;
+    -fx-padding: 20px;
+}
+
+/* Títulos e labels */
+.global-label {
+    -fx-font-family: "Arial";
+    -fx-font-size: 14px;
+    -fx-text-fill: #a1ecfb; /* Azul claro */
+}
+
+.date-picker-label {
+    -fx-text-fill: #000;
+    font-size: 14px;
+    font-weight: bold;
+    color: #2A9D8F; /* Uma cor diferente para destacar o label do DatePicker */
+    padding: 10px 0;
+}
+
+/* Botões */
+.button {
+    -fx-background-color: #27496d; /* Azul escuro */
+    -fx-text-fill: #ffffff;
+    -fx-font-size: 14px;
+    -fx-padding: 5px 10px;
+    -fx-border-color: #a1ecfb; /* Acento azul */
+    -fx-border-width: 2px;
+    -fx-border-radius: 5px;
+    -fx-background-radius: 5px;
+    -fx-margin: 20px;
+}
+
+.button:hover {
+    -fx-background-color: #00909e; /* Azul ciano ao passar o mouse */
+}
+
+.button:pressed {
+    -fx-background-color: #00adb5; /* Azul mais claro */
+}
+
+/* TableView */
+.table-view {
+    -fx-background-color: #1e1e2f;
+    -fx-border-color: #5bc0be; /* Verde água */
+    -fx-border-width: 2px;
+    -fx-border-radius: 5px;
+    -fx-padding: 10px;
+}
+
+.table-view .column-header {
+    -fx-background-color: #0f3057; /* Azul profundo */
+    -fx-text-fill: #ffffff;
+    -fx-font-weight: bold;
+}
+
+.table-view .cell {
+    -fx-background-color: #1e1e2f;
+    -fx-text-fill: #ffffff;
+    -fx-wrap-text: true;
+}
+
+.table-view .cell:hover {
+    -fx-background-color: #333; /* Alterando para um fundo mais claro */
+    -fx-text-fill: #ffffff;
+    position: relative;
+}
+
+.table-view .cell:hover::after {
+    content: attr(data-tooltip);  /* O conteúdo do tooltip será o texto armazenado no atributo data-tooltip */
+    position: absolute;
+    bottom: 100%; /* Aparece acima da célula */
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: #333;  /* Cor de fundo do balão */
+    color: #fff;  /* Cor do texto */
+    padding: 5px;
+    font-size: 12px;
+    border-radius: 5px;
+    white-space: nowrap; /* Impede que o texto seja quebrado */
+    opacity: 0;
+    transition: opacity 0.3s ease; /* Animação suave */
+    pointer-events: none; /* Impede que o mouse interaja com o tooltip */
+}
+
+/* Exibe o tooltip quando passar o mouse sobre a célula */
+.table-view .cell:hover::after {
+    opacity: 1;
+}
+
+/* Menus */
+.menu-bar {
+    -fx-background-color: #0f3057; /* Azul profundo */
+    -fx-border-color: #5bc0be; /* Verde água */
+    -fx-border-width: 2px;
+    -fx-border-radius: 5px;
+    -fx-padding: 5px;
+}
+
+.menu {
+    -fx-text-fill: #ffffff;
+    -fx-font-size: 12px;
+}
+
+.menu:hover {
+    -fx-background-color: #5bc0be; /* Destaque ao passar o mouse */
+    -fx-text-fill: #ffffff;
+}
+
+/* Separadores entre menus */
+.menu-bar .menu-button {
+    -fx-padding: 5px;
+    -fx-text-fill: #ffffff;
+}
+
+.menu:focused {
+    -fx-background-color: #0f3057;
+    -fx-text-fill: #a1ecfb; /* Cor azul clara quando o item é clicado */
+    -fx-font-weight: bold; /* Negrito quando o item é clicado */
+}
+
+.menu-bar .menu-item {
+    -fx-background-color: #0f3057;
+    -fx-border-color: #5bc0be;
+}
+
+.menu .menu-item:hover {
+    -fx-background-color: #5bc0be; /* Cor de fundo quando o mouse passa sobre o item */
+    -fx-text-fill: #ffffff; /* Cor do texto quando o mouse passa sobre o item */
+}
+
+.button:pressed {
+    -fx-background-color: #00adb5;
+    -fx-opacity: 0.8; /* Opacidade reduzida ao ser pressionado */
+}
+
+.button, .menu-bar .menu-button {
+    -fx-effect: dropshadow(gaussian, #000000, 5, 0.2, 0, 1);
+}
+
+.menu, .button {
+    -fx-transition: all 0.2s ease-in-out;
+}
+
+/* Barra de Resumo */
+.hbox {
+    -fx-spacing: 15px;
+    -fx-alignment: center;
+}
+
+.hbox > .label {
+    -fx-font-size: 12px;
+    -fx-text-fill: #ffffff;
+}
+
+/* Outros elementos */
+.vbox {
+    -fx-spacing: 15px;
+    -fx-padding: 10px 0;
+}
+
+.hbox {
+    -fx-spacing: 25px;
+    -fx-padding: 10px 0;
+}

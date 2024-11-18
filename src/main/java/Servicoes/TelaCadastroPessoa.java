@@ -7,6 +7,7 @@ import DAO.PessoaDAO;
 import Entities.Cargo;
 import Entities.Departamento;
 import Entities.Pessoa;
+import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.scene.Scene;
@@ -39,13 +40,22 @@ public class TelaCadastroPessoa {
         layout.setStyle("-fx-padding: 10;");
 
         Label nomeLabel = new Label("Nome:");
+        nomeLabel.getStyleClass().add("global-label");
         TextField nomeField = new TextField();
 
-        Label dataNascimentoLabel = new Label("Data de Nascimento: (dd/MM/yyyy):");
-        TextField dataNascimentoField = new TextField();
-        dataNascimentoField.setPromptText("dd/MM/yyyy");
+        Label dataNascimentoLabel = new Label("Data de Nascimento:");
+        dataNascimentoLabel.getStyleClass().add("global-label");
+        
+        DatePicker dataNascimentoPicker = new DatePicker();
+        dataNascimentoPicker.setPromptText("dd/MM/yyyy");
+        dataNascimentoPicker.getStyleClass().add("date-picker-label");
+
+//        Label dataNascimentoLabel = new Label("Data de Nascimento: (dd/MM/yyyy):");
+//        TextField dataNascimentoField = new TextField();
+//        dataNascimentoField.setPromptText("dd/MM/yyyy");
 
         Label cpfLabel = new Label("CPF:");
+        cpfLabel.getStyleClass().add("global-label");
         TextField cpfField = new TextField();
         cpfField.setPromptText("000.000.000-00");
 
@@ -57,14 +67,15 @@ public class TelaCadastroPessoa {
         carregarDepartamentos();
         carregarCargos();
 
-        dataNascimentoField.textProperty().addListener((observableValue, oldValue, newValue) -> dataNascimentoField.setText(formatInputAsDate(newValue)));
+        // dataNascimentoField.textProperty().addListener((observableValue, oldValue, newValue) -> dataNascimentoField.setText(formatInputAsDate(newValue)));
 
         cpfField.textProperty().addListener((observableValue, oldValue, newValue) -> cpfField.setText(formatInputAsCPF(newValue)));
 
         Button salvarButton = new Button("Salvar");
         salvarButton.setOnAction(event -> {
             String nome = nomeField.getText();
-            LocalDate dataNascimento = parseDate(dataNascimentoField.getText());
+            // LocalDate dataNascimento = parseDate(dataNascimentoField.getText());
+            LocalDate dataNascimento = dataNascimentoPicker.getValue();
             String cpf = cpfField.getText();
 
             Departamento departamentoSelecionado = departamentoComboBox.getValue();
@@ -101,7 +112,8 @@ public class TelaCadastroPessoa {
 
         layout.getChildren().addAll(
                 nomeLabel, nomeField,
-                dataNascimentoLabel, dataNascimentoField,
+                // dataNascimentoLabel, dataNascimentoField,
+                dataNascimentoLabel, dataNascimentoPicker,
                 cpfLabel, cpfField,
                 departamentoComboBox, cargoComboBox,
                 salvarButton
@@ -112,7 +124,7 @@ public class TelaCadastroPessoa {
         primaryStage.setTitle("Cadastro de Pessoa");
         primaryStage.show();
 
-        scene.getStylesheets().add(getClass().getResource("/styles.css").toExternalForm());
+        scene.getStylesheets().add(getClass().getResource("/nascimentoData.css").toExternalForm());
     }
 
     private void carregarDepartamentos() {
@@ -127,16 +139,16 @@ public class TelaCadastroPessoa {
         cargoComboBox.getItems().addAll(cargos);
     }
 
-    private String formatInputAsDate(String input) {
-        String digitsOnly = input.replaceAll("[^\\d]", "");
-
-        if (digitsOnly.length() >= 2 && digitsOnly.length() <= 4) {
-            return digitsOnly.substring(0, 2) + "/" + digitsOnly.substring(2);
-        } else if (digitsOnly.length() > 4) {
-            return digitsOnly.substring(0, 2) + "/" + digitsOnly.substring(2, 4) + "/" + digitsOnly.substring(4);
-        }
-        return digitsOnly;
-    }
+//    private String formatInputAsDate(String input) {
+//        String digitsOnly = input.replaceAll("[^\\d]", "");
+//
+//        if (digitsOnly.length() >= 2 && digitsOnly.length() <= 4) {
+//            return digitsOnly.substring(0, 2) + "/" + digitsOnly.substring(2);
+//        } else if (digitsOnly.length() > 4) {
+//            return digitsOnly.substring(0, 2) + "/" + digitsOnly.substring(2, 4) + "/" + digitsOnly.substring(4);
+//        }
+//        return digitsOnly;
+//    }
 
     private String formatInputAsCPF(String input) {
         String digitsOnly = input.replaceAll("[^\\d]", "");
@@ -157,12 +169,12 @@ public class TelaCadastroPessoa {
         return digitsOnly.length() == 11;
     }
 
-    private LocalDate parseDate(String dataStr) {
-        DateTimeFormatter formater = DateTimeFormatter.ofPattern(DATE_FORMAT); // Já definido início código
-        try {
-            return LocalDate.parse(dataStr, formater);
-        } catch (DateTimeParseException e) {
-            return null;
-        }
-    }
+//    private LocalDate parseDate(String dataStr) {
+//        DateTimeFormatter formater = DateTimeFormatter.ofPattern(DATE_FORMAT); // Já definido início código
+//        try {
+//            return LocalDate.parse(dataStr, formater);
+//        } catch (DateTimeParseException e) {
+//            return null;
+//        }
+//    }
 }
