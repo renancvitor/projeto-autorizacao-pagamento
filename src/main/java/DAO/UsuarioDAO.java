@@ -5,7 +5,6 @@ import Entities.Usuario;
 import Servicoes.PermissaoService;
 
 import java.sql.*;
-import java.util.ArrayList;
 import java.util.List;
 
 public class UsuarioDAO {
@@ -17,7 +16,6 @@ public class UsuarioDAO {
         this.permissaoService = new PermissaoService();
     }
 
-    // Método para obter o idpessoa pelo CPF
     private int getIdPessoaByCpf(String cpf) throws SQLException {
         String sql = "SELECT idpessoa FROM pessoa WHERE cpf = ?";
         try (PreparedStatement stmt = connection.prepareStatement(sql)) {
@@ -28,10 +26,9 @@ public class UsuarioDAO {
                 }
             }
         }
-        return -1; // Retorna -1 se o CPF não for encontrado
+        return -1;
     }
 
-    // Método para verificar se a pessoa já tem um usuário
     private boolean isUsuarioExistente(int idPessoa) throws SQLException {
         String sql = "SELECT COUNT(*) FROM usuarios WHERE idpessoa = ?";
         try (PreparedStatement stmt = connection.prepareStatement(sql)) {
@@ -45,7 +42,6 @@ public class UsuarioDAO {
         return false;
     }
 
-    // Método estático para obter UserType pelo id_tipo_usuario
     private UserType getUserTypeFromId(int idTipoUsuario) {
         return switch (idTipoUsuario) {
             case 1 -> UserType.ADMIN;
@@ -90,7 +86,6 @@ public class UsuarioDAO {
     }
 
     public List<String> getPermissoesByUsuarioId(int usuarioId) throws SQLException {
-        // Buscar o id_tipo_usuario do usuário no banco de dados
         String sql = "SELECT id_tipo_usuario FROM usuarios WHERE id = ?";
         int tipoUsuarioId = -1;
 
@@ -103,7 +98,6 @@ public class UsuarioDAO {
             }
         }
 
-        // Verifica se o tipoUsuarioId foi encontrado e mapeia o UserType
         UserType userType = switch (tipoUsuarioId) {
             case 1 -> UserType.ADMIN;
             case 2 -> UserType.GESTOR;
@@ -112,12 +106,10 @@ public class UsuarioDAO {
             default -> null;
         };
 
-        // Retorna as permissões baseadas no UserType
         return (userType != null) ? permissaoService.getPermissoesByUserType(userType) : List.of();
     }
 
     public void inserirUsuario(Usuario usuario) throws SQLException {
-        // Valida o CPF antes de inserir o usuário
         int idPessoa = getIdPessoaByCpf(usuario.getCpf());
         if (idPessoa == -1) {
             throw new IllegalArgumentException("CPF não cadastrado na tabela Pessoa!");
@@ -147,7 +139,6 @@ public class UsuarioDAO {
         }
     }
 
-    // Método para buscar o ID da permissão a partir do nome
     private int obterIdPermissaoPorNome(String nomePermissao) throws SQLException {
         String sql = "SELECT id FROM permissoes WHERE nome_permissao = ?";
         try (PreparedStatement stmt = connection.prepareStatement(sql)) {
@@ -162,20 +153,17 @@ public class UsuarioDAO {
     }
 
     private void consultarPermissoesUsuario(Usuario usuario) throws SQLException {
-        // Consulta para obter as permissões do tipo de usuário
         String sql = "SELECT p.nome_permissao FROM tipos_usuarios_permissoes tp "
                 + "JOIN permissoes p ON tp.id_permissao = p.id "
                 + "WHERE tp.id_tipo_usuario = ?";
 
         try (PreparedStatement stmt = connection.prepareStatement(sql)) {
-            // Passando o id_tipo_usuario do usuário
             stmt.setInt(1, usuario.getId());
 
             try (ResultSet rs = stmt.executeQuery()) {
-                // Processando o resultado da consulta
                 while (rs.next()) {
                     String permissao = rs.getString("nome_permissao");
-                    usuario.adicionarPermissao(permissao);  // Método para adicionar a permissão ao usuário
+                    usuario.adicionarPermissao(permissao);
                 }
             }
         }

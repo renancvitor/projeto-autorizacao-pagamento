@@ -24,12 +24,10 @@ public class PermissaoService {
         return permissoesPorTipoUsuario.getOrDefault(userType, new ArrayList<>());
     }
 
-    // Método genérico para verificar se um tipo de usuário tem uma permissão específica
     private boolean hasPermissao(Usuario usuario, String permissao) {
         return permissoesPorTipoUsuario.getOrDefault(usuario.getUserType(), List.of()).contains(permissao);
     }
 
-    // Métodos específicos de verificação de permissões
     public boolean aprovarReprovarSolicitacoes(Usuario usuario) {
         return hasPermissao(usuario, "aprovarReprovarSolicitacoes");
     }

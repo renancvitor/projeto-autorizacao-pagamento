@@ -1,0 +1,29 @@
+/* Estilo do DialogPane (fundo do Alert) */
+.custom-alert .dialog-pane {
+    -fx-background-color: #1e1e2f !important; /* Força a aplicação */
+    -fx-background-insets: 0;
+    -fx-background-radius: 10px;
+    -fx-border-color: #a1ecfb;
+    -fx-border-width: 2px;
+    -fx-border-radius: 10px;
+}
+
+/* Texto dentro do Alert */
+.custom-alert .content-label {
+    -fx-text-fill: #ffffff !important;
+    -fx-font-size: 14px;
+}
+
+/* Botão "OK" */
+.custom-alert .button {
+    -fx-background-color: #27496d !important;
+    -fx-text-fill: #ffffff !important;
+    -fx-border-color: #a1ecfb;
+    -fx-border-width: 2px;
+    -fx-border-radius: 5px;
+}
+
+/* Hover no botão */
+.custom-alert .button:hover {
+    -fx-background-color: #357cbf;
+}

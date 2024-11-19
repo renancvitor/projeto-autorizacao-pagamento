@@ -7,6 +7,7 @@ import Entities.Usuario;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 
 import java.sql.Connection;
@@ -46,7 +47,6 @@ public class TelaLogin {
                 TelaPrincipal telaPrincipal = new TelaPrincipal(usuario);
                 telaPrincipal.start(primaryStage);
             } else {
-                // Exibe mensagem de erro
                 System.out.println("Login inválido");
             }
         });
@@ -65,6 +65,8 @@ public class TelaLogin {
             if (usuario != null) {
                 UserService.setUsuarioLogado(usuario); // Definir o usuário logado na sessão
                 Alert alert = new Alert(Alert.AlertType.INFORMATION, "Login bem-sucedido. Bem-vindo, " + usuario.getLogin());
+                alert.getDialogPane().getStylesheets().add(getClass().getResource("/alertStyle.css").toExternalForm());
+                alert.getDialogPane().getStyleClass().add("custom-alert");
                 alert.show();
 
                 return usuario;

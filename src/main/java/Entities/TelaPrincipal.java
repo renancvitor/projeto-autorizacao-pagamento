@@ -4,6 +4,7 @@ import DAO.SolicitacaoDAO;
 import Servicoes.*;
 import javafx.application.Application;
 import javafx.application.Platform;
+import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
@@ -19,8 +20,12 @@ import javafx.util.Callback;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
+import java.sql.Timestamp;
 import java.text.NumberFormat;
 import java.time.LocalDate;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
+import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
@@ -198,13 +203,63 @@ public class TelaPrincipal extends Application {
             }
         });
 
+//        TableColumn<Solicitacao, LocalDate> dataCriacaoCol = new TableColumn<>("Data de Criação");
+//        dataCriacaoCol.setCellValueFactory(new PropertyValueFactory<>("dataCriacao"));
+//        dataCriacaoCol.setPrefWidth(150);
+
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+
         TableColumn<Solicitacao, LocalDate> dataCriacaoCol = new TableColumn<>("Data de Criação");
         dataCriacaoCol.setCellValueFactory(new PropertyValueFactory<>("dataCriacao"));
         dataCriacaoCol.setPrefWidth(150);
 
-        TableColumn<Solicitacao, String> dataPagamentoCol = new TableColumn<>("Data Pagamento");
+        dataCriacaoCol.setCellValueFactory(cellData -> {
+            Timestamp timestamp = cellData.getValue().getDataCriacao();
+            if (timestamp != null) {
+                return new SimpleObjectProperty<>(timestamp.toLocalDateTime().toLocalDate());
+            }
+            return new SimpleObjectProperty<>(null);
+        });
+
+        dataCriacaoCol.setCellFactory(column -> new TableCell<Solicitacao, LocalDate>() {
+            @Override
+            protected void updateItem(LocalDate item, boolean empty) {
+                super.updateItem(item, empty);
+                if (empty || item == null) {
+                    setText(null);
+                } else {
+                    setText(item.format(formatter));
+                }
+            }
+        });
+
+//        TableColumn<Solicitacao, String> dataPagamentoCol = new TableColumn<>("Data Pagamento");
+//        dataPagamentoCol.setCellValueFactory(new PropertyValueFactory<>("dataPagamento"));
+//        dataPagamentoCol.setPrefWidth(120);
+
+        TableColumn<Solicitacao, LocalDate> dataPagamentoCol = new TableColumn<>("Data Pagamento");
         dataPagamentoCol.setCellValueFactory(new PropertyValueFactory<>("dataPagamento"));
         dataPagamentoCol.setPrefWidth(120);
+
+        dataPagamentoCol.setCellValueFactory(cellData -> {
+            java.sql.Date sqlDate  = cellData.getValue().getDataPagamento();
+            if (sqlDate  != null) {
+                return new SimpleObjectProperty<>(sqlDate .toLocalDate());
+            }
+            return new SimpleObjectProperty<>(null);
+        });
+
+        dataPagamentoCol.setCellFactory(column -> new TableCell<Solicitacao, LocalDate>() {
+            @Override
+            protected void updateItem(LocalDate item, boolean empty) {
+                super.updateItem(item, empty);
+                if (empty || item == null) {
+                    setText(null);
+                } else {
+                    setText(item.format(formatter));
+                }
+            }
+        });
 
         TableColumn<Solicitacao, String> formaPagamentoCol = new TableColumn<>("Forma Pagamento");
         formaPagamentoCol.setCellValueFactory(new PropertyValueFactory<>("formaPagamento"));
@@ -388,9 +443,9 @@ public class TelaPrincipal extends Application {
 
     private void cadastrarUsuario() {
         Stage cadastroUsuarioStage = new Stage();
-        TelaCadastroUsuario telaCadastroUsuario = new TelaCadastroUsuario(connection); // Construtor que aceita a conexão
-        telaCadastroUsuario.setUsuarioController(usuarioController); // NOVO
-        telaCadastroUsuario.start(cadastroUsuarioStage); // Exibe a tela de cadastro do usuário
+        TelaCadastroUsuario telaCadastroUsuario = new TelaCadastroUsuario(connection);
+        telaCadastroUsuario.setUsuarioController(usuarioController);
+        telaCadastroUsuario.start(cadastroUsuarioStage);
     }
 
     private void cadastrarDepartamento() {

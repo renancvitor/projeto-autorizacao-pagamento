@@ -142,7 +142,7 @@ public class UserPermissionsDAO {
 
     public List<String> getTiposUsuarios() throws SQLException {
         List<String> tiposUsuarios = new ArrayList<>();
-        String query = "SELECT tipo_usuario FROM tipos_usuarios";  // Consulta para buscar tipos de usuários
+        String query = "SELECT tipo_usuario FROM tipos_usuarios";
 
         try (Statement stmt = connection.createStatement(); ResultSet rs = stmt.executeQuery(query)) {
             while (rs.next()) {

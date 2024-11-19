@@ -3,6 +3,7 @@ package Entities;
 import DAO.SolicitacaoDAO;
 import Servicoes.Solicitacao;
 import Servicoes.StatusSolicitacao;
+import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.scene.Scene;
@@ -14,7 +15,10 @@ import javafx.util.Callback;
 
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.sql.Timestamp;
 import java.text.NumberFormat;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Locale;
 
@@ -88,13 +92,63 @@ public class TelaAnalisados {
             }
         });
 
-        TableColumn<Solicitacao, String> dataCriacaoCol = new TableColumn<>("Data Criação");
+//        TableColumn<Solicitacao, String> dataCriacaoCol = new TableColumn<>("Data Criação");
+//        dataCriacaoCol.setCellValueFactory(new PropertyValueFactory<>("dataCriacao"));
+//        dataCriacaoCol.setPrefWidth(150);
+
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+
+        TableColumn<Solicitacao, LocalDate> dataCriacaoCol = new TableColumn<>("Data de Criação");
         dataCriacaoCol.setCellValueFactory(new PropertyValueFactory<>("dataCriacao"));
         dataCriacaoCol.setPrefWidth(150);
 
-        TableColumn<Solicitacao, String> dataPagamentoCol = new TableColumn<>("Data Pagamento");
+        dataCriacaoCol.setCellValueFactory(cellData -> {
+            Timestamp timestamp = cellData.getValue().getDataCriacao();
+            if (timestamp != null) {
+                return new SimpleObjectProperty<>(timestamp.toLocalDateTime().toLocalDate());
+            }
+            return new SimpleObjectProperty<>(null);
+        });
+
+        dataCriacaoCol.setCellFactory(column -> new TableCell<Solicitacao, LocalDate>() {
+            @Override
+            protected void updateItem(LocalDate item, boolean empty) {
+                super.updateItem(item, empty);
+                if (empty || item == null) {
+                    setText(null);
+                } else {
+                    setText(item.format(formatter));
+                }
+            }
+        });
+
+//        TableColumn<Solicitacao, String> dataPagamentoCol = new TableColumn<>("Data Pagamento");
+//        dataPagamentoCol.setCellValueFactory(new PropertyValueFactory<>("dataPagamento"));
+//        dataPagamentoCol.setPrefWidth(120);
+
+        TableColumn<Solicitacao, LocalDate> dataPagamentoCol = new TableColumn<>("Data Pagamento");
         dataPagamentoCol.setCellValueFactory(new PropertyValueFactory<>("dataPagamento"));
         dataPagamentoCol.setPrefWidth(120);
+
+        dataPagamentoCol.setCellValueFactory(cellData -> {
+            java.sql.Date sqlDate  = cellData.getValue().getDataPagamento();
+            if (sqlDate  != null) {
+                return new SimpleObjectProperty<>(sqlDate .toLocalDate());
+            }
+            return new SimpleObjectProperty<>(null);
+        });
+
+        dataPagamentoCol.setCellFactory(column -> new TableCell<Solicitacao, LocalDate>() {
+            @Override
+            protected void updateItem(LocalDate item, boolean empty) {
+                super.updateItem(item, empty);
+                if (empty || item == null) {
+                    setText(null);
+                } else {
+                    setText(item.format(formatter));
+                }
+            }
+        });
 
         TableColumn<Solicitacao, String> formaPagamentoCol = new TableColumn<>("Forma Pagamento");
         formaPagamentoCol.setCellValueFactory(new PropertyValueFactory<>("formaPagamento"));

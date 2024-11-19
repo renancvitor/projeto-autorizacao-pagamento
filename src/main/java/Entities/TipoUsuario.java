@@ -9,7 +9,6 @@ public class TipoUsuario {
         this.tipoUsuario = tipoUsuario;
     }
 
-    // Getters e Setters
     public int getId() {
         return id;
     }
