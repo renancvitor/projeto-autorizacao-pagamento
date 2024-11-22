@@ -43,4 +43,8 @@ public class PermissaoService {
     public boolean realizarSolicitacoes(Usuario usuario) {
         return hasPermissao(usuario, "realizarSolicitacoes");
     }
+
+    public boolean podeVerOutrasSolicitacoes(Usuario usuario) {
+        return usuario.getUserType() != UserType.COMUM;
+    }
 }

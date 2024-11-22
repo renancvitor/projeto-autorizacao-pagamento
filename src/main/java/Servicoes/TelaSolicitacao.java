@@ -24,6 +24,8 @@ public class TelaSolicitacao {
     private TextField formaPagamentoField;
     private TextField valorTotalField;
     private Button submitButton;
+    private SolicitacaoService solicitacaoService;
+    private PermissaoService permissaoService;
 
     private Usuario usuarioLogado;
     private TableView<Solicitacao> tabelaSolicitacoes;
@@ -33,6 +35,8 @@ public class TelaSolicitacao {
         this.usuarioLogado = usuarioLogado;
         this.solicitacaoDAO = new SolicitacaoDAO(connection);
         this.tabelaSolicitacoes = tabelaSolicitacoes;
+        this.permissaoService = new PermissaoService();
+        this.solicitacaoService = new SolicitacaoService(solicitacaoDAO, permissaoService);
     }
 
     public void start(Stage stage) {
@@ -101,7 +105,7 @@ public class TelaSolicitacao {
             Alert alert = new Alert(Alert.AlertType.INFORMATION, "Solicitação enviada com sucesso.");
             alert.show();
 
-            List<Solicitacao> solicitacoes = solicitacaoDAO.getTodasSolicitacoes();
+            List<Solicitacao> solicitacoes = solicitacaoService.getSolicitacoesVisiveisParaUsuario(usuarioLogado);
             ObservableList<Solicitacao> observableListSolicitacoes = FXCollections.observableArrayList(solicitacoes);
             tabelaSolicitacoes.setItems(observableListSolicitacoes);
 

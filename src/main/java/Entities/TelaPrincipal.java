@@ -40,6 +40,7 @@ public class TelaPrincipal extends Application {
     private ObservableList<Solicitacao> observableList;
     private PermissaoService permissaoService;
     private UsuarioController usuarioController;
+    private UserType userType = UserType.COMUM;
 
     public TelaPrincipal(Usuario usuario) {
         this.usuario = usuario;
@@ -387,6 +388,22 @@ public class TelaPrincipal extends Application {
 
 
         scene.getStylesheets().add(getClass().getResource("/styles.css").toExternalForm());
+
+        // carregarSolicitacoesVisiveis();
+    }
+
+    private void carregarSolicitacoesVisiveis() {
+        Platform.runLater(() -> {
+            try {
+                // Obter solicitações visíveis para o usuário
+                List<Solicitacao> solicitacoes = solicitacaoService.getSolicitacoesVisiveisParaUsuario(usuario);
+                observableList.setAll(solicitacoes); // Atualizar a lista observável
+                table.setItems(observableList);     // Atualizar a tabela
+            } catch (Exception e) {
+                e.printStackTrace();
+                // mostrarMensagemErro("Erro ao carregar as solicitações: " + e.getMessage());
+            }
+        });
     }
 
     private void abrirCadastroPessoa(Stage primartStage) {
@@ -419,14 +436,24 @@ public class TelaPrincipal extends Application {
 
     private void refreshTable() {
         System.out.println("Refreshing table...");
+
         try {
-            List<Solicitacao> solicitacoesPendentes = solicitacaoService.getSolicitacoesPorStatus(StatusSolicitacao.PENDENTE);
-            Platform.runLater(() -> {
-                observableList.setAll(solicitacoesPendentes);
-                table.setItems(observableList);
-                atualizarResumoRapido();
-            });
+            if (userType != null) {
+                int idTipoUsuario = userType.getId();
+                int idUser = usuario.getId();
+                List<Solicitacao> solicitacoesPendentes = solicitacaoService.getSolicitacoesPorStatus(StatusSolicitacao.PENDENTE, idTipoUsuario, idUser);
+                Platform.runLater(() -> {
+                    observableList.setAll(solicitacoesPendentes);
+                    table.setItems(observableList);
+                    atualizarResumoRapido();
+                });
+            } else {
+                System.err.println("Erro: userType é nulo!");
+            }
         } catch (SQLException e) {
+            e.printStackTrace();
+        } catch (Exception e) {
+            System.err.println("Erro inesperado: " + e.getMessage());
             e.printStackTrace();
         }
     }

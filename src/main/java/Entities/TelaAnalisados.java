@@ -2,7 +2,9 @@ package Entities;
 
 import DAO.SolicitacaoDAO;
 import Servicoes.Solicitacao;
+import Servicoes.SolicitacaoService;
 import Servicoes.StatusSolicitacao;
+import javafx.application.Platform;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -25,6 +27,9 @@ import java.util.Locale;
 public class TelaAnalisados {
     private Connection connection;
     private TableView<Solicitacao> table;
+    private SolicitacaoService solicitacaoService;
+    private ObservableList<Solicitacao> observableList;
+    private Usuario usuario;
 
     public TelaAnalisados(Connection connection) {
         this.connection = connection;
@@ -189,7 +194,23 @@ public class TelaAnalisados {
         stage.show();
 
         scene.getStylesheets().add(getClass().getResource("/styles.css").toExternalForm());
+
+        // carregarSolicitacoesVisiveis();
     }
+
+//    private void carregarSolicitacoesVisiveis() {
+//        Platform.runLater(() -> {
+//            try {
+//                // Obter solicitações visíveis para o usuário
+//                List<Solicitacao> solicitacoes = solicitacaoService.getSolicitacoesVisiveisParaUsuario(usuario);
+//                observableList.setAll(solicitacoes); // Atualizar a lista observável
+//                table.setItems(observableList);     // Atualizar a tabela
+//            } catch (Exception e) {
+//                e.printStackTrace();
+//                // mostrarMensagemErro("Erro ao carregar as solicitações: " + e.getMessage());
+//            }
+//        });
+//    }
 
     private ObservableList<Solicitacao> getSolicitacoesAnalisadas() {
         SolicitacaoDAO solicitacaoDAO = new SolicitacaoDAO(connection);
