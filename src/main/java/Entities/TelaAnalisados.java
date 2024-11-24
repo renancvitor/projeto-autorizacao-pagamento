@@ -40,7 +40,6 @@ public class TelaAnalisados {
 
         VBox layout = new VBox();
 
-        // TableView para exibir as solicitações
         table = new TableView<>();
         table.setItems(getSolicitacoesAnalisadas());
 
@@ -80,7 +79,6 @@ public class TelaAnalisados {
                 tooltip.setWrapText(true);
                 tooltip.setStyle("-fx-font-size: 12px;");
 
-                // Associar o Tooltip ao Label
                 Tooltip.install(label, tooltip);
             }
 
@@ -96,10 +94,6 @@ public class TelaAnalisados {
                 }
             }
         });
-
-//        TableColumn<Solicitacao, String> dataCriacaoCol = new TableColumn<>("Data Criação");
-//        dataCriacaoCol.setCellValueFactory(new PropertyValueFactory<>("dataCriacao"));
-//        dataCriacaoCol.setPrefWidth(150);
 
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
 
@@ -126,10 +120,6 @@ public class TelaAnalisados {
                 }
             }
         });
-
-//        TableColumn<Solicitacao, String> dataPagamentoCol = new TableColumn<>("Data Pagamento");
-//        dataPagamentoCol.setCellValueFactory(new PropertyValueFactory<>("dataPagamento"));
-//        dataPagamentoCol.setPrefWidth(120);
 
         TableColumn<Solicitacao, LocalDate> dataPagamentoCol = new TableColumn<>("Data Pagamento");
         dataPagamentoCol.setCellValueFactory(new PropertyValueFactory<>("dataPagamento"));

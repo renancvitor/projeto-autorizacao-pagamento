@@ -64,10 +64,10 @@ public class TelaLogin {
             Usuario usuario = usuarioDAO.getUsuarioByLogin(login, senha);
             if (usuario != null) {
                 UserService.setUsuarioLogado(usuario); // Definir o usuário logado na sessão
-                Alert alert = new Alert(Alert.AlertType.INFORMATION, "Login bem-sucedido. Bem-vindo, " + usuario.getLogin());
-                alert.getDialogPane().getStylesheets().add(getClass().getResource("/alertStyle.css").toExternalForm());
-                alert.getDialogPane().getStyleClass().add("custom-alert");
-                alert.show();
+                // Alert alert = new Alert(Alert.AlertType.INFORMATION, "Login bem-sucedido. Bem-vindo, " + usuario.getLogin());
+//                alert.getDialogPane().getStylesheets().add(getClass().getResource("/alertStyle.css").toExternalForm());
+//                alert.getDialogPane().getStyleClass().add("custom-alert");
+//                alert.show();
 
                 return usuario;
             } else {

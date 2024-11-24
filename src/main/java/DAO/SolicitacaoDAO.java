@@ -41,7 +41,7 @@ public class SolicitacaoDAO {
 
         try {
             idTipoUsuario = getIdTipoUsuario(idUser);
-            sql = "SELECT * FROM solicitacoes WHERE";
+            sql = "SELECT * FROM solicitacoes WHERE status = ?";
 //            if (idTipoUsuario == 4) {
 //                sql = "SELECT * FROM solicitacoes WHERE status = ? AND id_usuario = ?";
 //            } else {
@@ -87,7 +87,6 @@ public class SolicitacaoDAO {
         return solicitacoes;
     }
 
-    // Método auxiliar para obter o tipo do usuário baseado no idUser
     private int getIdTipoUsuario(int idUser) throws SQLException {
         String sql = "SELECT id_tipo_usuario FROM usuarios WHERE id = ?";
         try (PreparedStatement pstmt = connection.prepareStatement(sql)) {
@@ -101,7 +100,6 @@ public class SolicitacaoDAO {
             }
         }
     }
-
 
     public void atualizarSolicitacao(Solicitacao solicitacao) throws SQLException {
         String sql = "UPDATE solicitacoes SET status = ? WHERE id = ?";
@@ -125,7 +123,6 @@ public class SolicitacaoDAO {
         }
         return 0;
     }
-
 
     public List<Solicitacao> getSolicitacoesAnalisadas() {
         List<Solicitacao> solicitacoes = new ArrayList<>();
@@ -154,11 +151,9 @@ public class SolicitacaoDAO {
         return solicitacoes;
     }
 
-    // ALTERAR ESTA BAGAÇA
-
     public List<Solicitacao> getSolicitacoesPorStatus(StatusSolicitacao status, int idTipoUsuario, int idUser) {
         List<Solicitacao> solicitacoes = new ArrayList<>();
-        String sql = "";
+        String sql;
 
         if (idTipoUsuario == 4) {
             sql = "SELECT * FROM solicitacoes WHERE status = ? AND id_usuario = ?";
@@ -167,12 +162,18 @@ public class SolicitacaoDAO {
         }
 
         try (PreparedStatement stmt = connection.prepareStatement(sql)) {
+            stmt.setString(1, status.name());
+
             if (idTipoUsuario == 4) {
-                stmt.setString(1, status.name());
                 stmt.setInt(2, idUser);
-            } else {
-                stmt.setString(1, status.name());
             }
+
+//            if (idTipoUsuario == 4) {
+//                stmt.setString(1, status.name());
+//                stmt.setInt(2, idUser);
+//            } else {
+//                stmt.setString(1, status.name());
+//            }
 
             ResultSet rs = stmt.executeQuery();
             while (rs.next()) {
@@ -248,17 +249,15 @@ public class SolicitacaoDAO {
         List<Solicitacao> solicitacoes = new ArrayList<>();
         String sql;
 
-        // Define a consulta com base no tipo do usuário
         if ("COMUM".equalsIgnoreCase(tipoUsuario)) {
             sql = "SELECT * FROM solicitacoes WHERE status = 'PENDENTE' AND id_usuario = ?"; // Apenas solicitações do próprio usuário
         } else if ("ADMIN".equalsIgnoreCase(tipoUsuario)) {
-            sql = "SELECT * FROM solicitacoes"; // Todos os registros
+            sql = "SELECT * FROM solicitacoes";
         } else {
             throw new IllegalArgumentException("Tipo de usuário inválido: " + tipoUsuario);
         }
 
         try (PreparedStatement pstmt = connection.prepareStatement(sql)) {
-            // Para COMUM, passa o ID do usuário como parâmetro
             if ("COMUM".equalsIgnoreCase(tipoUsuario)) {
                 pstmt.setInt(1, idUsuario);
             }
