@@ -97,7 +97,8 @@ public class TelaSolicitacao {
                     formaPagamento,
                     valorTotal,
                     idUsuario,
-                    status
+                    status,
+                    usuarioLogado.getLogin()
             );
 
             solicitacaoDAO.inserirSolicitacao(solicitacao);

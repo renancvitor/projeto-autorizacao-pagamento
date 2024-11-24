@@ -41,7 +41,7 @@ public class SolicitacaoDAO {
 
         try {
             idTipoUsuario = getIdTipoUsuario(idUser);
-            sql = "SELECT * FROM solicitacoes WHERE status = ?";
+            sql = "SELECT * FROM solicitacoes";
 //            if (idTipoUsuario == 4) {
 //                sql = "SELECT * FROM solicitacoes WHERE status = ? AND id_usuario = ?";
 //            } else {
@@ -68,7 +68,8 @@ public class SolicitacaoDAO {
                                 rs.getString("forma_pagamento"),
                                 rs.getDouble("valor_total"),
                                 rs.getInt("id_usuario"),
-                                StatusSolicitacao.valueOf(rs.getString("status"))
+                                StatusSolicitacao.valueOf(rs.getString("status")),
+                                rs.getString("login")
                         );
                         solicitacoes.add(solicitacao);
                         count++;
@@ -124,13 +125,34 @@ public class SolicitacaoDAO {
         return 0;
     }
 
-    public List<Solicitacao> getSolicitacoesAnalisadas() {
+    public List<Solicitacao> getSolicitacoesAnalisadas(int idTipoUsuario, int idUsuario) {
         List<Solicitacao> solicitacoes = new ArrayList<>();
-        String sql = "SELECT * FROM solicitacoes WHERE status = ? OR status = ?";
+        String sql;
+
+        if (idTipoUsuario == 4) {
+            sql = "SELECT " +
+                    "s.*, u.login " +
+                    "FROM " +
+                    "solicitacoes s" +
+                    "INNER JOIN usuarios u ON s.id_usuario = u.id " +
+                    "WHERE status IN ('APROVADA', 'REPROVADA') " +
+                    "AND id_usuario = ?";
+        } else {
+            sql = "SELECT " +
+                    "s.*, u.login " +
+                    "FROM " +
+                    "solicitacoes s " +
+                    "INNER JOIN usuarios u ON s.id_usuario = u.id " +
+                    "WHERE s.status IN ('APROVADA', 'REPROVADA')";
+        }
+
         try (PreparedStatement stmt = connection.prepareStatement(sql)) {
-            stmt.setString(1, StatusSolicitacao.APROVADA.name());
-            stmt.setString(2, StatusSolicitacao.REPROVADA.name());
+            if (idTipoUsuario == 4) {
+                stmt.setInt(1, idUsuario);
+            }
+
             ResultSet rs = stmt.executeQuery();
+
             while (rs.next()) {
                 Solicitacao solicitacao = new Solicitacao(
                         rs.getInt("id"),
@@ -141,7 +163,8 @@ public class SolicitacaoDAO {
                         rs.getString("forma_pagamento"),
                         rs.getDouble("valor_total"),
                         rs.getInt("id_usuario"),
-                        StatusSolicitacao.valueOf(rs.getString("status"))
+                        StatusSolicitacao.valueOf(rs.getString("status")),
+                        rs.getString("login")
                 );
                 solicitacoes.add(solicitacao);
             }
@@ -156,16 +179,25 @@ public class SolicitacaoDAO {
         String sql;
 
         if (idTipoUsuario == 4) {
-            sql = "SELECT * FROM solicitacoes WHERE status = ? AND id_usuario = ?";
+            sql = "SELECT " +
+                    "s.*, u.login " +
+                    "FROM " +
+                    "solicitacoes s" +
+                    "INNER JOIN usuarios u ON s.id_usuario = u.id " +
+                    "WHERE status = 'PENDENTE' " +
+                    "AND id_usuario = ?";
         } else {
-            sql = "SELECT * FROM solicitacoes WHERE status = ?";
+            sql = "SELECT " +
+                    "s.*, u.login " +
+                    "FROM " +
+                    "solicitacoes s " +
+                    "INNER JOIN usuarios u ON s.id_usuario = u.id " +
+                    "WHERE s.status = 'PENDENTE'";
         }
 
         try (PreparedStatement stmt = connection.prepareStatement(sql)) {
-            stmt.setString(1, status.name());
-
             if (idTipoUsuario == 4) {
-                stmt.setInt(2, idUser);
+                stmt.setInt(1, idUser);
             }
 
 //            if (idTipoUsuario == 4) {
@@ -186,7 +218,8 @@ public class SolicitacaoDAO {
                         rs.getString("forma_pagamento"),
                         rs.getDouble("valor_total"),
                         rs.getInt("id_usuario"),
-                        StatusSolicitacao.valueOf(rs.getString("status"))
+                        StatusSolicitacao.valueOf(rs.getString("status")),
+                        rs.getString("login")
                 );
                 solicitacoes.add(solicitacao);
             }
@@ -214,7 +247,8 @@ public class SolicitacaoDAO {
                         rs.getString("forma_pagamento"),
                         rs.getDouble("valor_total"),
                         rs.getInt("id_usuario"),
-                        StatusSolicitacao.valueOf(rs.getString("status")) // Converte a string para StatusSolicitacao
+                        StatusSolicitacao.valueOf(rs.getString("status")), // Converte a string para StatusSolicitacao
+                        rs.getString("login")
                 );
                 solicitacoes.add(solicitacao);
             }
@@ -273,7 +307,8 @@ public class SolicitacaoDAO {
                             rs.getString("forma_pagamento"),
                             rs.getDouble("valor_total"),
                             rs.getInt("id_usuario"),
-                            StatusSolicitacao.valueOf(rs.getString("status"))
+                            StatusSolicitacao.valueOf(rs.getString("status")),
+                            rs.getString("login")
                     );
                     solicitacoes.add(solicitacao);
                 }

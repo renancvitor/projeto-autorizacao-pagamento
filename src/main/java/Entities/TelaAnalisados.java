@@ -31,8 +31,9 @@ public class TelaAnalisados {
     private ObservableList<Solicitacao> observableList;
     private Usuario usuario;
 
-    public TelaAnalisados(Connection connection) {
+    public TelaAnalisados(Connection connection, Usuario usuario) {
         this.connection = connection;
+        this.usuario = usuario;
     }
 
     public void start(Stage stage) {
@@ -41,7 +42,7 @@ public class TelaAnalisados {
         VBox layout = new VBox();
 
         table = new TableView<>();
-        table.setItems(getSolicitacoesAnalisadas());
+        table.setItems(getSolicitacoesAnalisadas(usuario.getUserType().getId(), usuario.getId()));
 
         TableColumn<Solicitacao, Integer> idCol = new TableColumn<>("ID");
         idCol.setCellValueFactory(new PropertyValueFactory<>("id"));
@@ -175,11 +176,15 @@ public class TelaAnalisados {
         statusCol.setCellValueFactory(new PropertyValueFactory<>("status"));
         statusCol.setPrefWidth(80);
 
-        table.getColumns().addAll(idCol, fornecedorCol, descricaoCol, dataCriacaoCol, dataPagamentoCol, formaPagamentoCol, valorTotalCol, statusCol);
+        TableColumn<Solicitacao, String> usuarioCol = new TableColumn<>("Usuario");
+        usuarioCol.setCellValueFactory(new PropertyValueFactory<>("login"));
+        usuarioCol.setPrefWidth(80);
+
+        table.getColumns().addAll(idCol, fornecedorCol, descricaoCol, dataCriacaoCol, dataPagamentoCol, formaPagamentoCol, valorTotalCol, statusCol, usuarioCol);
 
         layout.getChildren().add(table);
 
-        Scene scene = new Scene(layout, 1086, 600);
+        Scene scene = new Scene(layout, 1140, 600);
         stage.setScene(scene);
         stage.show();
 
@@ -202,9 +207,9 @@ public class TelaAnalisados {
 //        });
 //    }
 
-    private ObservableList<Solicitacao> getSolicitacoesAnalisadas() {
+    private ObservableList<Solicitacao> getSolicitacoesAnalisadas(int idTipoUsuario, int idUsuario) {
         SolicitacaoDAO solicitacaoDAO = new SolicitacaoDAO(connection);
-        List<Solicitacao> solicitacoes = solicitacaoDAO.getSolicitacoesAnalisadas();
+        List<Solicitacao> solicitacoes = solicitacaoDAO.getSolicitacoesAnalisadas(idTipoUsuario, idUsuario);
         return FXCollections.observableArrayList(solicitacoes);
     }
 }

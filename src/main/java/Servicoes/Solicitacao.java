@@ -116,9 +116,10 @@ public class Solicitacao {
     private double valorTotal;
     private int idUsuario;
     private StatusSolicitacao status;
+    private String login;
 
     // Construtor correto da classe Solicitacao
-    public Solicitacao(int id, String fornecedor, String descricao, Timestamp dataCriacao, Date dataPagamento, String formaPagamento, double valorTotal, int idUsuario, StatusSolicitacao status) {
+    public Solicitacao(int id, String fornecedor, String descricao, Timestamp dataCriacao, Date dataPagamento, String formaPagamento, double valorTotal, int idUsuario, StatusSolicitacao status, String login) {
         this.id = id;
         this.fornecedor = fornecedor;
         this.descricao = descricao;
@@ -128,6 +129,7 @@ public class Solicitacao {
         this.valorTotal = valorTotal;
         this.idUsuario = idUsuario;
         this.status = status;
+        this.login = login;
     }
 
     public Solicitacao() {
@@ -206,5 +208,11 @@ public class Solicitacao {
         this.status = status;
     }
 
+    public String getLogin() {
+        return login;
+    }
 
+    public void setLogin(String login) {
+        this.login = login;
+    }
 }

@@ -129,7 +129,7 @@ public class TelaPrincipal extends Application {
 
         Button analisadosButton = new Button("Solicitações Analisadas");
         analisadosButton.setOnAction(e -> {
-            TelaAnalisados telaAnalisados = new TelaAnalisados(connection);
+            TelaAnalisados telaAnalisados = new TelaAnalisados(connection, usuario);
             Stage stage = new Stage();
             telaAnalisados.start(stage);
         });
@@ -295,6 +295,10 @@ public class TelaPrincipal extends Application {
         });
         statusCol.setPrefWidth(80);
 
+        TableColumn<Solicitacao, String> usuarioCol = new TableColumn<>("Usuário");
+        usuarioCol.setCellValueFactory(new PropertyValueFactory<>("login"));
+        usuarioCol.setPrefWidth(80);
+
         TableColumn<Solicitacao, Void> approveCol = new TableColumn<>("Aprovar");
         Callback<TableColumn<Solicitacao, Void>, TableCell<Solicitacao, Void>> cellFactoryApprove = new Callback<>() {
             @Override
@@ -355,12 +359,12 @@ public class TelaPrincipal extends Application {
         rejectCol.setCellFactory(cellFactoryReject);
         rejectCol.setPrefWidth(80);
 
-        table.getColumns().addAll(idCol, fornecedorCol, descricaoCol, dataCriacaoCol, dataPagamentoCol, formaPagamentoCol, valorTotalCol, statusCol, approveCol, rejectCol);
+        table.getColumns().addAll(idCol, fornecedorCol, descricaoCol, dataCriacaoCol, dataPagamentoCol, formaPagamentoCol, valorTotalCol, statusCol, usuarioCol, approveCol, rejectCol);
 
         layout.getChildren().add(topoLayout);
         layout.getChildren().add(table);
 
-        Scene scene = new Scene(layout, 1223, 600);
+        Scene scene = new Scene(layout, 1300, 600);
         primaryStage.setScene(scene);
         primaryStage.show();
 
@@ -374,7 +378,7 @@ public class TelaPrincipal extends Application {
             }
         });
 
-        refreshTable();
+        refreshTable(usuario);
 
         Button btnAtualizar = new Button("Atualizar");
 
@@ -434,14 +438,12 @@ public class TelaPrincipal extends Application {
         }
     }
 
-    private void refreshTable() {
+    private void refreshTable(Usuario usuario) {
         System.out.println("Refreshing table...");
 
         try {
-            if (userType != null) {
-                int idTipoUsuario = userType.getId();
-                int idUser = usuario.getId();
-                List<Solicitacao> solicitacoesPendentes = solicitacaoService.getSolicitacoesPorStatus(StatusSolicitacao.PENDENTE, idTipoUsuario, idUser);
+            if (usuario != null) {
+                List<Solicitacao> solicitacoesPendentes = solicitacaoService.getSolicitacoesPorStatus(StatusSolicitacao.PENDENTE, usuario.getUserType().getId(), usuario.getId());
                 Platform.runLater(() -> {
                     observableList.setAll(solicitacoesPendentes);
                     table.setItems(observableList);
@@ -460,12 +462,12 @@ public class TelaPrincipal extends Application {
 
     private void aprovarSolicitacao(Usuario usuario, PermissaoService permissaoService, Solicitacao solicitacao) {
         solicitacaoService.atualizarStatusSolicitacao(usuario, permissaoService, solicitacao, StatusSolicitacao.APROVADA);
-        refreshTable();
+        refreshTable(usuario);
     }
 
     private void reprovarSolicitacao(Usuario usuario, PermissaoService permissaoService, Solicitacao solicitacao) {
         solicitacaoService.atualizarStatusSolicitacao(usuario, permissaoService, solicitacao, StatusSolicitacao.REPROVADA);
-        refreshTable();
+        refreshTable(usuario);
     }
 
     private void cadastrarUsuario() {
