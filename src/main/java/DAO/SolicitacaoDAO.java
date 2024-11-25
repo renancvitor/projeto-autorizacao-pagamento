@@ -171,7 +171,7 @@ public class SolicitacaoDAO {
             sql = "SELECT " +
                     "s.*, u.login " +
                     "FROM " +
-                    "solicitacoes s" +
+                    "solicitacoes s " +
                     "INNER JOIN usuarios u ON s.id_usuario = u.id " +
                     "WHERE status = 'PENDENTE' " +
                     "AND id_usuario = ?";
