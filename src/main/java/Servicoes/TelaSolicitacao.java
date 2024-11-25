@@ -62,8 +62,23 @@ public class TelaSolicitacao {
         formaPagamentoField.setPromptText("Forma de Pagamento");
         layout.getChildren().add(formaPagamentoField);
 
+//        valorTotalField = new TextField();
+//        valorTotalField.setPromptText("Valor Total");
+//        layout.getChildren().add(valorTotalField);
+
         valorTotalField = new TextField();
         valorTotalField.setPromptText("Valor Total");
+
+// Validação para aceitar apenas números, ponto ou vírgula, com até duas casas decimais
+        valorTotalField.textProperty().addListener((observable, oldValue, newValue) -> {
+            if (!newValue.matches("\\d*[.,]?\\d{0,2}")) {
+                valorTotalField.setText(oldValue); // Reverte caso o valor seja inválido
+            } else {
+                // Substitui vírgula por ponto automaticamente
+                valorTotalField.setText(newValue.replace(",", "."));
+            }
+        });
+
         layout.getChildren().add(valorTotalField);
 
         submitButton = new Button("Enviar Solicitação");
