@@ -41,7 +41,13 @@ public class SolicitacaoDAO {
 
         try {
             idTipoUsuario = getIdTipoUsuario(idUser);
-            sql = "SELECT * FROM solicitacoes";
+            // sql = "SELECT * FROM solicitacoes";
+            sql = "SELECT " +
+                    "s.*, u.login " +
+                    "FROM " +
+                    "solicitacoes s " +
+                    "INNER JOIN usuarios u ON s.id_usuario = u.id " +
+                    "WHERE s.status = 'PENDENTE'";
 
             try (PreparedStatement pstmt = connection.prepareStatement(sql)) {
 
@@ -122,7 +128,7 @@ public class SolicitacaoDAO {
             sql = "SELECT " +
                     "s.*, u.login " +
                     "FROM " +
-                    "solicitacoes s" +
+                    "solicitacoes s " +
                     "INNER JOIN usuarios u ON s.id_usuario = u.id " +
                     "WHERE status IN ('APROVADA', 'REPROVADA') " +
                     "AND id_usuario = ?";

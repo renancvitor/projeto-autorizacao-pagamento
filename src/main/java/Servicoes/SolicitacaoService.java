@@ -27,17 +27,17 @@ public class SolicitacaoService {
 //    }
         // Caso o usuário tenha permissão para visualizar todas as solicitações (ADMIN, GESTOR, VISUALIZADOR)
         if (permissaoService.visualizarTodasSolicitacoes(usuario)) {
-            return solicitacaoDAO.getTodasSolicitacoes(usuario.getId());
+            return solicitacaoDAO.getSolicitacoesPorStatus(StatusSolicitacao.PENDENTE, usuario.getUserType().getId(), usuario.getId());
         }
 
         // Se for um usuário do tipo COMUM, ele só pode ver suas próprias solicitações
         if (usuario.getUserType() == UserType.COMUM) {
             // Usuários COMUNS só podem ver suas próprias solicitações
-            return solicitacaoDAO.getSolicitacoesPorUsuario(usuario.getId(), "COMUM");
+            return solicitacaoDAO.getSolicitacoesPorStatus(StatusSolicitacao.PENDENTE, usuario.getUserType().getId(), usuario.getId());
         }
 
         // Outros tipos (ADMIN, GESTOR, VISUALIZADOR) podem ver todas
-        return solicitacaoDAO.getSolicitacoesPorUsuario(usuario.getId(), usuario.getUserType().toString());
+        return solicitacaoDAO.getSolicitacoesPorStatus(StatusSolicitacao.PENDENTE, usuario.getUserType().getId(), usuario.getId());
     }
 
     public List<Solicitacao> getSolicitacoesPorStatus(StatusSolicitacao status, int idTipoUsuario, int idUser) throws SQLException {
