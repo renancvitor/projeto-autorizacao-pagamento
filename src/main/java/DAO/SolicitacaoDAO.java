@@ -36,25 +36,14 @@ public class SolicitacaoDAO {
 
     public List<Solicitacao> getTodasSolicitacoes(int idUser) {
         List<Solicitacao> solicitacoes = new ArrayList<>();
-        String sql = "";
+        String sql;
         int idTipoUsuario;
 
         try {
             idTipoUsuario = getIdTipoUsuario(idUser);
             sql = "SELECT * FROM solicitacoes";
-//            if (idTipoUsuario == 4) {
-//                sql = "SELECT * FROM solicitacoes WHERE status = ? AND id_usuario = ?";
-//            } else {
-//                sql = "SELECT * FROM solicitacoes WHERE status = ?";
-//            }
 
             try (PreparedStatement pstmt = connection.prepareStatement(sql)) {
-//                if (idTipoUsuario == UserType.COMUM.getId()) {
-//                    //pstmt.setString(1, status.name());
-//                    pstmt.setInt(2, idUser);
-//                } else {
-//                    //pstmt.setString(1, status.name());
-//                }
 
                 try (ResultSet rs = pstmt.executeQuery()) {
                     int count = 0;
