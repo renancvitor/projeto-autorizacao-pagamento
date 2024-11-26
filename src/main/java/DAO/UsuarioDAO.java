@@ -4,6 +4,8 @@ import Entities.UserType;
 import Entities.Usuario;
 import Servicoes.PermissaoService;
 
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.sql.*;
 import java.util.List;
 
@@ -169,4 +171,37 @@ public class UsuarioDAO {
         }
     }
 
+    private String hashSenha(String senha) throws NoSuchAlgorithmException {
+        MessageDigest md = MessageDigest.getInstance("SHA-256");
+        byte[] hashBytes = md.digest(senha.getBytes());
+        StringBuilder hexString = new StringBuilder();
+        for (byte b : hashBytes) {
+            hexString.append(String.format("%02x", b));
+        }
+        return hexString.toString();
+    }
+
+    public boolean verificarSenhaPorUsuario(String username, String senhaAtual) throws SQLException {
+        String query = "SELECT senha FROM usuarios WHERE login = ?";
+        try (PreparedStatement stmt = connection.prepareStatement(query)) {
+            stmt.setString(1, username);
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    String senhaArmazenada = rs.getString("senha");
+                    return senhaArmazenada.equals(senhaAtual);
+                }
+            }
+        }
+        return false;
+    }
+
+    public boolean alterarSenhaPorUsuario(String username, String novaSenha) throws SQLException {
+        String query = "UPDATE usuarios SET senha = ? WHERE login = ?";
+        try (PreparedStatement stmt = connection.prepareStatement(query)) {
+            stmt.setString(1, novaSenha);
+            stmt.setString(2, username);
+            int rowsUpdated = stmt.executeUpdate();
+            return rowsUpdated > 0;
+        }
+    }
 }

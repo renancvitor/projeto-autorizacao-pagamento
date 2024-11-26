@@ -1,5 +1,6 @@
 package Application;
 
+import DAO.ConnectionFactory;
 import DAO.UsuarioDAO;
 import Entities.TelaPrincipal;
 import Entities.UserService;
@@ -47,9 +48,21 @@ public class TelaLogin {
                 TelaPrincipal telaPrincipal = new TelaPrincipal(usuario);
                 telaPrincipal.start(primaryStage);
             } else {
-                System.out.println("Login inválido");
+                // System.out.println("Login inválido");
+                Alert alert = new Alert(Alert.AlertType.ERROR, "Usuário ou senha inválidos.");
+                alert.show();
             }
         });
+
+        Button alterarSenhaButton = new Button("Alterar Senha");
+        grid.add(alterarSenhaButton, 1, 3);
+
+        alterarSenhaButton.setOnAction(event -> {
+            TelaAlterarSenha telaAlterarSenha = new TelaAlterarSenha();
+            telaAlterarSenha.exibir();
+        });
+
+
 
         Scene scene = new Scene(grid, 300, 200);
         primaryStage.setScene(scene);
@@ -72,6 +85,8 @@ public class TelaLogin {
                 return usuario;
             } else {
                 Alert alert = new Alert(Alert.AlertType.ERROR, "Usuário ou senha inválidos.");
+                alert.getDialogPane().getStylesheets().add(getClass().getResource("/alertStyle.css").toExternalForm());
+                alert.getDialogPane().getStyleClass().add("custom-alert");
                 alert.show();
             }
         } catch (SQLException e) {
@@ -79,4 +94,5 @@ public class TelaLogin {
         }
         return null;
     }
+
 }
