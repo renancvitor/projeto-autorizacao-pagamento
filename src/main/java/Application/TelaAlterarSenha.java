@@ -67,15 +67,14 @@ public class TelaAlterarSenha {
     private void alterarSenha(String username, String senhaAtual, String novaSenha, Stage stage) {
         try {
             UsuarioDAO usuarioDAO = new UsuarioDAO(connection);
-            // Verificar se a senha atual está correta
-            if (usuarioDAO.verificarSenhaPorUsuario(username, senhaAtual)) { // Novo método no DAO
-                if (!usuarioDAO.alterarSenhaPorUsuario(username, novaSenha)) { // Novo método no DAO
+            if (usuarioDAO.verificarSenhaPorUsuario(username, senhaAtual)) {
+                if (usuarioDAO.alterarSenhaPorUsuario(username, novaSenha)) {
+                    Alert alert = new Alert(Alert.AlertType.INFORMATION, "Senha alterada com sucesso.");
+                    alert.showAndWait();
+                    stage.close();
+                } else {
                     Alert alert = new Alert(Alert.AlertType.ERROR, "Erro ao alterar a senha.");
                     alert.show();
-                } else {
-                    Alert alert = new Alert(Alert.AlertType.INFORMATION, "Senha alterada com sucesso.");
-                    alert.show();
-                    stage.close();
                 }
             } else {
                 Alert alert = new Alert(Alert.AlertType.ERROR, "Nome de usuário ou senha atual inválidos.");
@@ -87,4 +86,5 @@ public class TelaAlterarSenha {
             e.printStackTrace();
         }
     }
+
 }

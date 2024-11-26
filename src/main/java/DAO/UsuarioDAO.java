@@ -37,7 +37,7 @@ public class UsuarioDAO {
             stmt.setInt(1, idPessoa);
             try (ResultSet rs = stmt.executeQuery()) {
                 if (rs.next()) {
-                    return rs.getInt(1) > 0; // Retorna true se já existir um usuário
+                    return rs.getInt(1) > 0;
                 }
             }
         }
@@ -63,11 +63,34 @@ public class UsuarioDAO {
         };
     }
 
+//    public Usuario getUsuarioByLogin(String login, String senha) throws SQLException {
+//        String sql = "SELECT * FROM usuarios WHERE login = ? AND senha = ?";
+//        try (PreparedStatement stmt = connection.prepareStatement(sql)) {
+//            stmt.setString(1, login);
+//            stmt.setString(2, senha);
+//            try (ResultSet rs = stmt.executeQuery()) {
+//                if (rs.next()) {
+//                    int id = rs.getInt("id");
+//                    String retrievedLogin = rs.getString("login");
+//                    String retrievedSenha = rs.getString("senha");
+//                    String cpf = rs.getString("cpf");
+//                    int idTipoUsuario = rs.getInt("id_tipo_usuario");
+//                    UserType userType = getUserTypeFromId(idTipoUsuario);
+//
+//                    List<String> permissoes = getPermissoesByUsuarioId(id);
+//
+//                    return new Usuario(id, retrievedLogin, retrievedSenha, permissoes, cpf, idTipoUsuario, userType);
+//                }
+//            }
+//        }
+//        return null;
+//    }
+
     public Usuario getUsuarioByLogin(String login, String senha) throws SQLException {
-        String sql = "SELECT * FROM usuarios WHERE login = ? AND senha = ?";
+        String sql = "SELECT id, login, senha, cpf, id_tipo_usuario FROM usuarios WHERE login = ?";
         try (PreparedStatement stmt = connection.prepareStatement(sql)) {
             stmt.setString(1, login);
-            stmt.setString(2, senha);
+
             try (ResultSet rs = stmt.executeQuery()) {
                 if (rs.next()) {
                     int id = rs.getInt("id");
@@ -75,14 +98,19 @@ public class UsuarioDAO {
                     String retrievedSenha = rs.getString("senha");
                     String cpf = rs.getString("cpf");
                     int idTipoUsuario = rs.getInt("id_tipo_usuario");
-                    UserType userType = getUserTypeFromId(idTipoUsuario);
 
-                    // Obter permissões do usuário
-                    List<String> permissoes = getPermissoesByUsuarioId(id);
+                    String senhaHash = hashSenha(senha);
 
-                    return new Usuario(id, retrievedLogin, retrievedSenha, permissoes, cpf, idTipoUsuario, userType);
+                    if (senhaHash.equals(retrievedSenha)) {
+                        UserType userType = getUserTypeFromId(idTipoUsuario);
+                        List<String> permissoes = getPermissoesByUsuarioId(id);
+
+                        return new Usuario(id, retrievedLogin, retrievedSenha, permissoes, cpf, idTipoUsuario, userType);
+                    }
                 }
             }
+        } catch (NoSuchAlgorithmException e) {
+            throw new SQLException("Erro ao gerar o hash da senha.", e);
         }
         return null;
     }
@@ -171,6 +199,59 @@ public class UsuarioDAO {
         }
     }
 
+    public boolean verificarSenhaPorUsuario(String username, String senhaAtual) throws SQLException {
+        try {
+            String senhaHash = hashSenha(senhaAtual);
+
+            String query = "SELECT senha FROM usuarios WHERE login = ?";
+            try (PreparedStatement stmt = connection.prepareStatement(query)) {
+                stmt.setString(1, username);
+                try (ResultSet rs = stmt.executeQuery()) {
+                    if (rs.next()) {
+                        String senhaArmazenada = rs.getString("senha");
+
+                        if (senhaArmazenada.equals(senhaAtual)) {
+                            atualizarSenhaParaHash(username, senhaHash);
+                            return true;
+                        } else if (senhaArmazenada.equals(senhaHash)) {
+                            return true;
+                        } else {
+                            return false;
+                        }
+                    }
+                }
+            }
+            return false;
+        } catch (NoSuchAlgorithmException e) {
+            throw new SQLException("Erro ao gerar hash da senha.", e);
+        }
+    }
+
+    private void atualizarSenhaParaHash(String username, String senhaHash) throws SQLException {
+        String query = "UPDATE usuarios SET senha = ? WHERE login = ?";
+        try (PreparedStatement stmt = connection.prepareStatement(query)) {
+            stmt.setString(1, senhaHash);
+            stmt.setString(2, username);
+            stmt.executeUpdate();
+            System.out.println("Senha migrada para hash com sucesso para o usuário: " + username);
+        }
+    }
+
+    public boolean alterarSenhaPorUsuario(String username, String novaSenha) throws SQLException {
+        try {
+            String senhaHash = hashSenha(novaSenha);
+            String query = "UPDATE usuarios SET senha = ? WHERE login = ?";
+            try (PreparedStatement stmt = connection.prepareStatement(query)) {
+                stmt.setString(1, senhaHash);
+                stmt.setString(2, username);
+                int rowsUpdated = stmt.executeUpdate();
+                return rowsUpdated > 0;
+            }
+        } catch (NoSuchAlgorithmException e) {
+            throw new SQLException("Erro ao gerar hash da nova senha.", e);
+        }
+    }
+
     private String hashSenha(String senha) throws NoSuchAlgorithmException {
         MessageDigest md = MessageDigest.getInstance("SHA-256");
         byte[] hashBytes = md.digest(senha.getBytes());
@@ -179,29 +260,5 @@ public class UsuarioDAO {
             hexString.append(String.format("%02x", b));
         }
         return hexString.toString();
-    }
-
-    public boolean verificarSenhaPorUsuario(String username, String senhaAtual) throws SQLException {
-        String query = "SELECT senha FROM usuarios WHERE login = ?";
-        try (PreparedStatement stmt = connection.prepareStatement(query)) {
-            stmt.setString(1, username);
-            try (ResultSet rs = stmt.executeQuery()) {
-                if (rs.next()) {
-                    String senhaArmazenada = rs.getString("senha");
-                    return senhaArmazenada.equals(senhaAtual);
-                }
-            }
-        }
-        return false;
-    }
-
-    public boolean alterarSenhaPorUsuario(String username, String novaSenha) throws SQLException {
-        String query = "UPDATE usuarios SET senha = ? WHERE login = ?";
-        try (PreparedStatement stmt = connection.prepareStatement(query)) {
-            stmt.setString(1, novaSenha);
-            stmt.setString(2, username);
-            int rowsUpdated = stmt.executeUpdate();
-            return rowsUpdated > 0;
-        }
     }
 }

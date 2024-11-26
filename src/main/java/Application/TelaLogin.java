@@ -48,7 +48,6 @@ public class TelaLogin {
                 TelaPrincipal telaPrincipal = new TelaPrincipal(usuario);
                 telaPrincipal.start(primaryStage);
             } else {
-                // System.out.println("Login inválido");
                 Alert alert = new Alert(Alert.AlertType.ERROR, "Usuário ou senha inválidos.");
                 alert.show();
             }
@@ -76,7 +75,7 @@ public class TelaLogin {
             UsuarioDAO usuarioDAO = new UsuarioDAO(connection);
             Usuario usuario = usuarioDAO.getUsuarioByLogin(login, senha);
             if (usuario != null) {
-                UserService.setUsuarioLogado(usuario); // Definir o usuário logado na sessão
+                UserService.setUsuarioLogado(usuario);
                 // Alert alert = new Alert(Alert.AlertType.INFORMATION, "Login bem-sucedido. Bem-vindo, " + usuario.getLogin());
 //                alert.getDialogPane().getStylesheets().add(getClass().getResource("/alertStyle.css").toExternalForm());
 //                alert.getDialogPane().getStyleClass().add("custom-alert");
