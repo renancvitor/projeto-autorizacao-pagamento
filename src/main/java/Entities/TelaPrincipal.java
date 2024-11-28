@@ -9,13 +9,18 @@ import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import javafx.util.Callback;
+
+import Application.TelaLogin;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -23,9 +28,7 @@ import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.text.NumberFormat;
 import java.time.LocalDate;
-import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
-import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
@@ -60,9 +63,31 @@ public class TelaPrincipal extends Application {
     public void start(Stage primaryStage) {
         primaryStage.setTitle("Sistema Principal");
 
-        VBox layout = new VBox(10);
+//        VBox layout = new VBox(10);
+//        Label welcomeLabel = new Label("Bem-vindo, " + usuario.getLogin() + "!");
+//        layout.getChildren().add(welcomeLabel);
+
+        HBox topBar = new HBox();
+        topBar.setPadding(new Insets(5, 10, 5, 10));
+        topBar.setSpacing(10);
+
         Label welcomeLabel = new Label("Bem-vindo, " + usuario.getLogin() + "!");
-        layout.getChildren().add(welcomeLabel);
+
+        Button logoutButton = new Button("Logout");
+        logoutButton.setOnAction(e -> {
+            primaryStage.close();
+
+            Stage loginStage = new Stage();
+            TelaLogin telaLogin = new TelaLogin();
+            telaLogin.start(loginStage);
+        });
+
+        BorderPane topBarContainer = new BorderPane();
+        topBarContainer.setLeft(welcomeLabel);
+        topBarContainer.setRight(logoutButton);
+
+        VBox layout = new VBox(10);
+        layout.getChildren().add(topBarContainer);
 
         Usuario usuarioAtual = UserService.getUsuarioLogado();
 
@@ -204,10 +229,6 @@ public class TelaPrincipal extends Application {
             }
         });
 
-//        TableColumn<Solicitacao, LocalDate> dataCriacaoCol = new TableColumn<>("Data de Criação");
-//        dataCriacaoCol.setCellValueFactory(new PropertyValueFactory<>("dataCriacao"));
-//        dataCriacaoCol.setPrefWidth(150);
-
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
 
         TableColumn<Solicitacao, LocalDate> dataCriacaoCol = new TableColumn<>("Data de Criação");
@@ -233,10 +254,6 @@ public class TelaPrincipal extends Application {
                 }
             }
         });
-
-//        TableColumn<Solicitacao, String> dataPagamentoCol = new TableColumn<>("Data Pagamento");
-//        dataPagamentoCol.setCellValueFactory(new PropertyValueFactory<>("dataPagamento"));
-//        dataPagamentoCol.setPrefWidth(120);
 
         TableColumn<Solicitacao, LocalDate> dataPagamentoCol = new TableColumn<>("Data Pagamento");
         dataPagamentoCol.setCellValueFactory(new PropertyValueFactory<>("dataPagamento"));
@@ -390,22 +407,18 @@ public class TelaPrincipal extends Application {
 
         layout.getChildren().add(vboxResumoRapido);
 
-
         scene.getStylesheets().add(getClass().getResource("/styles.css").toExternalForm());
 
-        // carregarSolicitacoesVisiveis();
     }
 
     private void carregarSolicitacoesVisiveis() {
         Platform.runLater(() -> {
             try {
-                // Obter solicitações visíveis para o usuário
                 List<Solicitacao> solicitacoes = solicitacaoService.getSolicitacoesVisiveisParaUsuario(usuario);
-                observableList.setAll(solicitacoes); // Atualizar a lista observável
-                table.setItems(observableList);     // Atualizar a tabela
+                observableList.setAll(solicitacoes);
+                table.setItems(observableList);
             } catch (Exception e) {
                 e.printStackTrace();
-                // mostrarMensagemErro("Erro ao carregar as solicitações: " + e.getMessage());
             }
         });
     }
@@ -420,8 +433,6 @@ public class TelaPrincipal extends Application {
         cadastroPessoaStage.setTitle("Cadastro de Pessoa");
         cadastroPessoaStage.show();
     }
-
-
 
     private void atualizarResumoRapido() {
         try {
