@@ -10,7 +10,6 @@ import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
-import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
@@ -125,7 +124,6 @@ public class TelaPrincipal extends Application {
             menuBarContainer.getChildren().addAll(menuBarUser, menuBarFunc);
 
             layout.getChildren().add(menuBarContainer);
-
         }
 
         Label resumoLabel = new Label(""); // Resumo Rápido:
@@ -408,7 +406,6 @@ public class TelaPrincipal extends Application {
         layout.getChildren().add(vboxResumoRapido);
 
         scene.getStylesheets().add(getClass().getResource("/styles.css").toExternalForm());
-
     }
 
     private void carregarSolicitacoesVisiveis() {

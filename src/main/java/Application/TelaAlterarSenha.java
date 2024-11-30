@@ -70,18 +70,26 @@ public class TelaAlterarSenha {
             if (usuarioDAO.verificarSenhaPorUsuario(username, senhaAtual)) {
                 if (usuarioDAO.alterarSenhaPorUsuario(username, novaSenha)) {
                     Alert alert = new Alert(Alert.AlertType.INFORMATION, "Senha alterada com sucesso.");
+                    alert.getDialogPane().getStylesheets().add(getClass().getResource("/alertStyle.css").toExternalForm());
+                    alert.getDialogPane().getStyleClass().add("custom-alert");
                     alert.showAndWait();
                     stage.close();
                 } else {
                     Alert alert = new Alert(Alert.AlertType.ERROR, "Erro ao alterar a senha.");
+                    alert.getDialogPane().getStylesheets().add(getClass().getResource("/alertStyle.css").toExternalForm());
+                    alert.getDialogPane().getStyleClass().add("custom-alert");
                     alert.show();
                 }
             } else {
                 Alert alert = new Alert(Alert.AlertType.ERROR, "Nome de usuário ou senha atual inválidos.");
+                alert.getDialogPane().getStylesheets().add(getClass().getResource("/alertStyle.css").toExternalForm());
+                alert.getDialogPane().getStyleClass().add("custom-alert");
                 alert.show();
             }
         } catch (SQLException e) {
             Alert alert = new Alert(Alert.AlertType.ERROR, "Erro no banco de dados: " + e.getMessage());
+            alert.getDialogPane().getStylesheets().add(getClass().getResource("/alertStyle.css").toExternalForm());
+            alert.getDialogPane().getStyleClass().add("custom-alert");
             alert.show();
             e.printStackTrace();
         }

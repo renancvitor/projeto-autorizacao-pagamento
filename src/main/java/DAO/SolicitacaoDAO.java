@@ -1,14 +1,11 @@
 package DAO;
 
-import Entities.UserType;
 import Servicoes.Solicitacao;
 import Servicoes.StatusSolicitacao;
 
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
-
-import static DAO.ConnectionFactory.getConnection;
 
 public class SolicitacaoDAO {
     private Connection connection;
@@ -41,7 +38,6 @@ public class SolicitacaoDAO {
 
         try {
             idTipoUsuario = getIdTipoUsuario(idUser);
-            // sql = "SELECT * FROM solicitacoes";
             sql = "SELECT " +
                     "s.*, u.login " +
                     "FROM " +
@@ -314,6 +310,5 @@ public class SolicitacaoDAO {
 
         return solicitacoes;
     }
-
 
 }

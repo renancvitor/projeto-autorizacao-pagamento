@@ -71,6 +71,8 @@ public class TelaCadastroUsuario {
 
             if (login.isEmpty() || senha.isEmpty() || cpf.isEmpty() || tipoUsuarioSelecionado == null) {
                 Alert alert = new Alert(Alert.AlertType.WARNING, "Preencha todos os campos!");
+                alert.getDialogPane().getStylesheets().add(getClass().getResource("/alertStyle.css").toExternalForm());
+                alert.getDialogPane().getStyleClass().add("custom-alert");
                 alert.show();
             } else {
                 try {
@@ -86,6 +88,8 @@ public class TelaCadastroUsuario {
                     usuarioDAO.inserirUsuario(novoUsuario);
 
                     Alert alert = new Alert(Alert.AlertType.INFORMATION, "Usuário cadastrado com sucesso!");
+                    alert.getDialogPane().getStylesheets().add(getClass().getResource("/alertStyle.css").toExternalForm());
+                    alert.getDialogPane().getStyleClass().add("custom-alert");
                     alert.show();
                     stage.close();
                 } catch (SQLException e) {
@@ -107,7 +111,7 @@ public class TelaCadastroUsuario {
     private void carregarTiposUsuario() {
         UserPermissionsDAO permissionsDAO = new UserPermissionsDAO(connection);
         try {
-            List<String> tiposUsuarios = permissionsDAO.getTiposUsuarios(); // Método que retorna nomes dos tipos de usuário
+            List<String> tiposUsuarios = permissionsDAO.getTiposUsuarios();
             tipoUsuarioComboBox.getItems().setAll(tiposUsuarios);
         } catch (SQLException e) {
             e.printStackTrace();

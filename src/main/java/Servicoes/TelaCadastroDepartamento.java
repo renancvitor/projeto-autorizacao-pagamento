@@ -57,6 +57,8 @@ public class TelaCadastroDepartamento extends Application {
 
         if (nome.isEmpty()) {
             Alert alert = new Alert(Alert.AlertType.WARNING, "O campo de nome não pode estar vazio.");
+            alert.getDialogPane().getStylesheets().add(getClass().getResource("/alertStyle.css").toExternalForm());
+            alert.getDialogPane().getStyleClass().add("custom-alert");
             alert.show();
             return;
         }
@@ -65,9 +67,10 @@ public class TelaCadastroDepartamento extends Application {
             Departamento departamento = new Departamento(0, nome);
 
             departamentoDAO.salvarDepartamento(departamento);
-            // System.out.println("Departamento criado com sucesso");
 
             Alert alert = new Alert(Alert.AlertType.INFORMATION, "Departamento criado com sucesso!");
+            alert.getDialogPane().getStylesheets().add(getClass().getResource("/alertStyle.css").toExternalForm());
+            alert.getDialogPane().getStyleClass().add("custom-alert");
             alert.show();
 
             nomeField.clear();
@@ -75,6 +78,8 @@ public class TelaCadastroDepartamento extends Application {
         } catch (SQLException e) {
             e.printStackTrace();
             Alert alert = new Alert(Alert.AlertType.ERROR, "Erro ao salvar o departamento: " + e.getMessage());
+            alert.getDialogPane().getStylesheets().add(getClass().getResource("/alertStyle.css").toExternalForm());
+            alert.getDialogPane().getStyleClass().add("custom-alert");
             alert.show();
         }
     }

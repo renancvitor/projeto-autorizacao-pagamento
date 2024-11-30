@@ -62,19 +62,13 @@ public class TelaSolicitacao {
         formaPagamentoField.setPromptText("Forma de Pagamento");
         layout.getChildren().add(formaPagamentoField);
 
-//        valorTotalField = new TextField();
-//        valorTotalField.setPromptText("Valor Total");
-//        layout.getChildren().add(valorTotalField);
-
         valorTotalField = new TextField();
         valorTotalField.setPromptText("Valor Total");
 
-// Validação para aceitar apenas números, ponto ou vírgula, com até duas casas decimais
         valorTotalField.textProperty().addListener((observable, oldValue, newValue) -> {
             if (!newValue.matches("\\d*[.,]?\\d{0,2}")) {
-                valorTotalField.setText(oldValue); // Reverte caso o valor seja inválido
+                valorTotalField.setText(oldValue);
             } else {
-                // Substitui vírgula por ponto automaticamente
                 valorTotalField.setText(newValue.replace(",", "."));
             }
         });
@@ -119,6 +113,8 @@ public class TelaSolicitacao {
             solicitacaoDAO.inserirSolicitacao(solicitacao);
 
             Alert alert = new Alert(Alert.AlertType.INFORMATION, "Solicitação enviada com sucesso.");
+            alert.getDialogPane().getStylesheets().add(getClass().getResource("/alertStyle.css").toExternalForm());
+            alert.getDialogPane().getStyleClass().add("custom-alert");
             alert.show();
 
             List<Solicitacao> solicitacoes = solicitacaoService.getSolicitacoesVisiveisParaUsuario(usuarioLogado);

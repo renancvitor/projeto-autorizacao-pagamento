@@ -1,15 +1,11 @@
 package Servicoes;
 
-import Application.MainApp;
 import DAO.CargoDAO;
 import DAO.DepartamentoDAO;
 import DAO.PessoaDAO;
 import Entities.Cargo;
 import Entities.Departamento;
 import Entities.Pessoa;
-import javafx.application.Platform;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.layout.VBox;
@@ -19,8 +15,6 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.SQLIntegrityConstraintViolationException;
 import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
-import java.time.format.DateTimeParseException;
 import java.util.List;
 
 public class TelaCadastroPessoa {
@@ -50,10 +44,6 @@ public class TelaCadastroPessoa {
         dataNascimentoPicker.setPromptText("dd/MM/yyyy");
         dataNascimentoPicker.getStyleClass().add("date-picker-label");
 
-//        Label dataNascimentoLabel = new Label("Data de Nascimento: (dd/MM/yyyy):");
-//        TextField dataNascimentoField = new TextField();
-//        dataNascimentoField.setPromptText("dd/MM/yyyy");
-
         Label cpfLabel = new Label("CPF:");
         cpfLabel.getStyleClass().add("global-label");
         TextField cpfField = new TextField();
@@ -67,14 +57,11 @@ public class TelaCadastroPessoa {
         carregarDepartamentos();
         carregarCargos();
 
-        // dataNascimentoField.textProperty().addListener((observableValue, oldValue, newValue) -> dataNascimentoField.setText(formatInputAsDate(newValue)));
-
         cpfField.textProperty().addListener((observableValue, oldValue, newValue) -> cpfField.setText(formatInputAsCPF(newValue)));
 
         Button salvarButton = new Button("Salvar");
         salvarButton.setOnAction(event -> {
             String nome = nomeField.getText();
-            // LocalDate dataNascimento = parseDate(dataNascimentoField.getText());
             LocalDate dataNascimento = dataNascimentoPicker.getValue();
             String cpf = cpfField.getText();
 
@@ -94,25 +81,31 @@ public class TelaCadastroPessoa {
                     pessoaDAO.salvarPessoa(pessoa);
 
                     Alert alert = new Alert(Alert.AlertType.INFORMATION, "Funcionário salvo com sucesso!");
+                    alert.getDialogPane().getStylesheets().add(getClass().getResource("/alertStyle.css").toExternalForm());
+                    alert.getDialogPane().getStyleClass().add("custom-alert");
                     alert.show();
 
                 } catch (SQLIntegrityConstraintViolationException e) {
                     Alert alert = new Alert(Alert.AlertType.ERROR, "Já existe um funcionário com este login!");
+                    alert.getDialogPane().getStylesheets().add(getClass().getResource("/alertStyle.css").toExternalForm());
+                    alert.getDialogPane().getStyleClass().add("custom-alert");
                     alert.show();
                 } catch (SQLException e) {
                     Alert alert = new Alert(Alert.AlertType.ERROR, "Erro ao salvar funcionário: " + e.getMessage());
+                    alert.getDialogPane().getStylesheets().add(getClass().getResource("/alertStyle.css").toExternalForm());
+                    alert.getDialogPane().getStyleClass().add("custom-alert");
                     alert.show();
                 }
             } else {
-                // System.out.println("Data de nascimento ou CPF inválidos.");
                 Alert alert = new Alert(Alert.AlertType.ERROR, "Data de nascimento ou CPF inválidos.");
+                alert.getDialogPane().getStylesheets().add(getClass().getResource("/alertStyle.css").toExternalForm());
+                alert.getDialogPane().getStyleClass().add("custom-alert");
                 alert.show();
             }
         });
 
         layout.getChildren().addAll(
                 nomeLabel, nomeField,
-                // dataNascimentoLabel, dataNascimentoField,
                 dataNascimentoLabel, dataNascimentoPicker,
                 cpfLabel, cpfField,
                 departamentoComboBox, cargoComboBox,

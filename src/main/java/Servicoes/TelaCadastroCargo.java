@@ -57,6 +57,8 @@ public class TelaCadastroCargo extends Application {
 
         if (nome.isEmpty()) {
             Alert alert = new Alert(Alert.AlertType.WARNING, "O campo de nome não pode estar vazio.");
+            alert.getDialogPane().getStylesheets().add(getClass().getResource("/alertStyle.css").toExternalForm());
+            alert.getDialogPane().getStyleClass().add("custom-alert");
             alert.show();
             return;
         }
@@ -66,12 +68,16 @@ public class TelaCadastroCargo extends Application {
             cargoDAO.salvarCargo(cargo);
 
             Alert alert = new Alert(Alert.AlertType.INFORMATION, "Cargo criado com sucesso!");
+            alert.getDialogPane().getStylesheets().add(getClass().getResource("/alertStyle.css").toExternalForm());
+            alert.getDialogPane().getStyleClass().add("custom-alert");
             alert.show();
 
             nomeField.clear();
         } catch (SQLException e) {
             e.printStackTrace();
             Alert alert = new Alert(Alert.AlertType.ERROR, "Erro ao salvar cargo: " + e.getMessage());
+            alert.getDialogPane().getStylesheets().add(getClass().getResource("/alertStyle.css").toExternalForm());
+            alert.getDialogPane().getStyleClass().add("custom-alert");
             alert.show();
         }
     }

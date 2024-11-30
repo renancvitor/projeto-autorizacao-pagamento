@@ -1,6 +1,5 @@
 package Application;
 
-import DAO.ConnectionFactory;
 import DAO.UsuarioDAO;
 import Entities.TelaPrincipal;
 import Entities.UserService;
@@ -8,7 +7,6 @@ import Entities.Usuario;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.layout.GridPane;
-import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 
 import java.sql.Connection;
@@ -49,6 +47,8 @@ public class TelaLogin {
                 telaPrincipal.start(primaryStage);
             } else {
                 Alert alert = new Alert(Alert.AlertType.ERROR, "Usuário ou senha inválidos.");
+                alert.getDialogPane().getStylesheets().add(getClass().getResource("/alertStyle.css").toExternalForm());
+                alert.getDialogPane().getStyleClass().add("custom-alert");
                 alert.show();
             }
         });
@@ -83,10 +83,10 @@ public class TelaLogin {
 
                 return usuario;
             } else {
-                Alert alert = new Alert(Alert.AlertType.ERROR, "Usuário ou senha inválidos.");
-                alert.getDialogPane().getStylesheets().add(getClass().getResource("/alertStyle.css").toExternalForm());
-                alert.getDialogPane().getStyleClass().add("custom-alert");
-                alert.show();
+//                Alert alert = new Alert(Alert.AlertType.ERROR, "Usuário ou senha inválidos.");
+//                alert.getDialogPane().getStylesheets().add(getClass().getResource("/alertStyle.css").toExternalForm());
+//                alert.getDialogPane().getStyleClass().add("custom-alert");
+//                alert.show();
             }
         } catch (SQLException e) {
             e.printStackTrace();
